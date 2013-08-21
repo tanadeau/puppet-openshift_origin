@@ -36,6 +36,18 @@ class openshift_origin::custom_shell {
     fail 'Custom OpenShift Origin shell is only available on Fedora systems'
   }
 
+  ensure_resource('package', 'rubygem-highline', {
+      ensure   => 'latest',
+      require => Yumrepo[openshift-origin-deps],
+    }
+  )
+
+  ensure_resource('package', 'rubygem-httpclient', {
+      ensure   => 'latest',
+      require => Yumrepo[openshift-origin-deps],
+    }
+  )
+
   file { 'getty.service':
     ensure  => present,
     path    => '/usr/lib/systemd/system/getty@.service',

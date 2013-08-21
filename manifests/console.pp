@@ -132,6 +132,13 @@ class openshift_origin::console {
       }
     )
 
+    ensure_resource('package', 'rubygem-sass-twitter-bootstrap', {
+        ensure   => 'latest',
+        alias    => 'sass-twitter-bootstrap',
+        require => Yumrepo[openshift-origin-deps],
+      }
+    )
+
     ensure_resource('package', 'rubygem-jquery-rails', {
         ensure   => 'latest',
         alias    => 'jquery-rails',
@@ -204,6 +211,13 @@ class openshift_origin::console {
     ensure_resource('package', 'ruby193-rubygem-sass-rails', {
         ensure   => 'latest',
         alias    => 'sass-rails',
+        require => Yumrepo[openshift-origin-deps],
+      }
+    )
+
+    ensure_resource('package', 'ruby193-rubygem-sass-twitter-bootstrap', {
+        ensure   => 'latest',
+        alias    => 'sass-twitter-bootstrap',
         require => Yumrepo[openshift-origin-deps],
       }
     )
@@ -320,6 +334,7 @@ class openshift_origin::console {
       Package['openshift-origin-console'],
       Package['rubygem-openshift-origin-console'],
       Package['sass-rails'],
+      Package['sass-twitter-bootstrap'],
       Package['jquery-rails'],
       Package['uglifier'],
       Package['coffee-rails'],
