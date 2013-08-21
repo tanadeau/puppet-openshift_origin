@@ -147,6 +147,7 @@ class openshift_origin (
   $install_login_shell        = false,
   $eth_device                 = 'eth0',
   $install_repo               = 'nightlies',
+  $dependencies_repo          = 'nightlies',
   $named_ipaddress            = $::ipaddress,
   $avahi_ipaddress            = $::ipaddress,
   $mongodb_fqdn               = 'localhost',
@@ -302,10 +303,30 @@ class openshift_origin (
   }
 
   if $create_origin_yum_repos == true {
-    $mirror_base_url = $::operatingsystem ? {
-      'Fedora' => "https://mirror.openshift.com/pub/openshift-origin/fedora-${::operatingsystemrelease}/${::architecture}/",
-      'Centos' => "https://mirror.openshift.com/pub/openshift-origin/rhel-6/${::architecture}/",
-      default  => "https://mirror.openshift.com/pub/openshift-origin/rhel-6/${::architecture}/",
+    case $dependencies_repo {
+      'nightlies' : {
+        case $::operatingsystem {
+          'Fedora' : {
+            $mirror_base_url = "https://mirror.openshift.com/pub/origin-server/nightly/fedora-19/dependencies/x86_64/"
+          }
+          default  : {
+            $mirror_base_url = "https://mirror.openshift.com/pub/origin-server/nightly/rhel-6/dependencies/x86_64/"
+          }
+        }
+      }
+      'release' : {
+        case $::operatingsystem {
+          'Fedora' : {
+            $mirror_base_url = "https://mirror.openshift.com/pub/origin-server/release/2/fedora-19/dependencies/x86_64/"
+          }
+          default  : {
+            $mirror_base_url = "https://mirror.openshift.com/pub/origin-server/release/2/rhel-6/dependencies/x86_64/"
+          }
+        }
+      }
+      default     : {
+        $mirror_base_url = $dependencies_repo
+      }
     }
 
     yumrepo { 'openshift-origin-deps':
@@ -319,10 +340,20 @@ class openshift_origin (
       'nightlies' : {
         case $::operatingsystem {
           'Fedora' : {
-            $install_repo_path = "https://mirror.openshift.com/pub/openshift-origin/nightly/fedora-${::operatingsystemrelease}/latest/${::architecture}/"
+            $install_repo_path = "https://mirror.openshift.com/pub/origin-server/nightly/fedora-19/latest/x86_64/"
           }
           default  : {
-            $install_repo_path = "https://mirror.openshift.com/pub/openshift-origin/nightly/rhel-6/latest/${::architecture}/"
+            $install_repo_path = "https://mirror.openshift.com/pub/origin-server/nightly/rhel-6/latest/x86_64/"
+          }
+        }
+      }
+      'release' : {
+        case $::operatingsystem {
+          'Fedora' : {
+            $install_repo_path = "https://mirror.openshift.com/pub/origin-server/release/2/fedora-19/packages/x86_64/"
+          }
+          default  : {
+            $install_repo_path = "https://mirror.openshift.com/pub/origin-server/release/2/rhel-6/packages/x86_64/"
           }
         }
       }
