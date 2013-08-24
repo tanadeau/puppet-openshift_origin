@@ -31,67 +31,67 @@
 #
 class openshift_origin::broker {
   ensure_resource('package', 'mongodb-devel', {
-      ensure => 'latest',
+      ensure  => latest,
     }
   )
 
   ensure_resource('package', 'openshift-origin-broker', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin],
     }
   )
 
   ensure_resource('package', 'rubygem-openshift-origin-msg-broker-mcollective', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin],
     }
   )
 
   ensure_resource('package', 'rubygem-openshift-origin-dns-nsupdate', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin],
     }
   )
 
   if($::operatingsystem == 'Fedora') {
     ensure_resource('package', 'rubygem-openshift-origin-dns-avahi', {
-        ensure  => present,
+        ensure  => latest,
         require => Yumrepo[openshift-origin],
       }
     )
   }
 
   ensure_resource('package', 'rubygem-openshift-origin-dns-bind', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin],
     }
   )
 
   ensure_resource('package', 'rubygem-openshift-origin-controller', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin],
     }
   )
 
   ensure_resource('package', 'openshift-origin-broker-util', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin],
     }
   )
 
   ensure_resource('package', 'rubygem-passenger', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin-deps],
     }
   )
 
   ensure_resource('package', 'openssh', {
-      ensure => present,
+      ensure  => latest,
     }
   )
 
   ensure_resource('package', 'mod_passenger', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin-deps],
     }
   )
@@ -998,7 +998,7 @@ class openshift_origin::broker {
   case $::openshift_origin::broker_auth_plugin {
     'mongo'      : {
       package { ['rubygem-openshift-origin-auth-mongo']:
-        ensure  => present,
+        ensure  => latest,
         require => Yumrepo[openshift-origin],
       }
 
@@ -1014,7 +1014,7 @@ class openshift_origin::broker {
     }
     'basic-auth' : {
       package { ['rubygem-openshift-origin-auth-remote-user']:
-        ensure  => present,
+        ensure  => latest,
         require => Yumrepo[openshift-origin],
       }
 

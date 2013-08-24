@@ -32,37 +32,37 @@
 class openshift_origin::node {
   include openshift_origin::params
   ensure_resource('package', 'rubygem-openshift-origin-node', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin],
     }
   )
 
   ensure_resource('package', 'openshift-origin-node-util', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin],
     }
   )
 
   ensure_resource('package', 'pam_openshift', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin],
     }
   )
 
   ensure_resource('package', 'openshift-origin-node-proxy', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin],
     }
   )
 
   ensure_resource('package', 'openshift-origin-port-proxy', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin],
     }
   )
 
   ensure_resource('package', 'openshift-origin-msg-node-mcollective', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin],
     }
   )
@@ -242,7 +242,7 @@ class openshift_origin::node {
 
   if $::openshift_origin::node_container == 'selinux' {
     ensure_resource('package', "rubygem-openshift-origin-container-selinux", {
-        ensure  => present,
+        ensure  => latest,
         require => Yumrepo['openshift-origin'],
       }
     )
@@ -370,13 +370,13 @@ class openshift_origin::node {
 
   if $::openshift_origin::node_container == 'libvirt-lxc' {
     ensure_resource('package', 'libvirt-daemon', {
-        ensure  => present,
+        ensure  => latest,
         require => Yumrepo['openshift-origin'],
       }
     )
 
     ensure_resource('package', 'libvirt-sandbox', {
-        ensure  => present,
+        ensure  => latest,
       }
     )
 
@@ -540,7 +540,7 @@ class openshift_origin::node {
     'openshift-origin-cartridge-python',
     'openshift-origin-cartridge-ruby',
   ]:
-    ensure  => present,
+    ensure  => latest,
     require => [
       Yumrepo[openshift-origin],
       Yumrepo[openshift-origin-deps],
@@ -554,7 +554,7 @@ class openshift_origin::node {
         package { [
           'openshift-origin-cartridge-mariadb',
         ]:
-        ensure  => present,
+        ensure  => latest,
         require => [
           Yumrepo[openshift-origin],
           Yumrepo[openshift-origin-deps],
@@ -565,7 +565,7 @@ class openshift_origin::node {
       package { [
           'openshift-origin-cartridge-mysql',
         ]:
-        ensure  => present,
+        ensure  => latest,
         require => [
           Yumrepo[openshift-origin],
           Yumrepo[openshift-origin-deps],
@@ -579,7 +579,7 @@ class openshift_origin::node {
       'openshift-origin-cartridge-mock',
       'openshift-origin-cartridge-mock-plugin',
     ]:
-      ensure  => present,
+      ensure  => latest,
       require => [
         Yumrepo[openshift-origin],
         Yumrepo[openshift-origin-deps],

@@ -32,12 +32,12 @@
 class openshift_origin::mongo {
   include openshift_origin::params
   ensure_resource('package', 'mongodb', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo['openshift-origin-deps'],
     }
   )
   ensure_resource('package', 'mongodb-server', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo['openshift-origin-deps'],
     }
   )

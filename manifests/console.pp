@@ -31,23 +31,18 @@
 #
 class openshift_origin::console {
   ensure_resource('package', 'rubygem-openshift-origin-console', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin],
     }
   )
 
   ensure_resource('package', 'gcc', {
-      ensure  => present,
-    }
-  )
-
-  ensure_resource('package', 'make', {
-      ensure  => present,
+      ensure  => latest,
     }
   )
 
   ensure_resource('package', 'openshift-origin-console', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin],
     }
   )

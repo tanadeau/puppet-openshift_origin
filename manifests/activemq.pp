@@ -38,7 +38,7 @@ class openshift_origin::activemq {
   )
 
   ensure_resource('package', 'activemq-client', {
-      ensure  => present,
+      ensure  => latest,
       require => Yumrepo[openshift-origin-deps],
     }
   )
