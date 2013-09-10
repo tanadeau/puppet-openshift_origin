@@ -597,8 +597,10 @@ class openshift_origin (
     }
 
     if ($configure_named ==  true and $configure_broker ==  true) {
-      exec{ "Register host ${::hostname} with IP ${::ipaddress} with named":
-        command => "/usr/sbin/oo-register-dns -h ${::hostname} -n ${::ipaddress}",
+      $broker_hostname_arr = split($broker_fqdn, '[.]')
+      $broker_hostname = $broker_hostname_arr[0]
+      exec{ "Register host ${broker_hostname} with IP ${::ipaddress} with named":
+        command => "/usr/sbin/oo-register-dns -h ${broker_hostname} -n ${::ipaddress} -d ${cloud_domain}",
         require => [
           Package['facter'],
           Package['openshift-origin-broker-util'],

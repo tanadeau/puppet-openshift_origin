@@ -30,11 +30,6 @@
 # limitations under the License.
 #
 class openshift_origin::broker {
-  ensure_resource('package', 'mongodb-devel', {
-      ensure  => latest,
-    }
-  )
-
   ensure_resource('package', 'openshift-origin-broker', {
       ensure  => latest,
       require => Yumrepo[openshift-origin],
@@ -180,6 +175,11 @@ class openshift_origin::broker {
     ensure_resource('package', 'rubygem-bigdecimal', {
         ensure   => 'latest',
         alias    => 'bigdecimal'
+      }
+    )
+
+    ensure_resource('package', 'mongodb-devel', {
+        ensure  => latest,
       }
     )
 
@@ -544,8 +544,6 @@ class openshift_origin::broker {
         ensure  => 'latest',
         alias   => 'bson',
         require => [
-          Package['ruby-devel'],
-          Package['mongodb-devel'],
           Yumrepo[openshift-origin-deps],
         ],
       }
@@ -555,8 +553,6 @@ class openshift_origin::broker {
         ensure  => 'latest',
         alias   => 'bson_ext',
         require => [
-          Package['ruby-devel'],
-          Package['mongodb-devel'],
           Yumrepo[openshift-origin-deps],
         ],
       }

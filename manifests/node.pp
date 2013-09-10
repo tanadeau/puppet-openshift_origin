@@ -405,6 +405,11 @@ class openshift_origin::node {
       require => Package['cronie']
     }
 
+    service { 'messagebus':
+      enable  => true,
+      require => Package['oddjob']
+    }
+
     service { 'oddjobd':
       enable  => true,
       require => Package['oddjob']
