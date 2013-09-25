@@ -269,12 +269,6 @@
 # [*conf_node_supplementary_posix_groups*]
 #   Name of supplementary UNIX group to add a gear to.
 # 
-# [*install_jbossews_cartridge*]
-# [*install_jbosseap_cartridge*]
-# [*install_jbossas_cartridge*]
-#   Toggles to enable/disable installation of specific JBoss cartridges.
-#   Default: false
-# 
 # [*development_mode*]
 #   Set development mode and extra logging. 
 #   Default: false
@@ -286,6 +280,32 @@
 # [*register_host_with_named*]
 #   Setup DNS entries for this host in a locally installed bind DNS instance.
 #   Default: false
+#
+# [*install_cartridges*]
+#   List of cartridges to be installed on the node. Options:
+#
+#   * 10gen-mms-agent
+#   * cron
+#   * diy
+#   * haproxy
+#   * mongodb
+#   * nodejs
+#   * perl
+#   * php
+#   * phpmyadmin
+#   * postgresql
+#   * python
+#   * ruby
+#   * jenkins
+#   * jenkins-client
+#   * mariadb         (will install mysql on RHEL)
+#   * jbossews
+#   * jbossas
+#   * jbosseap
+#
+#   Default: ['10gen-mms-agent','cron','diy','haproxy','mongodb',
+#             'nodejs','perl','php','phpmyadmin','postgresql',
+#             'python','ruby','jenkins','jenkins-client','mariadb']
 # 
 # == Manual Tasks
 # 
@@ -368,13 +388,13 @@ class openshift_origin (
   $node_unmanaged_users                 = [],
   $conf_node_external_eth_dev           = 'eth0',
   $conf_node_supplementary_posix_groups = '',
-  $install_jbossews_cartridge           = false,
-  $install_jbosseap_cartridge           = false,
-  $install_jbossas_cartridge            = false,
   $development_mode                     = false,
   $conf_named_upstream_dns              = ['8.8.8.8'],
   $install_login_shell                  = false,
   $register_host_with_named             = false,
+  $install_cartridges                   = ['10gen-mms-agent','cron','diy','haproxy','mongodb',
+                                           'nodejs','perl','php','phpmyadmin','postgresql',
+                                           'python','ruby','jenkins','jenkins-client','mariadb'],
 ){
   include openshift_origin::role
   if member( $roles, 'named' ) {

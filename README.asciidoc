@@ -384,13 +384,6 @@ Default: eth0
 ==== conf_node_supplementary_posix_groups
 Name of supplementary UNIX group to add a gear to.
 
-==== install_jbossews_cartridge
-==== install_jbosseap_cartridge
-==== install_jbossas_cartridge
-Toggles to enable/disable installation of specific JBoss cartridges.
-
-Default: false
-
 ==== development_mode
 Set development mode and extra logging. 
 
@@ -404,6 +397,32 @@ all-in-one VM installation.
 Setup DNS entries for this host in a locally installed bind DNS instance.
 
 Default: false
+
+==== install_cartridges
+List of cartridges to be installed on the node. Options:
+
+* 10gen-mms-agent
+* cron
+* diy
+* haproxy
+* mongodb
+* nodejs
+* perl
+* php
+* phpmyadmin
+* postgresql
+* python
+* ruby
+* jenkins
+* jenkins-client
+* mariadb         (will install mysql on RHEL)
+* jbossews
+* jbossas
+* jbosseap
+
+Default: ['10gen-mms-agent','cron','diy','haproxy','mongodb',
+          'nodejs','perl','php','phpmyadmin','postgresql',
+          'python','ruby','jenkins','jenkins-client','mariadb']
 
 == Manual Tasks
 

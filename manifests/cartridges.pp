@@ -14,99 +14,60 @@
 #  limitations under the License.
 #
 class openshift_origin::cartridges {
-  package { 'jenkins':
-    ensure  => "1.510-1.1",
-  }
 
   package { 'yum-plugin-versionlock':
     ensure  => latest,
   }
 
-  exec { '/usr/bin/yum versionlock jenkins':
-    require => [
-      Package['jenkins'],
-      Package['yum-plugin-versionlock'],
-    ]
+  define OpenShiftCartridge {
+    case $name:
+      'jenkins', 'jenkins-client': {
+        ensure_resource( 'package', 'jenkins', {
+            ensure  => "1.510-1.1",
+          }
+        )
+            
+        ensure_resource( 'exec', '/usr/bin/yum versionlock jenkins', {
+            require => [
+              Package['jenkins'],
+              Package['yum-plugin-versionlock'],
+            ]
+          }
+        }
+        
+        ensure_resource( 'package', "openshift-origin-cartridge-${name}", {} )
+      }
+      'mariadb', 'mysql': {
+        case $::operatingsystem {
+          'Fedora' : {
+            $mariadb_cart = 'openshift-origin-cartridge-mariadb'
+          }
+          default  : {
+            $mariadb_cart = 'openshift-origin-cartridge-mysql'    
+          }
+        }
+        
+        ensure_resource( 'package', $mariadb_cart, {
+            ensure  => latest,
+            require => [
+              Class['openshift_origin::install_method'],
+            ],
+            notify => Exec['oo-admin-cartridge'],
+          } 
+        )
+      }
+      default: {
+        ensure_resource( 'package', "openshift-origin-cartridge-${name}", {} )
+      }
   }
 
-  case $::operatingsystem {
-    'Fedora' : {
-      $mariadb_cart = 'openshift-origin-cartridge-mariadb'
-    }
-    default  : {
-      $mariadb_cart = 'openshift-origin-cartridge-mysql'    
-    }
-  }
-  
-  ensure_resource('package', [
-      'openshift-origin-cartridge-10gen-mms-agent',
-      'openshift-origin-cartridge-cron',
-      'openshift-origin-cartridge-diy',
-      'openshift-origin-cartridge-haproxy',
-      'openshift-origin-cartridge-mongodb',
-      'openshift-origin-cartridge-nodejs',
-      'openshift-origin-cartridge-perl',
-      'openshift-origin-cartridge-php',
-      'openshift-origin-cartridge-phpmyadmin',
-      'openshift-origin-cartridge-postgresql',
-      'openshift-origin-cartridge-python',
-      'openshift-origin-cartridge-ruby',
-      'openshift-origin-cartridge-jenkins',
-      'openshift-origin-cartridge-jenkins-client',
-      $mariadb_cart,
-    ], {
-      ensure  => latest,
-      require => [
-        Class['openshift_origin::install_method'],
-        Package['jenkins'],
-      ],
-      notify => Exec['oo-admin-cartridge'],
-    }
-  )
-  
-  if( $::openshift_origin::install_jbossews_cartridge == true ) {
-    ensure_resource('package', 'openshift-origin-cartridge-jbossews', {
-        ensure  => latest,
-        require => [
-          Class['openshift_origin::install_method'],
-        ],
-        notify => Exec['oo-admin-cartridge'],
-      }
-    )
-  }
-  
-  if( $::openshift_origin::install_jbosseap_cartridge == true ) {
-    ensure_resource('package', 'openshift-origin-cartridge-jbosseap', {
-        ensure  => latest,
-        require => [
-          Class['openshift_origin::install_method'],
-        ],
-        notify => Exec['oo-admin-cartridge'],
-      }
-    )
-  }
-  
-  if( $::openshift_origin::install_jbossas_cartridge == true ) {
-    ensure_resource('package', 'openshift-origin-cartridge-jbossas', {
-        ensure  => latest,
-        require => [
-          Class['openshift_origin::install_method'],
-        ],
-        notify => Exec['oo-admin-cartridge'],
-      }
-    )
-  }
+  OpenShiftCartridge { $::openshift_origin::install_cartridges: }
   
   if( $::openshift_origin::development_mode == true ) {
-    package { [
+    OpenShiftCartridge { [
       'openshift-origin-cartridge-mock',
       'openshift-origin-cartridge-mock-plugin',
-    ]:
-      ensure  => latest,
-      require => [
-        Class['openshift_origin::install_method'],
-      ],
-      notify => Exec['oo-admin-cartridge'],
+      ]:
     }
   }
   
