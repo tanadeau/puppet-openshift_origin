@@ -130,14 +130,13 @@
 #   This is used for the node to give a public IP, if different from the
 #   one on its NIC.
 # 
-# [*no_ntp*]
-#   Default: false
-#   Enabling this option prevents the installation script from
-#   configuring NTP.  It is important that the time be synchronized
-#   across hosts because MCollective messages have a TTL of 60 seconds
-#   and may be dropped if the clocks are too far out of synch.  However,
-#   NTP is not necessary if the clock will be kept in synch by some
-#   other means.
+# [*configure_ntp*]
+#   Default: true
+#   Enabling this option configuresNTP.  It is important that the time 
+#   be synchronized across hosts because MCollective messages have a TTL
+#   of 60 seconds and may be dropped if the clocks are too far out of 
+#   synch.  However, NTP is not necessary if the clock will be kept in 
+#   synch by some other means.
 # 
 # Passwords used to secure various services. You are advised to specify
 # only alphanumeric values in this script as others may cause syntax
@@ -340,7 +339,7 @@ class openshift_origin (
   $bind_krb_principal                   = '',
   $broker_ip_addr                       = $ipaddress,
   $node_ip_addr                         = $ipaddress,
-  $no_ntp                               = false,  
+  $configure_ntp                        = true,  
   $activemq_admin_password              = inline_template('<%= SecureRandon.base64 %>'),
   $mcollective_user                     = 'mcollective',
   $mcollective_password                 = 'marionette',

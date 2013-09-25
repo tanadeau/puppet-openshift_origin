@@ -104,13 +104,15 @@ class openshift_origin::broker {
     require => Package['openshift-origin-broker'],
   }
 
-  file { 'openshift broker-dev.conf':
-    path    => '/etc/openshift/broker-dev.conf',
-    content => template('openshift_origin/broker/broker.conf.erb'),
-    owner   => 'apache',
-    group   => 'apache',
-    mode    => '0644',
-    require => Package['openshift-origin-broker'],
+  if $::openshift_origin::development_mode {
+    file { 'openshift broker-dev.conf':
+      path    => '/etc/openshift/broker-dev.conf',
+      content => template('openshift_origin/broker/broker.conf.erb'),
+      owner   => 'apache',
+      group   => 'apache',
+      mode    => '0644',
+      require => Package['openshift-origin-broker'],
+    }
   }
 
   exec { 'restorecon -vr /var/log/openshift':

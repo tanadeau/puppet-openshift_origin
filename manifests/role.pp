@@ -38,7 +38,7 @@ class openshift_origin::install_method {
 }
 
 class openshift_origin::role {
-  if ( $::openshift_origin::no_ntp != false ) {
+  if ( $::openshift_origin::configure_ntp ) {
     ensure_resource('package', 'ntpdate', {
         ensure => 'latest',
       }
