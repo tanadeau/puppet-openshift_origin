@@ -15,13 +15,13 @@
 #
 class openshift_origin::plugins::container::libvirt {
   ensure_resource('package', 'libvirt-daemon', {
-      ensure  => latest,
+      ensure  => present,
       require => Yumrepo['openshift-origin'],
     }
   )
   
   ensure_resource('package', 'libvirt-sandbox', {
-      ensure  => latest,
+      ensure  => present,
     }
   )
   

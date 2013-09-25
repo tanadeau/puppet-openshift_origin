@@ -16,7 +16,7 @@
 class openshift_origin::cartridges {
 
   package { 'yum-plugin-versionlock':
-    ensure  => latest,
+    ensure  => present,
   }
 
   define openshiftCartridge  {
@@ -48,7 +48,7 @@ class openshift_origin::cartridges {
         }
         
         ensure_resource( 'package', $mariadb_cart, {
-            ensure  => latest,
+            ensure  => present,
             require => [
               Class['openshift_origin::install_method'],
             ],

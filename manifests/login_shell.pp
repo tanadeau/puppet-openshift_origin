@@ -21,13 +21,13 @@ class openshift_origin::login_shell {
   }
 
   ensure_resource('package', 'rubygem-highline', {
-      ensure   => 'latest',
+      ensure   => 'present',
       require => Class['openshift_origin::install_method'],
     }
   )
 
   ensure_resource('package', 'rubygem-httpclient', {
-      ensure   => 'latest',
+      ensure   => 'present',
       require => Class['openshift_origin::install_method'],
     }
   )

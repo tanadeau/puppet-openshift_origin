@@ -15,7 +15,7 @@
 #
 class openshift_origin::console {
   ensure_resource('package', 'openshift-origin-console', {
-      ensure  => latest,
+      ensure  => present,
       require => Class['openshift_origin::install_method'],
     }
   )

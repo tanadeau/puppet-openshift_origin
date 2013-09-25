@@ -15,7 +15,7 @@
 #
 class openshift_origin::plugins::container::selinux {
   ensure_resource('package', 'pam_openshift', {
-      ensure  => latest,
+      ensure  => present,
       require => Class['openshift_origin::install_method'],
     }
   )

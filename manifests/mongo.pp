@@ -15,7 +15,7 @@
 #
 class openshift_origin::mongo {
   ensure_resource('package', ['mongodb', 'mongodb-server'], {
-      ensure  => latest,
+      ensure  => present,
       require => Class['openshift_origin::install_method'],
     }
   )

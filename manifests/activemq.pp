@@ -16,13 +16,13 @@
 class openshift_origin::activemq {
   include openshift_origin::params
   ensure_resource('package', 'activemq', {
-      ensure  => latest,
+      ensure  => present,
       require => Class['openshift_origin::install_method'],
     }
   )
 
   ensure_resource('package', 'activemq-client', {
-      ensure  => latest,
+      ensure  => present,
       require => Class['openshift_origin::install_method'],
     }
   )
