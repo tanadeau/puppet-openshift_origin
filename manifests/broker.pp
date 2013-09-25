@@ -147,7 +147,6 @@ class openshift_origin::broker {
       Package['openshift-origin-broker'],
       File['openshift broker.conf'],
       File['mcollective broker plugin config'],
-      File['Auth plugin config'],
     ],
   }
 

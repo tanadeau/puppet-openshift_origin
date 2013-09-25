@@ -360,7 +360,7 @@ class openshift_origin (
   $broker_ip_addr                       = $ipaddress,
   $node_ip_addr                         = $ipaddress,
   $configure_ntp                        = true,  
-  $activemq_admin_password              = inline_template('<%= SecureRandon.base64 %>'),
+  $activemq_admin_password              = inline_template('<%= SecureRandom.base64 %>'),
   $mcollective_user                     = 'mcollective',
   $mcollective_password                 = 'marionette',
   $mongodb_admin_user                   = 'admin',

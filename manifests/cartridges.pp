@@ -19,8 +19,8 @@ class openshift_origin::cartridges {
     ensure  => latest,
   }
 
-  define OpenShiftCartridge {
-    case $name:
+  define openshiftCartridge  {
+    case $name {
       'jenkins', 'jenkins-client': {
         ensure_resource( 'package', 'jenkins', {
             ensure  => "1.510-1.1",
@@ -33,7 +33,7 @@ class openshift_origin::cartridges {
               Package['yum-plugin-versionlock'],
             ]
           }
-        }
+        )
         
         ensure_resource( 'package', "openshift-origin-cartridge-${name}", {} )
       }
@@ -59,16 +59,13 @@ class openshift_origin::cartridges {
       default: {
         ensure_resource( 'package', "openshift-origin-cartridge-${name}", {} )
       }
+    }
   }
 
-  OpenShiftCartridge { $::openshift_origin::install_cartridges: }
+  openshiftCartridge { $::openshift_origin::install_cartridges: }
   
   if( $::openshift_origin::development_mode == true ) {
-    OpenShiftCartridge { [
-      'openshift-origin-cartridge-mock',
-      'openshift-origin-cartridge-mock-plugin',
-      ]:
-    }
+    openshiftCartridge { [ 'mock', 'mock-plugin' ]: }
   }
   
   # Note, this does not handle cartridge uninstalls

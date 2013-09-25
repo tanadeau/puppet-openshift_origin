@@ -46,6 +46,7 @@ class openshift_origin::plugins::auth::kerberos {
       File['broker http keytab']
     ],
     notify  => Service['openshift-broker'],    
+    before  => Exec['Broker gem dependencies'],
   }
 
   file {'console kerberos.conf':
@@ -61,6 +62,7 @@ class openshift_origin::plugins::auth::kerberos {
       File['broker http keytab']
     ],
     notify  => Service['openshift-console'],    
+    before  => Exec['Console gem dependencies'],
   }
 
   file { 'Auth plugin config':
@@ -70,5 +72,6 @@ class openshift_origin::plugins::auth::kerberos {
     group   => 'root',
     mode    => '0644',
     require => Package['rubygem-openshift-origin-auth-remote-user']
+    before  => Exec['Broker gem dependencies'],
   }
 }
