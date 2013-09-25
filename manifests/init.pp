@@ -222,6 +222,7 @@
 #                       broker_krb_service_name, broker_krb_auth_realms,
 #                       broker_krb_keytab values.
 #     * htpasswd      - Stores username/password in a htaccess file.
+#     * ldap          - LDAP based authentication. Uses broker_ldap_uri
 #   Default: htpasswd
 # 
 # [*broker_krb_service_name*]
@@ -233,6 +234,11 @@
 # [*broker_krb_keytab*]
 #   The Krb5KeyTab value of mod_auth_kerb is not configurable -- the keytab
 #   is expected in /var/www/openshift/broker/httpd/conf.d/http.keytab
+#
+# [*broker_ldap_uri*]
+#   URI to the LDAP server (e.g. ldap://ldap.example.com:389/ou=People,dc=my-domain,dc=com).
+#   Set <code>broker_auth_plugin</code> to <code>ldap</code> to enable
+#   this feature.
 # 
 # [*node_container_plugin*]
 #   Specify the container type to use on the node.
@@ -357,6 +363,7 @@ class openshift_origin (
   $broker_krb_service_name              = '',
   $broker_krb_auth_realms               = '',
   $broker_krb_keytab                    = '',
+  $broker_ldap_uri                      = '',
   $node_container_plugin                = 'selinux',
   $node_frontend_plugins                = ['apache-mod-rewrite','nodejs-websocket'],
   $node_unmanaged_users                 = [],
