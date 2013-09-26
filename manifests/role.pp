@@ -15,10 +15,11 @@
 #
 define register_dns( $fqdn ) {
   if $::openshift_origin::register_host_with_named {
-    exec { "Register ${fqdn}":
-      command => template("openshift_origin/register_dns.erb"),
-      provider => 'shell'
-    }
+    ensure_resource( 'exec', "Register ${fqdn}", {
+        command => template("openshift_origin/register_dns.erb"),
+        provider => 'shell'
+      }
+    )
   }
 }
 
