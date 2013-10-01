@@ -85,13 +85,8 @@ class openshift_origin::activemq {
     }
   )
 
-  $activemq_port = $::use_firewalld ? {
-    'true'  => '61613/tcp',
-    default => '61613:tcp',
-  }
-
-  exec { 'Open port for ActiveMQ':
-    command => "${openshift_origin::params::firewall_port_cmd}${activemq_port}",
-    require => Package['firewall-package']
+  firewall{ 'activemq':
+    port      => '61613',
+    protocol  => 'tcp',
   }
 }

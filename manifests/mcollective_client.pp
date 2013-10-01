@@ -14,14 +14,16 @@
 #  limitations under the License.
 #
 class openshift_origin::mcollective_client {
-  ensure_resource( 'package' , "${openshift_origin::ruby_scl_prefix}mcollective-client", {
+  include openshift_origin::params
+  
+  ensure_resource( 'package' , "${::openshift_origin::params::ruby_scl_prefix}mcollective-client", {
       alias => 'mcollective-client',
     } 
   )
 
   file { 'mcollective client config':
     ensure  => present,
-    path    => "${::openshift_origin::ruby_scl_path_prefix}/etc/mcollective/client.cfg",
+    path    => "${::openshift_origin::params::ruby_scl_path_prefix}/etc/mcollective/client.cfg",
     content => template('openshift_origin/mcollective/mcollective-client.cfg.erb'),
     owner   => 'root',
     group   => 'root',

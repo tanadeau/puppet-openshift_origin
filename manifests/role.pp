@@ -30,12 +30,6 @@ class openshift_origin::install_method {
     'none' : {}
     'yum'  : { include openshift_origin::yum_install_method }
   }
-  
-  ensure_resource('package', $openshift_origin::params::firewall_package, {
-      ensure => present,
-      alias  => 'firewall-package',
-    }
-  )
 }
 
 class openshift_origin::role {

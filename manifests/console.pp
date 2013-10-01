@@ -29,7 +29,7 @@ class openshift_origin::console {
     require => Package['openshift-origin-console'],
   }
 
-  if $::openshift_origin::development_mode {
+  if $::openshift_origin::development_mode == true {
     file { 'openshift console-dev.conf':
       path    => '/etc/openshift/console-dev.conf',
       content => template('openshift_origin/console/console.conf.erb'),

@@ -281,6 +281,14 @@
 #   Setup DNS entries for this host in a locally installed bind DNS instance.
 #   Default: false
 #
+# [*firewall_provider*]
+#   Select the firewall provider to configure OpenShift with.
+#   Options:
+#
+#   * none
+#   * iptables
+#   * lokkit
+#
 # [*install_cartridges*]
 #   List of cartridges to be installed on the node. Options:
 #
@@ -370,7 +378,7 @@ class openshift_origin (
   $mongodb_name                         = 'openshift_broker',
   $openshift_user1                      = 'demo',
   $openshift_password1                  = 'changeme',
-  $conf_broker_auth_salt                = undef,
+  $conf_broker_auth_salt                = inline_template('<%= SecureRandom.base64 %>'),
   $conf_broker_auth_key_password        = undef,
   $conf_broker_auth_public_key          = undef,
   $conf_broker_auth_private_key         = undef,
@@ -392,32 +400,28 @@ class openshift_origin (
   $conf_named_upstream_dns              = ['8.8.8.8'],
   $install_login_shell                  = false,
   $register_host_with_named             = false,
+  $firewall_provider                    = 'iptables',
   $install_cartridges                   = ['10gen-mms-agent','cron','diy','haproxy','mongodb',
                                            'nodejs','perl','php','phpmyadmin','postgresql',
                                            'python','ruby','jenkins','jenkins-client','mariadb'],
+  $update_resolv_conf                   = true,
 ){
   include openshift_origin::role
   if member( $roles, 'named' ) {
-    class{ 'openshift_origin::role::named': }
+    class{ 'openshift_origin::role::named': 
+      before => Class['openshift_origin::update_resolv_conf'],
+    } 
     if member( $roles, 'broker' )    { Class['openshift_origin::role::named']    -> Class['openshift_origin::role::broker'] }
     if member( $roles, 'node' )      { Class['openshift_origin::role::named']    -> Class['openshift_origin::role::node'] }
     if member( $roles, 'activemq' )  { Class['openshift_origin::role::named']    -> Class['openshift_origin::role::activemq'] }
     if member( $roles, 'datastore' ) { Class['openshift_origin::role::named']    -> Class['openshift_origin::role::datastore'] }
   }
-  if member( $roles, 'broker' ) {    class{ 'openshift_origin::role::broker':    } }
-  if member( $roles, 'node' ) {      class{ 'openshift_origin::role::node':      } }
-  if member( $roles, 'activemq' ) {  class{ 'openshift_origin::role::activemq':  } }
-  if member( $roles, 'datastore' ) { class{ 'openshift_origin::role::datastore': } }
-
-  case $::operatingsystem {
-    'Fedora': { $ruby_scl_prefix = '' }
-    default : { $ruby_scl_prefix = 'ruby193-' }
-  }
+  if member( $roles, 'broker' ) {    class{ 'openshift_origin::role::broker': before => Class['openshift_origin::update_resolv_conf'] } }
+  if member( $roles, 'node' ) {      class{ 'openshift_origin::role::node': before => Class['openshift_origin::update_resolv_conf'] } }
+  if member( $roles, 'activemq' ) {  class{ 'openshift_origin::role::activemq': before => Class['openshift_origin::update_resolv_conf'] } }
+  if member( $roles, 'datastore' ) { class{ 'openshift_origin::role::datastore': before => Class['openshift_origin::update_resolv_conf'] } }
   
-  case $::operatingsystem {
-    'Fedora': { $ruby_scl_path_prefix = '' }
-    default : { $ruby_scl_path_prefix = '/opt/rh/ruby193/root' }
-  }
+  class{ 'openshift_origin::update_resolv_conf': }
 
   if $::operatingsystem == 'Fedora' {
     service { 'NetworkManager-wait-online':

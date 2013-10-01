@@ -15,11 +15,11 @@
 #
 class openshift_origin::node {
   include openshift_origin::params
+  class { 'openshift_origin::modprobe': }
 
   ensure_resource('package', [
       'rubygem-openshift-origin-node',
-      "${::openshift_origin::ruby_scl_prefix}rubygem-passenger-native",
-      'openshift-origin-port-proxy',
+      "${::openshift_origin::params::ruby_scl_prefix}rubygem-passenger-native",
       'openshift-origin-node-util',
       'policycoreutils-python',
       'openshift-origin-msg-node-mcollective',
@@ -73,7 +73,19 @@ class openshift_origin::node {
       "set net.ipv4.ip_local_port_range '15000 35530'",
 
       # Increase the connection tracking table size.
-      "set net.netfilter.nf_conntrack_max 1048576"
+      "set net.netfilter.nf_conntrack_max 1048576",
+      
+      #IPTables port proxy
+      "set net.ipv4.ip_forward 1",
+      "set net.ipv4.conf.all.route_localnet 1",
+      
+      #Shared memory limits
+      "set kernel.shmall 4294967296",
+      "set kernel.shmmax 68719476736",
+      
+      #IPC Message queue limits
+      "set kernel.msgmnb 65536",
+      "set kernel.msgmax 65536",
     ],
     notify => Exec['Reload sysctl']
   }
@@ -85,8 +97,9 @@ class openshift_origin::node {
   # that are not yet loaded.  On the other hand, adding -e might cause
   # us to miss some important error messages.
   exec{ 'Reload sysctl':
-    command     => '/usr/sbin/sysctl -p /etc/sysctl.conf',
+    command     => "${::openshift_origin::params::sysctl} -p /etc/sysctl.conf",
     refreshonly => true,
+    require     => Class['openshift_origin::modprobe'],
   }
   
   case $::openshift_origin::node_container_plugin {
@@ -108,7 +121,7 @@ class openshift_origin::node {
   }
   
   service { [
-      'openshift-port-proxy',
+      'openshift-iptables-port-proxy',
       'openshift-tc',
       'sshd',
       'oddjobd',
@@ -116,7 +129,6 @@ class openshift_origin::node {
     ]:
     enable  => true,
     require => [
-      Package['openshift-origin-port-proxy'],
       Package['rubygem-openshift-origin-node'],      
       Package['openshift-origin-node-util'],
       Package["mcollective"],
@@ -130,7 +142,7 @@ class openshift_origin::node {
       Package['rubygem-openshift-origin-node'],      
       Package['openshift-origin-node-util'],
     ],
-    provider => $os_init_provider,
+    provider => $::openshift_origin::params::os_init_provider,
   }
   
   file { 'create node setting markers dir':
@@ -141,38 +153,25 @@ class openshift_origin::node {
     mode    => '0755'
   }
   
-  exec { 'Open port for SSH':
-    command => "${openshift_origin::params::firewall_service_cmd}ssh",
-    require => Package['firewall-package'],
-  }
-
-  exec { 'Open port for HTTP':
-    command => "${openshift_origin::params::firewall_service_cmd}http",
-    require => Package['firewall-package'],
-  }
-
-  exec { 'Open port for HTTPS':
-    command => "${openshift_origin::params::firewall_service_cmd}https",
-    require => Package['firewall-package'],
+  firewall{ 'ssh':
+    service => 'ssh',
   }
   
-  $webproxy_http_port = $::use_firewalld ? {
-    'true'  => '8000/tcp',
-    default => '8000:tcp',
+  firewall{ 'http':
+    service => 'http',
+  }
+  
+  firewall{ 'https':
+    service => 'https',
+  }
+  
+  firewall{ 'node-http':
+    port      => '8000',
+    protocol  => 'tcp',
   }
 
-  exec { 'Open HTTP port for Node-webproxy':
-    command => "${openshift_origin::params::firewall_port_cmd}${webproxy_http_port}",
-    require => Package['firewall-package'],
-  }
-
-  $webproxy_https_port = $::use_firewalld ? {
-    'true'  => '8443/tcp',
-    default => '8443:tcp',
-  }
-
-  exec { 'Open HTTPS port for Node-webproxy':
-    command => "${openshift_origin::params::firewall_port_cmd}${webproxy_https_port}",
-    require => Package['firewall-package'],
+  firewall{ 'node-https':
+    port      => '8443',
+    protocol  => 'tcp',
   }
 }

@@ -14,24 +14,6 @@
 #  limitations under the License.
 #
 class openshift_origin::params {
-  # Make sure the tools needed to manage the firewall are installed
-  $firewall_package     = $::use_firewalld ? {
-    'true'  => 'firewalld',
-    default => 'system-config-firewall-base',
-  }
-
-  # Set the base firewall command for enableling services
-  $firewall_service_cmd = $::use_firewalld ? {
-    'true'  => '/usr/bin/firewall-cmd --permanent --zone=public --add-service=',
-    default => '/usr/sbin/lokkit --service=',
-  }
-
-  # Set the base firewall command for enableling services
-  $firewall_port_cmd    = $::use_firewalld ? {
-    'true'  => '/usr/bin/firewall-cmd --permanent --zone=public --add-port=',
-    default => '/usr/sbin/lokkit --port=',
-  }
-  
   $os_init_provider     =  $::operatingsystem ? {
     'Fedora' => 'systemd',
     'CentOS' => 'redhat',
@@ -91,5 +73,35 @@ class openshift_origin::params {
   $echo      = $::operatingsystem ? {
     'Fedora' => '/usr/bin/echo',
     default  => '/bin/echo',
+  }
+  
+  $ruby_scl_prefix = $::operatingsystem ? {
+    'Fedora' => '',
+    default  => 'ruby193-',
+  }
+  
+  $ruby_scl_path_prefix = $::operatingsystem ? {
+    'Fedora' => '',
+    default  => '/opt/rh/ruby193/root',
+  }
+
+  $sysctl      = $::operatingsystem ? {
+    'Fedora' => '/usr/sbin/sysctl',
+    default  => '/sbin/sysctl',
+  }
+  
+  $iptables    = $::operatingsystem ? {
+    'Fedora' => '/usr/sbin/iptables',
+    default  => '/sbin/iptables',
+  }
+  
+  $iptables_save_command = $operatingsystem ? {
+    'Fedora' => "/usr/libexec/iptables/iptables.init save",
+    default  => "/sbin/service iptables save",
+  }
+  
+  $iptables_requires     = $operatingsystem ? {
+    'Fedora' => ['iptables', 'iptables-services'],
+    default  => ['iptables'],
   }
 }

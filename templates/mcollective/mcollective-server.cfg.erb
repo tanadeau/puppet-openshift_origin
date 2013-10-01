@@ -1,7 +1,7 @@
 topicprefix = /topic/
 main_collective = mcollective
 collectives = mcollective
-libdir = <%= scope.lookupvar('::openshift_origin::ruby_scl_path_prefix') %>/usr/libexec/mcollective
+libdir = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/usr/libexec/mcollective
 logfile = /var/log/mcollective.log
 loglevel = debug
 daemonize = <%= scope.lookupvar('::operatingsystem') == "Fedora" ? '0' : '1'%>
@@ -21,4 +21,4 @@ plugin.activemq.pool.1.password = <%= scope.lookupvar('::openshift_origin::mcoll
 
 # Facts
 factsource = yaml
-plugin.yaml = <%= scope.lookupvar('::openshift_origin::ruby_scl_path_prefix') %>/etc/mcollective/facts.yaml
+plugin.yaml = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/etc/mcollective/facts.yaml

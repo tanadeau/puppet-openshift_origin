@@ -104,7 +104,7 @@ class openshift_origin::broker {
     require => Package['openshift-origin-broker'],
   }
 
-  if $::openshift_origin::development_mode {
+  if $::openshift_origin::development_mode == true {
     file { 'openshift broker-dev.conf':
       path    => '/etc/openshift/broker-dev.conf',
       content => template('openshift_origin/broker/broker.conf.erb'),
@@ -117,6 +117,7 @@ class openshift_origin::broker {
 
   exec { 'restorecon -vr /var/log/openshift':
     provider  => 'shell',
+    require   => Package['openshift-origin-broker'],
   }
   
   $broker_bundle_show = $::operatingsystem ? {

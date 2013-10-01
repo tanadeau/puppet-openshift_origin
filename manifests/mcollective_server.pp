@@ -14,14 +14,16 @@
 #  limitations under the License.
 #
 class openshift_origin::mcollective_server {
-  ensure_resource( 'package' , "${openshift_origin::ruby_scl_prefix}mcollective", {
+  include openshift_origin::params
+  
+  ensure_resource( 'package' , "${::openshift_origin::params::ruby_scl_prefix}mcollective", {
       alias => 'mcollective',
     } 
   )
 
   file { 'mcollective server config':
     ensure  => present,
-    path    => "${::openshift_origin::ruby_scl_path_prefix}/etc/mcollective/server.cfg",
+    path    => "${::openshift_origin::params::ruby_scl_path_prefix}/etc/mcollective/server.cfg",
     content => template('openshift_origin/mcollective/mcollective-server.cfg.erb'),
     owner   => 'root',
     group   => 'root',
@@ -42,16 +44,16 @@ class openshift_origin::mcollective_server {
     }
   }
   
-  service { "${ruby_scl_prefix}mcollective":
+  service { "${::openshift_origin::params::ruby_scl_prefix}mcollective":
     enable  => true,
     require => [
       Package['mcollective'],
     ],
-    provider => $os_init_provider,
+    provider => $::openshift_origin::params::os_init_provider,
   }
   
   exec { 'openshift-facts':
-    command     => "/usr/bin/oo-exec-ruby ${::openshift_origin::ruby_scl_path_prefix}/usr/libexec/mcollective/update_yaml.rb ${::openshift_origin::ruby_scl_path_prefix}/etc/mcollective/facts.yaml",
+    command     => "/usr/bin/oo-exec-ruby ${::openshift_origin::params::ruby_scl_path_prefix}/usr/libexec/mcollective/update_yaml.rb ${::openshift_origin::params::ruby_scl_path_prefix}/etc/mcollective/facts.yaml",
     environment => ['LANG=en_US.UTF-8', 'LC_ALL=en_US.UTF-8'],
     require     => [
       Package['openshift-origin-msg-node-mcollective'],

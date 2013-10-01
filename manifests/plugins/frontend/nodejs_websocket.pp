@@ -23,6 +23,6 @@ class openshift_origin::plugins::frontend::nodejs_websocket {
       Package['openshift-origin-node-proxy'],      
       Package['openshift-origin-node-util'],
     ],
-    provider => $os_init_provider,
+    provider => $openshift_origin::params::os_init_provider,
   }
 }

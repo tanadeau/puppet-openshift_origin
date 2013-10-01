@@ -83,11 +83,8 @@ class openshift_origin::named {
     require => Package['bind'],
   }
 
-  if $openshift_origin::configure_firewall == true {
-    exec { 'Open port for BIND':
-      command => "${openshift_origin::params::firewall_service_cmd}dns",
-      require => Package['firewall-package'],
-    }
+  firewall{ 'dns':
+    service => 'dns',
   }
 
   exec { 'named restorecon':

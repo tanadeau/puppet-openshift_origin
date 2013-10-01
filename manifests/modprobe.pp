@@ -13,8 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-Facter.add( "use_firewalld" ) do
-  setcode do
-    File.exist?('/usr/bin/firewall-cmd') && system("/usr/bin/firewall-cmd --state")
-  end
-end
+class openshift_origin::modprobe{
+  case $::operatingsystem {
+    'Fedora': {
+      file { '/etc/modprobe.d/ip_conntrack.conf':
+        content => 'install ip_conntrack',
+      }
+    }
+    default: {
+    }
+  }
+}

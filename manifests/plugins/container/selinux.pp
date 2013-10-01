@@ -209,7 +209,7 @@ class openshift_origin::plugins::container::selinux {
       owner   => 'root',
       group   => 'root',
       mode    => '0644',
-      refresh => Exec['prepare cgroups']
+      notify  => Exec['prepare cgroups']
     }
     
     exec { 'prepare cgroups':
@@ -217,7 +217,7 @@ class openshift_origin::plugins::container::selinux {
       refreshonly => true
     }
     
-    service { ['cgconfig', 'cgred', 'openshift-cgroups']:
+    service { ['cgconfig', 'cgred']:
       enable => true
     }
   }

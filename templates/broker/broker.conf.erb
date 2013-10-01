@@ -18,6 +18,7 @@ MONGO_HOST_PORT="<%= scope.lookupvar('::openshift_origin::datastore_hostname') %
 MONGO_USER="<%= scope.lookupvar('::openshift_origin::mongodb_broker_user') %>"
 MONGO_PASSWORD="<%= scope.lookupvar('::openshift_origin::mongodb_broker_password') %>"
 MONGO_DB="<%= scope.lookupvar('::openshift_origin::mongodb_name') %>"
+MONGO_TEST_DB="<%= scope.lookupvar('::openshift_origin::mongodb_name') %>_test"
 MONGO_SSL="false"
 #Enables gear/filesystem resource usage tracking
 ENABLE_USAGE_TRACKING_DATASTORE="true"
