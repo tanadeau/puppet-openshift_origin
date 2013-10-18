@@ -356,6 +356,7 @@ class openshift_origin (
   $os_repo                              = undef,
   $os_updates_repo                      = undef,
   $jboss_repo_base                      = undef,
+  $jenkins_repo_base                    = undef,
   $optional_repo                        = undef,
   $domain                               = 'example.com',
   $broker_hostname                      = 'broker.example.com',
@@ -418,10 +419,10 @@ class openshift_origin (
     if member( $roles, 'activemq' )  { Class['openshift_origin::role::named']    -> Class['openshift_origin::role::activemq'] }
     if member( $roles, 'datastore' ) { Class['openshift_origin::role::named']    -> Class['openshift_origin::role::datastore'] }
   }
-  if member( $roles, 'broker' ) {    class{ 'openshift_origin::role::broker': before => Class['openshift_origin::update_resolv_conf'] } }
-  if member( $roles, 'node' ) {      class{ 'openshift_origin::role::node': before => Class['openshift_origin::update_resolv_conf'] } }
-  if member( $roles, 'activemq' ) {  class{ 'openshift_origin::role::activemq': before => Class['openshift_origin::update_resolv_conf'] } }
-  if member( $roles, 'datastore' ) { class{ 'openshift_origin::role::datastore': before => Class['openshift_origin::update_resolv_conf'] } }
+  if member( $roles, 'broker' ) {    class{ 'openshift_origin::role::broker': require => Class['openshift_origin::update_resolv_conf'] } }
+  if member( $roles, 'node' ) {      class{ 'openshift_origin::role::node': require => Class['openshift_origin::update_resolv_conf'] } }
+  if member( $roles, 'activemq' ) {  class{ 'openshift_origin::role::activemq': require => Class['openshift_origin::update_resolv_conf'] } }
+  if member( $roles, 'datastore' ) { class{ 'openshift_origin::role::datastore': require => Class['openshift_origin::update_resolv_conf'] } }
   
   class{ 'openshift_origin::update_resolv_conf': }
 
