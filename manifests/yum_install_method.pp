@@ -112,6 +112,17 @@ class openshift_origin::yum_install_method {
     ]
   }
   
+  if ( $::openshift_origin::jenkins_repo_base != undef ) {
+    augeas { 'Jenkins repository':
+      context => "/files/etc/yum.repos.d/jenkins_repo.repo",
+      changes => [
+        "set jenkins_repo/id jenkins-repo",
+        "set jenkins_repo/baseurl ${::openshift_origin::jenkins_repo_base}",
+        "set jenkins_repo/gpgcheck 0",
+      ],
+    }
+  }
+
   if ( $::openshift_origin::jboss_repo_base != undef ) {
     augeas { 'Jboss repository':
       context => "/files/etc/yum.repos.d/jboss_repo.repo",
