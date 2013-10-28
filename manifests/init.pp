@@ -351,7 +351,10 @@
 class openshift_origin (
   $roles                                = ['broker','node','activemq','datastore','named'],
   $install_method                       = 'yum',
-  $repos_base                           = 'https://mirror.openshift.com/pub/origin-server/nightly/fedora-19',
+  $repos_base                           = $::operatingsystem ? {
+                                            'Fedora' => 'https://mirror.openshift.com/pub/origin-server/nightly/fedora-19',
+                                            default  => 'https://mirror.openshift.com/pub/origin-server/nightly/rhel-6',
+                                          },
   $override_install_repo                = undef,
   $os_repo                              = undef,
   $os_updates_repo                      = undef,
