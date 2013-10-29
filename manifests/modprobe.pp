@@ -21,6 +21,14 @@ class openshift_origin::modprobe{
       }
     }
     default: {
+      file { '/etc/sysconfig/modules/bridge.modules':
+        content => "#!/bin/bash\nexec /sbin/modprobe bridge >/dev/null 2>&1",
+        mode    => '700',
+      }
+      
+      exec { 'load bridge module':
+        command => '/sbin/modprobe bridge',
+      }
     }
   }
 }

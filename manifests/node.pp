@@ -64,8 +64,8 @@ class openshift_origin::node {
   }
   
   augeas { 'Tune Sysctl knobs':
-    context => "/files/etc/sysctl.conf",
-    changes => [
+    context  => "/files/etc/sysctl.conf",
+    changes  => [
       # Increase kernel semaphores to accomodate many httpds.
       "set kernel.sem '250  32000 32  4096'",
 
@@ -87,7 +87,7 @@ class openshift_origin::node {
       "set kernel.msgmnb 65536",
       "set kernel.msgmax 65536",
     ],
-    notify => Exec['Reload sysctl']
+    notify  => Exec['Reload sysctl'],
   }
   
   # Reload sysctl.conf to get the new settings.
