@@ -25,8 +25,8 @@ class openshift_origin::plugins::auth::htpasswd {
     ensure   => file,
   }
 
-  exec { 'set first OpenShift user password':
-    command     => "/usr/bin/htpasswd -b /etc/openshift/htpasswd ${::openshift_origin::openshift_user1} ${::openshift_origin::openshift_password1}",
+  exec { 'create /etc/openshift dir and set first OpenShift user password':
+    command     => "/usr/bin/mkdir -p /etc/openshift && /usr/bin/htpasswd -b /etc/openshift/htpasswd ${::openshift_origin::openshift_user1} ${::openshift_origin::openshift_password1}",
     require => [
       Package['httpd-tools'],
       File['htpasswd'],
