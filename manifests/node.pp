@@ -152,6 +152,23 @@ class openshift_origin::node {
     group   => 'root',
     mode    => '0755'
   }
+
+  file { 'openshift env dir':
+    ensure  => 'directory',
+    path    => '/etc/openshift/env/',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+  }
+
+  file { '/etc/openshift/env/OPENSHIFT_UMASK':
+    ensure  => present,
+    content => template('openshift_origin/node/ENV_OPENSHIFT_UMASK'),
+    require => File['openshift env dir'],
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+  }
   
   ensure_resource( 'firewall', 'http', {
       service => 'http',
