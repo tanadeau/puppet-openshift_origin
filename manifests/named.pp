@@ -83,8 +83,14 @@ class openshift_origin::named {
     require => Package['bind'],
   }
 
-  firewall{ 'dns':
-    service => 'dns',
+  firewall{ 'dns-tcp':
+    port     => 53,
+    protocol => 'tcp',
+  }
+
+  firewall{ 'dns-udp':
+    port     => 53,
+    protocol => 'udp',
   }
 
   exec { 'named restorecon':
