@@ -22,4 +22,48 @@ class openshift_origin::plugins::dns::avahi {
     mode    => '0644',
     require => Package['rubygem-openshift-origin-dns-avahi'],
   }
+
+  file { 'avahi-cname-manager config':
+    path    => '/etc/avahi/cname-manager.conf',
+    content => template('openshift_origin/broker/plugins/dns/avahi/cname-manager.conf.erb'),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    require => [
+      Package['rubygem-openshift-origin-dns-avahi'],
+      Package['avahi-cname-manager'],
+    ]
+  }
+
+  ensure_resource('package', 'avahi-cname-manager', {
+      ensure  => present,
+      require => Class['openshift_origin::install_method'],
+    }
+  )
+
+  ensure_resource('package', 'avahi', {
+      ensure  => present,
+      require => Class['openshift_origin::install_method'],
+    }
+  )
+
+  exec { "Open mdns port":
+    command => "${::openshift_origin::params::iptables} -A INPUT -p udp --dport 5353 -d 224.0.0.251 -j ACCEPT;
+                ${::openshift_origin::params::iptables} -A OUTPUT -p udp --dport 5353 -d 224.0.0.251 -j ACCEPT;
+                ${::openshift_origin::params::iptables_save_command};",
+    require =>  [
+                  Package[$::openshift_origin::params::iptables_requires],
+                  Exec['initial iptables setup'],
+                  Package['avahi'],
+                ],
+    before  => Exec['final iptables setup'],
+  }
+
+  service { ['avahi-daemon', 'avahi-cname-manager']:
+    enable  => true,
+    require => [
+      Package['avahi'],
+      Package['avahi-cname-manager'],
+    ]
+  }
 }

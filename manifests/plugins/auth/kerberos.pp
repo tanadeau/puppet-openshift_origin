@@ -22,6 +22,7 @@ class openshift_origin::plugins::auth::kerberos {
 
   package { 'mod_auth_kerb':
     ensure => installed,
+    require => Class['openshift_origin::install_method'],
   }
   
   file {'broker http keytab':

@@ -18,6 +18,7 @@ class openshift_origin::mcollective_client {
   
   ensure_resource( 'package' , "${::openshift_origin::params::ruby_scl_prefix}mcollective-client", {
       alias => 'mcollective-client',
+      require => Class['openshift_origin::install_method'],
     } 
   )
 

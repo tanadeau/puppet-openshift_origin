@@ -15,7 +15,10 @@
 #
 class openshift_origin::plugins::frontend::apache {
 
-  ensure_resource ( 'package', 'httpd', {} )
+  ensure_resource ( 'package', 'httpd', {
+      require => Class['openshift_origin::install_method'],
+    }
+  )
 
   service { 'httpd':
     enable  => true,

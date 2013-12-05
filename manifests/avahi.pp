@@ -18,6 +18,7 @@ class openshift_origin::avahi {
 
   package { ['avahi-cname-manager']:
     ensure => present,
+    require => Class['openshift_origin::install_method'],
   }
 
   if !($::domain =~ /.local$/) {

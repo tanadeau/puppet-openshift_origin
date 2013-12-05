@@ -16,7 +16,10 @@
 class openshift_origin::plugins::frontend::apache_mod_rewrite {
   include ::openshift_origin::params
 
-  ensure_resource( 'package', 'rubygem-openshift-origin-frontend-apache-mod-rewrite', {} )
+  ensure_resource( 'package', 'rubygem-openshift-origin-frontend-apache-mod-rewrite', {
+      require => Class['openshift_origin::install_method'],
+    }
+  )
   
   include openshift_origin::plugins::frontend::apache
 

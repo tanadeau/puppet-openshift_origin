@@ -24,6 +24,7 @@ class openshift_origin::cartridges {
       'jenkins', 'jenkins-client': {
         ensure_resource( 'package', 'jenkins', {
             ensure  => "1.510-1.1",
+            require => Class['openshift_origin::install_method'],
           }
         )
             
@@ -35,7 +36,10 @@ class openshift_origin::cartridges {
           }
         )
         
-        ensure_resource( 'package', "openshift-origin-cartridge-${name}", {} )
+        ensure_resource( 'package', "openshift-origin-cartridge-${name}", {
+            require => Class['openshift_origin::install_method'],
+          }
+        )
       }
       'mariadb', 'mysql': {
         case $::operatingsystem {
