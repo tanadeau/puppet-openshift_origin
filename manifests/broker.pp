@@ -36,6 +36,7 @@ class openshift_origin::broker {
   case $::openshift_origin::broker_dns_plugin {
     'nsupdate' : { include openshift_origin::plugins::dns::nsupdate }
     'avahi'    : { include openshift_origin::plugins::dns::avahi }
+    'route53'  : { include openshift_origin::plugins::dns::route53 }
   }
   
   case $::openshift_origin::broker_auth_plugin {
