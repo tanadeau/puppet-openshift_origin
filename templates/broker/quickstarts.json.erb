@@ -1,0 +1,109 @@
+<%
+  carts = scope.lookupvar('::openshift_origin::install_cartridges')
+  
+  php   = 'php-5' if carts.include? 'php'
+  mysql = 'mysql-5' if carts.include? 'mysql'
+  mysql = 'mariadb' if carts.include? 'mariadb'
+  jbossas = 'jbossas' if carts.include? 'jbossas'
+  python27 = 'python-2.7' if carts.include? 'python'
+  ruby = 'ruby' if carts.include? 'ruby'
+
+  req_comma = false
+%>
+[
+    <% if !php.nil? && !mysql.nil? %>
+    {
+        "quickstart": {
+            "id": "1",
+            "name": "CakePHP",
+            "website": "http://cakephp.org/",
+            "initial_git_url": "git://github.com/openshift/cakephp-example.git",
+            "cartridges": ["<%= php %>", "<%= mysql %>"],
+            "summary": "CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.",
+            "tags": ["php", "cakephp", "framework"],
+            "admin_tags": []
+        }
+    }
+        <% req_comma = true %>
+    <% end %>
+    <% if !python27.nil? %>
+        <%="," if req_comma %>
+    {
+        "quickstart": {
+            "id": "2",
+            "name": "Django",
+            "website": "https://www.djangoproject.com/",
+            "initial_git_url": "git://github.com/openshift/django-example.git",
+            "cartridges": ["<%= python27 %>"],
+            "summary": "A high-level Python web framework that encourages rapid development and clean, pragmatic design. Administrator user name and password are written to $OPENSHIFT_DATA_DIR/CREDENTIALS.",
+            "tags": ["python", "django", "framework"],
+            "admin_tags": []
+        }
+    }
+        <% req_comma = true %>
+    <% end %>
+    <% if false and !jbossas.nil? %>
+        <%="," if req_comma %>
+    {
+        "quickstart": {
+            "id": "3",
+            "name": "CapeDwarf",
+            "website": "http://www.jboss.org/capedwarf",
+            "initial_git_url": "git://github.com/openshift/capedwarf-example.git",
+            "cartridges": ["<%= jbossas %>"],
+            "summary": "Deploy and run your Java App Engine applications on JBoss AS7 through OpenShift.",
+            "tags": ["app engine", "java", "google", "capedwarf"],
+            "admin_tags": []
+        }
+    }
+        <% req_comma = true %>
+    <% end %>
+    <% if !php.nil? && !mysql.nil? %>
+        <%="," if req_comma %>
+    {
+        "quickstart": {
+            "id": "4",
+            "name": "Drupal",
+            "website": "http://drupal.org/",
+            "initial_git_url": "git://github.com/openshift/drupal-quickstart.git",
+            "cartridges": ["<%= php %>", "<%= mysql %>"],
+            "summary": "An open source content management platform written in PHP powering millions of websites and applications. It is built, used, and supported by an active and diverse community of people around the world. Administrator user name and password are written to $OPENSHIFT_DATA_DIR/CREDENTIALS.",
+            "tags": ["php", "drupal", "wiki", "framework", "instant_app"],
+            "admin_tags": []
+        }
+    }
+        <% req_comma = true %>
+    <% end %>
+    <% if !ruby.nil? && !mysql.nil? %>
+        <%="," if req_comma %>
+    {
+        "quickstart": {
+            "id": "6",
+            "name": "Ruby on Rails",
+            "website": "http://rubyonrails.org/",
+            "initial_git_url": "git://github.com/openshift/rails-example.git",
+            "cartridges": ["<%= ruby %>", "<%= mysql %>"],
+            "summary": "An open source web framework for Ruby that is optimized for programmer happiness and sustainable productivity. It lets you write beautiful code by favoring convention over configuration.",
+            "tags": ["ruby", "rails", "framework"],
+            "admin_tags": []
+        }
+    }
+        <% req_comma = true %>
+    <% end %>
+    <% if !php.nil? && !mysql.nil? %>
+        <%="," if req_comma %>
+    {
+        "quickstart": {
+            "id": "8",
+            "name": "WordPress",
+            "website": "http://wordpress.org",
+            "initial_git_url": "git://github.com/openshift/wordpress-example.git",
+            "cartridges": ["<%= php %>", "<%= mysql %>"],
+            "summary": "A semantic personal publishing platform written in PHP with a MySQL back end, focusing on aesthetics, web standards, and usability. Administrator user name and password are written to $OPENSHIFT_DATA_DIR/CREDENTIALS.",
+            "tags": ["php", "wordpress", "blog", "framework", "instant_app"],
+            "admin_tags": []
+        }
+    }
+        <% req_comma = true %>
+    <% end %>
+]

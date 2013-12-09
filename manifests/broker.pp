@@ -85,6 +85,16 @@ class openshift_origin::broker {
     mode    => '0644',
     require => Package['openshift-origin-broker'],
   }
+
+  file { 'quickstarts':
+    ensure  => present,
+    path    => '/etc/openshift/quickstarts.json',
+    content => template('openshift_origin/broker/quickstarts.json.erb'),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    require => Package['openshift-origin-broker'],
+  }
   
   file { 'mcollective broker plugin config':
     ensure  => present,
