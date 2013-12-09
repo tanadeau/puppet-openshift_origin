@@ -60,7 +60,8 @@ class openshift_origin::node {
   exec { 'Initialize quota DB':
     command => '/usr/sbin/oo-init-quota',
     require => Package['openshift-origin-node-util'],
-    unless  => '/usr/bin/quota -f /var/lib/openshift/ -q 2>/dev/null',
+    path    => ['/usr/sbin', '/usr/bin', '/sbin', '/bin'],
+    unless  => '/usr/bin/quota -f $(df /var/lib/openshift/ | tail -1 | tr -s \' \' | cut -d\' \' -f 6 | sort -u) -q 2>/dev/null',
   }
   
   augeas { 'Tune Sysctl knobs':
