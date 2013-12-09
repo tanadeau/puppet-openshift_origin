@@ -55,9 +55,9 @@ class openshift_origin::yum_install_method {
         augeas { 'Custom OS Update repository':
           context => "/files/etc/yum.repos.d/fedora-updates.repo",
           changes => [
-            "set fedora-updates/baseurl ${::openshift_origin::os_repo}",
-            "set fedora-updates/gpgcheck 0",
-            "rm  fedora-updates/mirrorlist",
+            "set updates/baseurl ${::openshift_origin::os_updates_repo}",
+            "set updates/gpgcheck 0",
+            "rm  updates/mirrorlist",
           ],
         }
       }
@@ -65,7 +65,7 @@ class openshift_origin::yum_install_method {
         augeas { 'Custom OS Update repository':
           context => "/files/etc/yum.repos.d/CentOS-Base.repo",
           changes => [
-            "set updates/baseurl ${::openshift_origin::os_repo}",
+            "set updates/baseurl ${::openshift_origin::os_updates_repo}",
             "set updates/gpgcheck 0",            
             "rm  updates/mirrorlist",
           ],
@@ -75,7 +75,7 @@ class openshift_origin::yum_install_method {
         augeas { 'Custom OS Update repository':
           context => "/files/etc/yum.repos.d/RHEL-Base.repo",
           changes => [
-            "set updates/baseurl ${::openshift_origin::os_repo}",
+            "set updates/baseurl ${::openshift_origin::os_updates_repo}",
             "set updates/gpgcheck 0",          
             "rm  updates/mirrorlist",
           ],

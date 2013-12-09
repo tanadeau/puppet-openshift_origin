@@ -23,6 +23,7 @@ class openshift_origin::plugins::auth::htpasswd {
   file { 'htpasswd':
     path     => "/etc/openshift/htpasswd",
     ensure   => file,
+    require  => Package['rubygem-openshift-origin-node'],
   }
 
   exec { 'create /etc/openshift dir and set first OpenShift user password':

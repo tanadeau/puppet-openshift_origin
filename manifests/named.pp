@@ -18,6 +18,7 @@ class openshift_origin::named {
 
   package { ['bind', 'bind-utils']:
     ensure => present,
+    require => Class['openshift_origin::install_method'],
   }
 
   file { 'dynamic zone':
