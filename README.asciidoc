@@ -313,6 +313,16 @@ List of all gear sizes this will be used in this OpenShift installation.
 
 Default: ['small']
 
+==== conf_default_gear_size
+Default gear size if one is not specified.
+
+Default: ['small']
+
+==== conf_default_gear_capabilities
+List of all gear sizes that newly created users will be able to create.
+
+Default: ['small']
+
 ==== broker_dns_plugin
 
 DNS plugin used by the broker to register application DNS entries.

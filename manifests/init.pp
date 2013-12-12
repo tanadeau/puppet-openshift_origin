@@ -205,6 +205,14 @@
 #   List of all gear sizes this will be used in this OpenShift installation.
 #   Default: ['small']
 # 
+# [*conf_default_gear_size*]
+#   Default gear size if one is not specified
+#   Default: 'small'
+#
+# [*conf_default_gear_capabilities*]
+#   List of all gear sizes that newly created users will be able to create
+#   Default: ['small']
+#
 # [*broker_dns_plugin*]
 #   DNS plugin used by the broker to register application DNS entries.
 #   Options:
@@ -391,6 +399,8 @@ class openshift_origin (
   $conf_broker_session_secret           = undef,
   $conf_console_session_secret          = undef,
   $conf_valid_gear_sizes                = ['small'],
+  $conf_default_gear_capabilities       = ['small'],
+  $conf_default_gear_size               = 'small',
   $broker_dns_plugin                    = 'nsupdate',
   $broker_auth_plugin                   = 'htpasswd',
   $broker_krb_service_name              = '',
