@@ -7,9 +7,9 @@ VALID_GEAR_SIZES="<%= scope.lookupvar('::openshift_origin::conf_valid_gear_sizes
 # Default number of gears to assign to a new user
 DEFAULT_MAX_GEARS="100"
 # Default gear sizes (comma-separated) allowed to a new user
-DEFAULT_GEAR_CAPABILITIES="small"
+DEFAULT_GEAR_CAPABILITIES="<%= scope.lookupvar('::openshift_origin::conf_default_gear_capabilities').join(',') %>"
 # Default gear size for a new gear
-DEFAULT_GEAR_SIZE="small"
+DEFAULT_GEAR_SIZE="<%= scope.lookupvar('::openshift_origin::conf_default_gear_size') %>"
 
 #Broker datastore configuration
 MONGO_REPLICA_SETS=false
