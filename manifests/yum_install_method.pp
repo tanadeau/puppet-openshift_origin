@@ -85,11 +85,21 @@ class openshift_origin::yum_install_method {
   }
   
   if $::openshift_origin::repos_base =~ /nightly/ {
-    $repo_path = "${::openshift_origin::repos_base}/packages/latest/x86_64"
-    $deps_path = "${::openshift_origin::repos_base}/dependencies/x86_64"
+    if $::openshift_origin::architecture == undef {
+      $repo_path = "${::openshift_origin::repos_base}/packages/latest/${::architecture}"
+      $deps_path = "${::openshift_origin::repos_base}/dependencies/${::architecture}"
+    } else {
+      $repo_path = "${::openshift_origin::repos_base}/packages/latest/${::openshift_origin::architecture}"
+      $deps_path = "${::openshift_origin::repos_base}/dependencies/${::openshift_origin::architecture}"
+    }
   } else {
-    $repo_path = "${::openshift_origin::repos_base}/packages/x86_64"
-    $deps_path = "${::openshift_origin::repos_base}/dependencies/x86_64"
+    if $::openshift_origin::architecture == undef {
+      $repo_path = "${::openshift_origin::repos_base}/packages/${::architecture}"
+      $deps_path = "${::openshift_origin::repos_base}/dependencies/${::architecture}"
+    } else {
+      $repo_path = "${::openshift_origin::repos_base}/packages/${::openshift_origin::architecture}"
+      $deps_path = "${::openshift_origin::repos_base}/dependencies/${::openshift_origin::architecture}"
+    }
   }
 
   if $::openshift_origin::override_install_repo != undef {

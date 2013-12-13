@@ -141,6 +141,17 @@ Base path to repository for OpenShift Origin
 
 Default: Fedora-19 Nightlies
 
+=== architecture
+CPU Architecture to use for the definition OpenShift Origin yum repositories
+Defaults: $::architecture (from facter)
+
+*Fedora:
+**x86_64
+**armv7hl
+*RHEL:
+**x86_64
+
+
 ==== override_install_repo
 Repository path override. Uses dependencies from repos_base but uses 
 override_install_repo path for OpenShift RPMs. Used when doing local builds.

@@ -49,6 +49,15 @@
 #     Fedora: https://mirror.openshift.com/pub/origin-server/release/2/fedora-19
 #     RHEL:   https://mirror.openshift.com/pub/origin-server/release/2/rhel-6
 #   Default: Fedora-19 Nightlies
+#
+# [*architecture*]
+#   CPU Architecture to use for the definition OpenShift Origin yum repositories
+#     Defaults to $::architecture
+#     Fedora:
+#       x86_64
+#       armv7hl
+#     RHEL:
+#       x86_64
 # 
 # [*override_install_repo*]
 #   Repository path override. Uses dependencies from repos_base but uses 
@@ -363,6 +372,7 @@ class openshift_origin (
                                             'Fedora' => 'https://mirror.openshift.com/pub/origin-server/nightly/fedora-19',
                                             default  => 'https://mirror.openshift.com/pub/origin-server/nightly/rhel-6',
                                           },
+  $architecture                         = undef,
   $override_install_repo                = undef,
   $os_repo                              = undef,
   $os_updates_repo                      = undef,
