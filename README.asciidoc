@@ -1,8 +1,8 @@
 == About
 
-This module helps install http://openshift.github.io[OpenShift Origin]
+This module helps install http://www.redhat.com/products/cloud-computing/openshift-enterprise/[OpenShift Enterprise]
 Platform As A Service.  Through the declaration of the `openshift_origin`
-class, you can configure the OpenShift Origin Broker, Node and support services
+class, you can configure the OpenShift Broker, Node and support services
 including ActiveMQ, MongoDB, named and OS settings including firewall,
 services, and ntp.
 
@@ -24,38 +24,85 @@ services, and ntp.
   http://forge.puppetlabs.com/puppetlabs/ntp[here] or with the command
   `puppet module install puppetlabs/ntp`
 
+== OpenShift Enterprise Caveats
+
+1. Only limited testing has been done so far
+1. Testing with redundant systems has not been done yet
+  * Redundant nodes and brokers should work without issue
+  * Redundant activemq hosts should work
+  * Redundant mongo hosts cannot be configured with this module at this time
+  * Redundant dns hosts cannot be configured with this module at this time
+1. Requires newer versions of puppet and facter than available in the RHEL and EPEL repos
+  * See http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html to install the latest versions from Puppet Labs
+1. This module does not configure Subscription Manager or RHN repos and does not configure the necessary yum priorities for OpenShift Enterprise
+  * https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html/Deployment_Guide/chap-Installing_and_Configuring_a_Broker_Host.html#sect-Configuring_Broker_Host_Entitlements
+  * https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html/Deployment_Guide/chap-Installing_and_Configuring_Node_Hosts.html#sect-Configuring_Node_Host_Entitlements
+1. If configuring the nameserver with this module, dnssec keys are not generated with this module and need to be created manually
+  * https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html/Deployment_Guide/sect-Installing_and_Configuring_BIND_and_DNS.html
+1. This module does not configure the public rsync keys used to move gears between nodes
+  * https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html/Deployment_Guide/Configuring_SSH_Keys_on_the_Node_Host.html
+1. Services aren't currently started/notified by the module when changes are made
+  * A reboot is currently required after the first puppet run
+  * Manual service restarts are needed following changes
+1. Node gear size (resource_limits.conf) is not controlled by the module currently
+1. The nptd service is not currently enabled when configure_ntp is set to true
+
 == Installation
 
-The module can be obtained from the
-https://github.com/openshift/puppet-openshift_origin[github repository].
-
-1. Download the https://github.com/openshift/puppet-openshift_origin/archive/master.zip[Zip file from github]
-1. Upload the Zip file to your Puppet Master.
-1. Unzip the file.  This will create a new directory called puppet-openshift_origin-{commit hash}
-1. Rename this directory to just `openshift_origin` and place it in your
+1. Register the host(s) with RHN or subscription-manager
+  * https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html/Deployment_Guide/chap-Installing_and_Configuring_a_Broker_Host.html#sect-Configuring_Broker_Host_Entitlements
+  * https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html/Deployment_Guide/chap-Installing_and_Configuring_Node_Hosts.html#sect-Configuring_Node_Host_Entitlements
+1. Verify repository configuration
+  * https://access.redhat.com/site/articles/386273
+1. Install the latest puppet/facter from the Puppet Labs repos
+  * yum install http://yum.puppetlabs.com/el/6/products/x86_64/puppetlabs-release-6-7.noarch.rpm
+  * yum install --disableplugin=priorities --disablerepo=epel puppet facter
+1. Install the npt and stdlib puppet modules
+  * puppet module install puppetlabs/stdlib
+  * puppet module install puppetlabs/ntp
+1. Install the openshift_origin puppet module from https://github.com/openshift/puppet-openshift_origin/tree/enterprise-2.0[github repository].
+  * Download the https://github.com/openshift/puppet-openshift_origin/archive/enterprise-2.0.zip[Zip file from github]
+  * Upload the Zip file to your Puppet Master.
+  * Unzip the file.  This will create a new directory called puppet-openshift_origin-{commit hash}
+  * Rename this directory to just `openshift_origin` and place it in your
      http://docs.puppetlabs.com/learning/modules1.html#modules[modulepath].
+1. Install bind and generate the dnssec keys
+  * yum install bind
+  * dnssec-keygen -a HMAC-MD5 -b 512 -n USER -r /dev/urandom -K /var/named example.com
+  * dnssec key = cat /var/named/Kexample.com.*.key | awk '{ print $8 }'
+1. Create/apply the puppet manifest (The Single host example below for example)
+1. Copy the public rsync key from the broker to all the nodes
+  * https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html/Deployment_Guide/Configuring_SSH_Keys_on_the_Node_Host.html
 
 == Configuration
 
 There is one class (`openshift_origin`) that needs to be declared on all nodes managing
-any component of OpenShift Origin. These nodes are configured using the parameters of
+any component of OpenShift.  These nodes are configured using the parameters of
 this class.
 
 === Using Parameterized Classes
 
 http://docs.puppetlabs.com/guides/parameterized_classes.html[Using Parameterized Classes]
 
-.Example: Single host (broker+console+node) which uses the Avahi MDNS and mongo Auth plugin:
+.Example: Single host (broker+console+node)
 ----
 class { 'openshift_origin' :
   domain                     => 'example.com',
   node_unmanaged_users       => ['root'],
-  development_mode           => true,
   conf_node_external_eth_dev => 'eth0',
-  install_method             => 'yum',
+  install_method             => 'none',
   register_host_with_named   => true,
-  broker_auth_plugin         => 'mongo',
-  broker_dns_plugin          => 'avahi',
+  broker_auth_plugin         => 'htpasswd',
+  broker_dns_plugin          => 'nsupdate',
+  bind_key                    => <dnssec key>,
+  conf_named_upstream_dns     => ['8.8.8.8'],
+  conf_broker_auth_salt       => 'my_auth_salt', # needs to be the same for all brokers
+  conf_broker_session_secret  => 'my_session_secret', # needs to be the same for all brokers
+  conf_console_session_secret => 'my_session_secret', # needs to be the same for all brokers
+  conf_valid_gear_sizes       => ['small'],
+  node_frontend_plugins       => ['apache-mod-rewrite','nodejs-websocket'],
+  install_cartridges          => ['cron','diy','haproxy','nodejs','perl','php','postgresql','python','ruby','jenkins',
+                                  'jenkins-client','mysql','jbossews','jbosseap'], # all currently supported OSE cartridges
 }
 ----
 
@@ -64,12 +111,11 @@ class { 'openshift_origin' :
 class { 'openshift_origin' :
   domain                     => 'example.com',
   node_unmanaged_users       => ['root'],
-  development_mode           => true,
   conf_node_external_eth_dev => 'eth0',
-  install_method             => 'yum',
+  install_method             => 'none',
   register_host_with_named   => true,
-  broker_auth_plugin         => 'remote-user',
-  broker_dns_plugin          => 'named',
+  broker_auth_plugin         => 'htpasswd',
+  broker_dns_plugin          => 'nsupdate',
   bind_krb_principal         => $hostname,
   bind_krb_keytab            => '/etc/dns.keytab'
   broker_krb_keytab          => '/etc/http.keytab',
@@ -366,7 +412,7 @@ this feature.
 Specify the container type to use on the node.
 Options:
 
-  * selinux - This is the default OpenShift Origin container type.
+  * selinux - This is the default OpenShift container type.
 
 ==== node_frontend_plugins
 Specify one or more plugins to use register HTTP and web-socket connections 
