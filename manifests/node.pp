@@ -127,6 +127,8 @@ class openshift_origin::node {
       'sshd',
       'oddjobd',
       'messagebus',
+      'cgconfig',
+      'cgred',
     ]:
     enable  => true,
     require => [
