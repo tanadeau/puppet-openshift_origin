@@ -1,0 +1,8 @@
+// define a zone for infrastructure hosts
+
+zone "<%= scope.lookupvar('::openshift_origin::dns_infrastructure_zone') %>" IN {
+    type master;
+    file "dynamic/<%= scope.lookupvar('::openshift_origin::dns_infrastructure_zone') %>.db";
+    allow-update { key <%= scope.lookupvar('::openshift_origin::dns_infrastructure_zone') %> ; } ;
+};
+
