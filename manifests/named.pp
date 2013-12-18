@@ -84,6 +84,53 @@ class openshift_origin::named {
     require => Package['bind'],
   }
 
+  # create named/adddress mappings for infrastructure hosts
+  if "${openshift_origin::dns_infrastructure_zone}" != '' {
+
+    file { 'infrastructure host configuration':
+      path => '/var/named/oo_infrastructure.conf',
+      owner => 'root',
+      group => 'named',
+      mode => '644',
+      content => template('openshift_origin/named/oo_infrastructure.conf.erb'),
+      replace => false,
+      require => File['/var/named']
+    }
+
+    file { 'named infrastructure key':
+      path    => "/var/named/${openshift_origin::dns_infrastructure_zone}.key",
+      content => template('openshift_origin/named/oo_infrastructure_key.erb'),
+      owner   => 'named',
+      group   => 'named',
+      mode    => '0444',
+      require => File['/var/named'],
+    }
+
+    file { 'infrastructure zone contents':
+      path => "/var/named/dynamic/${openshift_origin::dns_infrastructure_zone}.db",
+      owner => 'named',
+      group => 'named',
+      mode => '664',
+      content => template('openshift_origin/named/oo_infrastructure.db.erb'),
+      replace => false,
+      require => File['infrastructure host configuration']
+    }
+
+  } else {
+  
+    file { 'infrastructure host configuration (empty)':
+      ensure => present,
+      replace => false,
+      path => '/var/named/oo_infrastructure.conf',
+      owner => 'root',
+      group => 'named',
+      mode => '644',
+      content => '// no openshift infrastructure zone',
+      require => File['/var/named']
+    }
+  
+  }
+  
   firewall{ 'dns-tcp':
     port     => 53,
     protocol => 'tcp',

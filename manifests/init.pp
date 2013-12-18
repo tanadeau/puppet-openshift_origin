@@ -300,6 +300,46 @@
 #   Setup DNS entries for this host in a locally installed bind DNS instance.
 #   Default: false
 #
+# [*dns_infrastructure_zone*]
+#   The name of a zone to create which will contain OpenShift infrastructure
+#
+#   If this is unset then no infrastructure zone or other artifacts will be
+#   created.
+
+#   Default: ''
+#
+# [*dns_infrastructure_key*]
+#   An HMAC-MD5 dnssec symmetric key which will grant update access to the
+#   infrastucture zone resource records.
+#
+#   This is ignored unless _dns_infrastructure_zone_ is set.
+#
+#   Default: ''
+#
+# [*dns_infrastructure_names*]
+#   An array of hashes containing hostname and IP Address pairs to populate
+#   the infrastructure zone.
+#
+#   This value is ignored unless _dns_infrastructure_zone_ is set.
+#
+#   Hostnames can be simple names or fully qualified domain name (FQDN).
+#
+#   Simple names will be placed in the _dns_infrastructure_zone_.
+#   Matching FQDNs will be placed in the _dns_infrastructure_zone.
+#   Hostnames anchored with a dot (.) will be added verbatim.
+# 
+#   Default: []
+#
+#   Example:
+#     $dns_infrastructure_names = [
+#       {hostname => '10.0.0.1', ipaddr => 'broker1'},
+#       {hostname => '10.0.0.2', ipaddr => 'data1'},
+#       {hostname => '10.0.0.3', ipaddr => 'message1'},
+#       {hostname => '10.0.0.11', ipaddr => 'node1'},       
+#       {hostname => '10.0.0.12', ipaddr => 'node2'},       
+#       {hostname => '10.0.0.13', ipaddr => 'node3'},       
+#     ]
+#
 # [*firewall_provider*]
 #   Select the firewall provider to configure OpenShift with.
 #   Options:
@@ -426,6 +466,9 @@ class openshift_origin (
   $conf_named_upstream_dns              = ['8.8.8.8'],
   $install_login_shell                  = false,
   $register_host_with_named             = false,
+  $dns_infrastructure_zone              = '',
+  $dns_infrastructure_key               = '',
+  $dns_infrastructure_names             = [],
   $firewall_provider                    = 'iptables',
   $install_cartridges                   = ['10gen-mms-agent','cron','diy','haproxy','mongodb',
                                            'nodejs','perl','php','phpmyadmin','postgresql',

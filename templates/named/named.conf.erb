@@ -47,3 +47,6 @@ zone "<%= scope.lookupvar('::openshift_origin::domain') %>" IN {
     file "dynamic/<%= scope.lookupvar('::openshift_origin::domain') %>.db";
     allow-update { key <%= scope.lookupvar('::openshift_origin::domain') %> ; } ;
 };
+
+// create a place for openshift infrastructure ip/name mapping
+include "oo_infrastructure.conf";
