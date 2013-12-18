@@ -27,6 +27,8 @@ class openshift_origin::node {
       'make',
       'oddjob',
       'vim-enhanced',
+      'mlocate',
+      'screen',
     ], {
       ensure  => present,
       require => Class['openshift_origin::install_method'],
@@ -127,6 +129,8 @@ class openshift_origin::node {
       'sshd',
       'oddjobd',
       'messagebus',
+      'cgconfig',
+      'cgred',
     ]:
     enable  => true,
     require => [
