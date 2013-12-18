@@ -94,8 +94,13 @@ class openshift_origin::yum_install_method {
     }
   } else {
     if $::openshift_origin::architecture == undef {
-      $repo_path = "${::openshift_origin::repos_base}/packages/${::architecture}"
-      $deps_path = "${::openshift_origin::repos_base}/dependencies/${::architecture}"
+      if $::architecture =~ /arm/ {
+          $repo_path = "${::openshift_origin::repos_base}/packages/armhfp"
+          $deps_path = "${::openshift_origin::repos_base}/dependencies/armhfp"
+      } else {
+          $repo_path = "${::openshift_origin::repos_base}/packages/${::architecture}"
+          $deps_path = "${::openshift_origin::repos_base}/dependencies/${::architecture}"
+      }
     } else {
       $repo_path = "${::openshift_origin::repos_base}/packages/${::openshift_origin::architecture}"
       $deps_path = "${::openshift_origin::repos_base}/dependencies/${::openshift_origin::architecture}"
