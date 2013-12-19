@@ -203,22 +203,4 @@ class openshift_origin::plugins::container::selinux {
     require => Package['pam_openshift'],
   }
   
-  if $::operatingsystem != 'Fedora' {
-    file { '/etc/cgconfig.conf':
-      content => template('openshift_origin/plugins/container/cgconfig.conf.erb'),
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0644',
-      notify  => Exec['prepare cgroups']
-    }
-    
-    exec { 'prepare cgroups':
-      command     => '/sbin/restorecon -rv /etc/cgconfig.conf; mkdir -p /cgroup; restorecon -rv /cgroup',
-      refreshonly => true
-    }
-    
-    service { ['cgconfig', 'cgred']:
-      enable => true
-    }
-  }
 }
