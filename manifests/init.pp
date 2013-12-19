@@ -255,6 +255,39 @@
 #   URI to the LDAP server (e.g. ldap://ldap.example.com:389/ou=People,dc=my-domain,dc=com).
 #   Set <code>broker_auth_plugin</code> to <code>ldap</code> to enable
 #   this feature.
+#
+# [*node_shmmax*]
+#   kernel.shmmax sysctl setting for /etc/sysctl.conf
+#
+#   This setting should work for most deployments but if this is desired to be
+#   tuned higher, the general recommendations are as follows:
+#
+#    shmmax = shmall * PAGE_SIZE
+#       - PAGE_SIZE = getconf PAGE_SIZE
+#       - shmall = cat /proc/sys/kernel/shmall
+#
+#    shmmax is not recommended to be a value higher than 80% of total available
+#    RAM on the system (expressed in BYTES).
+#
+#   Defaults:
+#    64-bit:
+#      kernel.shmmax = 68719476736
+#    32-bit:
+#      kernel.shmmax = 33554432
+#
+# [*node_shmall*]
+#   kernel.shmall sysctl setting for /etc/sysctl.conf, this defaults to 
+#   2097152 BYTES
+#
+#   This parameter sets the total amount of shared memory pages that can be 
+#   used system wide. Hence, SHMALL should always be at least 
+#   ceil(shmmax/PAGE_SIZE). 
+#
+#   Defaults:
+#    64-bit:
+#      kernel.shmall = 4294967296
+#    32-bit:
+#      kernel.shmall = 2097152
 # 
 # [*node_container_plugin*]
 #   Specify the container type to use on the node.
@@ -457,6 +490,8 @@ class openshift_origin (
   $broker_krb_auth_realms               = '',
   $broker_krb_keytab                    = '',
   $broker_ldap_uri                      = '',
+  $node_shmmax                          = undef,
+  $node_shmall                          = undef,
   $node_container_plugin                = 'selinux',
   $node_frontend_plugins                = ['apache-mod-rewrite','nodejs-websocket'],
   $node_unmanaged_users                 = [],
@@ -497,4 +532,22 @@ class openshift_origin (
       enable => true,
     }
   }
+  $node_shmmax_default = $::architecture ? {
+    'x86_64' => 68719476736,
+    default  => 33554432,
+  }
+  $_node_shmmax = $node_shmax ? {
+    undef   => $node_shmmax_default,
+    default => $node_shmmax,
+  }
+
+  $node_shmall_default = $::architecture ? {
+    'x86_64' => 4294967296,
+    default  => 2097152,
+  }
+  $_node_shmall = $node_shmall ? {
+    undef   => $node_shmall_default,
+    default => $node_shmall,
+  }
+
 }
