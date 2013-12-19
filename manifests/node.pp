@@ -83,8 +83,8 @@ class openshift_origin::node {
       "set net.ipv4.conf.all.route_localnet 1",
       
       #Shared memory limits
-      "set kernel.shmall 4294967296",
-      "set kernel.shmmax 68719476736",
+      "set kernel.shmall ${::openshift_origin::_node_shmall}",
+      "set kernel.shmmax ${::openshift_origin::_node_shmmax}",
       
       #IPC Message queue limits
       "set kernel.msgmnb 65536",
