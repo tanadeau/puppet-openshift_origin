@@ -124,7 +124,23 @@
 # [*bind_krb_principal*]
 #   When the nameserver is remote, this Kerberos principal together with
 #   Kerberos keytab can be used instead of the HMAC-MD5 key for updates.
-#   
+#
+# [*aws_access_key_id*]
+#    This and the next value are Amazon AWS security credentials.
+#    The aws_access_key_id is a string which identifies an access credential.
+#
+#    http://docs.aws.amazon.com/AWSSecurityCredentials/1.0/AboutAWSCredentials.html#AccessCredentials.
+#
+# [*aws_secret_key*]
+#    This is the secret portion of AWS Access Credentials indicated by the
+#    aws_access_key_id
+#
+# [*aws_zone_id*]
+#   This is the ID string for an AWS Hosted zone which will contain the
+#   OpenShift application records.
+#
+#   http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html
+#
 # [*conf_named_upstream_dns*]
 #   List of upstream DNS servers to use when installing named on this node.
 #   Default: ['8.8.8.8']
@@ -230,6 +246,10 @@
 #                  bind_krb_principal for GSS_TSIG auth.
 #     * avahi    - sets up a MDNS based DNS resolution. Works only for 
 #                  all-in-one installations.
+#     * route53  - use AWS Route53 for dynamic DNS service.
+#                  Requires AWS key ID and secret and a delegated zone ID
+#     
+#
 # [*broker_auth_plugin*]
 #   Authentication setup for users of the OpenShift service.
 #   Options:
@@ -429,6 +449,9 @@ class openshift_origin (
   $bind_key                             = '',
   $bind_krb_keytab                      = '',
   $bind_krb_principal                   = '',
+  $aws_access_key_id                    = '',
+  $aws_secret_key                       = '',
+  $aws_zone_id                          = '',
   $broker_ip_addr                       = $ipaddress,
   $node_ip_addr                         = $ipaddress,
   $configure_ntp                        = true,  
