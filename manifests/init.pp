@@ -569,8 +569,12 @@ class openshift_origin (
   class{ 'openshift_origin::update_resolv_conf': }
 
   if $::operatingsystem == 'Fedora' {
+    package { 'NetworkManager':
+      ensure  => present,
+    }
     service { 'NetworkManager-wait-online':
-      enable => true,
+      require => Package['NetworkManager'],
+      enable  => true,
     }
   }
 
