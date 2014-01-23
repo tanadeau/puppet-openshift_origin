@@ -167,7 +167,7 @@ class openshift_origin::node {
     ],
     provider => $::openshift_origin::params::os_init_provider,
   }
-  
+
   file { 'create node setting markers dir':
     ensure  => 'directory',
     path    => '/var/lib/openshift/.settings',
@@ -183,6 +183,7 @@ class openshift_origin::node {
     owner   => 'root',
     group   => 'root',
     mode    => '0755',
+    require => Package['rubygem-openshift-origin-node'],
   }
 
   file { '/etc/openshift/env/OPENSHIFT_UMASK':
