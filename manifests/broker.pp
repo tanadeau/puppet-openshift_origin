@@ -95,6 +95,7 @@ class openshift_origin::broker {
     group   => 'root',
     mode    => '0644',
     require => Package['openshift-origin-broker'],
+    notify  => Service['openshift-broker'],
   }
   
   file { 'mcollective broker plugin config':
@@ -114,6 +115,7 @@ class openshift_origin::broker {
     group   => 'apache',
     mode    => '0644',
     require => Package['openshift-origin-broker'],
+    notify  => Service['openshift-broker'],
   }
 
   if $::openshift_origin::development_mode == true {
@@ -124,12 +126,14 @@ class openshift_origin::broker {
       group   => 'apache',
       mode    => '0644',
       require => Package['openshift-origin-broker'],
+      notify  => Service['openshift-broker'],
     }
   }
 
   exec { 'restorecon -vr /var/log/openshift':
     provider  => 'shell',
     require   => Package['openshift-origin-broker'],
+    notify    => Service['openshift-broker'],
   }
   
   $broker_bundle_show = $::operatingsystem ? {
@@ -161,11 +165,15 @@ class openshift_origin::broker {
       File['openshift broker.conf'],
       File['mcollective broker plugin config'],
     ],
+    notify  => Service['openshift-broker'],
   }
 
   service { 'openshift-broker':
-    require => [Package['openshift-origin-broker']],
-    enable  => true,
+    require    => [Package['openshift-origin-broker']],
+    ensure     => true,
+    enable     => true,
+    hasstatus  => true,
+    hasrestart => true,
   }
 
   if $::openshift_origin::install_login_shell {
