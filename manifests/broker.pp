@@ -30,7 +30,8 @@ class openshift_origin::broker {
   # because separate commands take a long time to run.
   exec { 'broker selinux booleans':
     command  => template('openshift_origin/selinux/broker.erb'),
-    provider => 'shell'
+    provider => 'shell',
+    require  => Package['openshift-origin-broker'],
   }
 
   case $::openshift_origin::broker_dns_plugin {
