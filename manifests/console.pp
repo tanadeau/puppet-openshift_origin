@@ -77,6 +77,13 @@ class openshift_origin::console {
     refreshonly => true,
   }
 
+  exec { 'console selinux booleans':
+    command  => template('openshift_origin/selinux/console.erb'),
+    provider => 'shell',
+    require  => Package['openshift-origin-console'],
+    notify   => Service['openshift-console'],
+  }
+
   service { 'openshift-console':
     require => Package['openshift-origin-console'],
     enable  => true,
