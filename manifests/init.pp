@@ -220,7 +220,16 @@
 #   same on all broker nodes.
 #   Default:  Self signed keys are generated. Will not work with multi-broker 
 #             setup.
-#   
+#
+# [*conf_broker_multi_haproxy_per_node*]
+#   Default: false
+#   This setting is applied on a per-scalable-application basis. When set to true,
+#   OpenShift will allow multiple instances of the HAProxy gear for a given
+#   scalable app to be established on the same node. Otherwise, on a
+#   per-scalable-application basis, a maximum of one HAProxy gear can be created
+#   for every node in the deployment (this is the default behavior, which protects
+#   scalable apps from single points of failure at the Node level).
+#
 # [*conf_broker_session_secret*]
 # [*conf_console_session_secret*]
 #   Session secrets used to encode cookies used by console and broker. This 
@@ -503,6 +512,7 @@ class openshift_origin (
   $conf_broker_auth_public_key          = undef,
   $conf_broker_auth_private_key         = undef,
   $conf_broker_session_secret           = undef,
+  $conf_broker_multi_haproxy_per_node   = false,
   $conf_console_session_secret          = undef,
   $conf_valid_gear_sizes                = ['small'],
   $conf_default_gear_capabilities       = ['small'],
