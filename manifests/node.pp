@@ -46,6 +46,7 @@ class openshift_origin::node {
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
+    notify  => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"],
   }
     
   # We combine these setsebool commands into a single semanage command
@@ -110,9 +111,19 @@ class openshift_origin::node {
     'libvirt': { include openshift_origin::plugins::container::libvirt }
   }
   
-  if member( $::openshift_origin::node_frontend_plugins, 'apache-mod-rewrite' ) { include openshift_origin::plugins::frontend::apache_mod_rewrite }
-  if member( $::openshift_origin::node_frontend_plugins, 'nodejs-websocket' ) { include openshift_origin::plugins::frontend::nodejs_websocket }
-  
+  if member( $::openshift_origin::node_frontend_plugins, 'apache-mod-rewrite' ) {
+    include openshift_origin::plugins::frontend::apache_mod_rewrite
+  }
+  elsif member( $::openshift_origin::node_frontend_plugins, 'apache-vhost' ) {
+    include openshift_origin::plugins::frontend::apache_vhost
+  }
+  if member( $::openshift_origin::node_frontend_plugins, 'nodejs-websocket' ) {
+    include openshift_origin::plugins::frontend::nodejs_websocket
+  }
+  if member( $::openshift_origin::node_frontend_plugins, 'haproxy-sni-proxy' ) and ($::operatingsystem != 'Fedora') {
+    include openshift_origin::plugins::frontend::haproxy_sni_proxy
+  }
+ 
   augeas { 'Tune sshd config':
     context => "/files/etc/ssh/sshd_config",
     changes => [

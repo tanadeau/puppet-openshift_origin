@@ -338,7 +338,8 @@
 #         creates/deletes/scale actions.
 #     * apache-vhost        - VHost based plugin for HTTP and HTTPS. Suited for 
 #         installations with less app create/delete activity. Easier to 
-#         customize.
+#         customize.  If apache-mod-rewrite is also selected, apache-vhost will be 
+#         ignored
 #     * nodejs-websocket    - Web-socket proxy listening on ports 8000/8444
 #     * haproxy-sni-proxy   - TLS proxy using SNI routing on ports 2303 through 2308
 #         requires /usr/sbin/haproxy15 (haproxy-1.5-dev19 or later).
