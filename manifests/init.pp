@@ -162,6 +162,12 @@
 #   of 60 seconds and may be dropped if the clocks are too far out of 
 #   synch.  However, NTP is not necessary if the clock will be kept in 
 #   synch by some other means.
+#
+# [*ntp_servers*]
+#   Default: ['time.apple.com iburst', 'pool.ntp.org iburst', 'clock.redhat.com iburst']
+#   Specifies one or more servers for NTP clock syncronization.
+#   Note: Use iburst after every ntp server definition to speed up
+#         the initial synchronization.
 # 
 # Passwords used to secure various services. You are advised to specify
 # only alphanumeric values in this script as others may cause syntax
@@ -497,6 +503,7 @@ class openshift_origin (
   $broker_ip_addr                       = $ipaddress,
   $node_ip_addr                         = $ipaddress,
   $configure_ntp                        = true,  
+  $ntp_servers                          = ['time.apple.com iburst', 'pool.ntp.org iburst', 'clock.redhat.com iburst'],
   $activemq_admin_password              = inline_template('<%= require "securerandom"; SecureRandom.base64 %>'),
   $mcollective_user                     = 'mcollective',
   $mcollective_password                 = 'marionette',
