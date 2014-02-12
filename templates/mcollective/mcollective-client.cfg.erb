@@ -2,6 +2,7 @@ topicprefix = /topic/
 main_collective = mcollective
 collectives = mcollective
 libdir = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/usr/libexec/mcollective
+logfile = /var/log/openshift/broker/ruby193-mcollective-client.log
 loglevel = debug
 direct_addressing = 1
 
