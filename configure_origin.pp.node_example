@@ -1,0 +1,39 @@
+class { 'openshift_origin' :
+  # Components to install on this host:
+  roles			 => ['node'],
+
+  # BIND / named config
+  # This is the key for updating the OpenShift BIND server
+  bind_key                   => '<DNSSEC_BIND_KEY>',
+  # This is the IP address for OpenShift BIND server - here, the broker.
+  named_ip_addr              => '<BROKER_IP_ADDRESS>',
+  # The domain under which applications should be created.
+  domain                     => 'example.com',
+  # Apps would be named <app>-<namespace>.example.com
+  # This also creates hostnames for local components under our domain
+  register_host_with_named   => true,
+
+  # The FQDNs of the OpenShift component hosts we will need
+  broker_hostname            => '<BROKER_HOSTNAME>.example.com',
+  activemq_hostname          => '<BROKER_HOSTNAME>.example.com',
+  node_hostname              => '<NODE_HOSTNAME>.example.com',
+
+  # NTP Servers for OpenShift hosts to sync time
+  ntp_servers                => ['<NTP_SERVER_FQDN> iburst'],
+
+  # To enable installing the Jenkins cartridge:
+  install_method             => 'yum',
+  jenkins_repo_base          => 'http://pkg.jenkins-ci.org/redhat',
+
+  # Cartridges to install on Node hosts
+  install_cartridges         => ['php', 'mysql'],
+ 
+  #Enable development mode for more verbose logs
+  #development_mode           => true,
+
+  # Set if using an external-facing ethernet device other than eth0
+  #conf_node_external_eth_dev => 'eth0',
+
+  #If using with GDM, or have users with UID 500 or greater, put in this list
+  #node_unmanaged_users       => ['user1'],
+}
