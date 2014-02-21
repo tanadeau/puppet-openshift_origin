@@ -79,7 +79,7 @@ class openshift_origin::broker {
       require => Package['openshift-origin-broker'],
     }
   }
-  
+
   file { 'quickstarts':
     ensure  => present,
     path    => '/etc/openshift/quickstarts.json',

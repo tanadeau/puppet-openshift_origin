@@ -37,7 +37,7 @@ class openshift_origin::node {
   
   include openshift_origin::cartridges
   include openshift_origin::mcollective_server  
-  
+
   file { 'openshift node config':
     ensure  => present,
     path    => '/etc/openshift/node.conf',

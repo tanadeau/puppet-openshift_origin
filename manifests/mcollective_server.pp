@@ -24,7 +24,7 @@ class openshift_origin::mcollective_server {
 
   # Ensure classes are run in order
   Class['Openshift_origin::Role']               -> Class['Openshift_origin::Mcollective_server']
-  Class['Openshift_origin::Update_resolv_conf'] -> Class['Openshift_origin::Mcollective_server']
+  Class['Openshift_origin::Update_conf_files'] -> Class['Openshift_origin::Mcollective_server']
 
   file { 'mcollective server config':
     ensure  => present,
