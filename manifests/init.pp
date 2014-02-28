@@ -549,24 +549,24 @@ class openshift_origin (
   $install_cartridges                   = ['10gen-mms-agent','cron','diy','haproxy','mongodb',
                                            'nodejs','perl','php','phpmyadmin','postgresql',
                                            'python','ruby','jenkins','jenkins-client','mariadb'],
-  $update_resolv_conf                   = true,
+  $update_conf_files                    = true,
 ){
   include openshift_origin::role
   if member( $roles, 'named' ) {
     class{ 'openshift_origin::role::named': 
-      before => Class['openshift_origin::update_resolv_conf'],
+      before => Class['openshift_origin::update_conf_files'],
     } 
     if member( $roles, 'broker' )    { Class['openshift_origin::role::named']    -> Class['openshift_origin::role::broker'] }
     if member( $roles, 'node' )      { Class['openshift_origin::role::named']    -> Class['openshift_origin::role::node'] }
     if member( $roles, 'activemq' )  { Class['openshift_origin::role::named']    -> Class['openshift_origin::role::activemq'] }
     if member( $roles, 'datastore' ) { Class['openshift_origin::role::named']    -> Class['openshift_origin::role::datastore'] }
   }
-  if member( $roles, 'broker' ) {    class{ 'openshift_origin::role::broker': require => Class['openshift_origin::update_resolv_conf'] } }
-  if member( $roles, 'node' ) {      class{ 'openshift_origin::role::node': require => Class['openshift_origin::update_resolv_conf'] } }
-  if member( $roles, 'activemq' ) {  class{ 'openshift_origin::role::activemq': require => Class['openshift_origin::update_resolv_conf'] } }
-  if member( $roles, 'datastore' ) { class{ 'openshift_origin::role::datastore': require => Class['openshift_origin::update_resolv_conf'] } }
+  if member( $roles, 'broker' ) {    class{ 'openshift_origin::role::broker': require => Class['openshift_origin::update_conf_files'] } }
+  if member( $roles, 'node' ) {      class{ 'openshift_origin::role::node': require => Class['openshift_origin::update_conf_files'] } }
+  if member( $roles, 'activemq' ) {  class{ 'openshift_origin::role::activemq': require => Class['openshift_origin::update_conf_files'] } }
+  if member( $roles, 'datastore' ) { class{ 'openshift_origin::role::datastore': require => Class['openshift_origin::update_conf_files'] } }
   
-  class{ 'openshift_origin::update_resolv_conf': }
+  class{ 'openshift_origin::update_conf_files': }
 
   if $::operatingsystem == 'Fedora' {
     package { 'NetworkManager':

@@ -72,7 +72,7 @@ class openshift_origin::mongo {
 
     exec { '/usr/sbin/oo-mongo-setup':
       command => $cmd,
-      require => [File['mongo setup script'],Class['openshift_origin::update_resolv_conf']]
+      require => [File['mongo setup script'],Class['openshift_origin::update_conf_files']]
     }
   }
 
