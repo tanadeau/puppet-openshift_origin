@@ -28,4 +28,18 @@ class openshift_origin::client_tools {
     mode    => '0644',
     require => Package['rhc'],
   }
+
+  case $::operatingsystem {
+    'RedHat', 'CentOS' : {
+      file { '/etc/profile.d/rhc.sh':
+        content => "function rhc() {\n  scl enable ruby193 \"rhc $@\"\n}",
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        require => Package['rhc'],
+      }
+    }
+    default : {
+    }
+  }
 }
