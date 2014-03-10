@@ -32,7 +32,7 @@ class openshift_origin::client_tools {
   case $::operatingsystem {
     'RedHat', 'CentOS' : {
       file { '/etc/profile.d/rhc.sh':
-        content => "function rhc() {\n  scl enable ruby193 \"rhc $@\"\n}",
+        content => "function rhc() {\n  scl enable ruby193 \"rhc $*\"\n}",
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
