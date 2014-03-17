@@ -92,6 +92,15 @@ class openshift_origin::yum_install_method {
       $repo_path = "${::openshift_origin::repos_base}/packages/latest/${::openshift_origin::architecture}"
       $deps_path = "${::openshift_origin::repos_base}/dependencies/${::openshift_origin::architecture}"
     }
+    if $::operatingsystem == 'Fedora' {
+      package { 'yum-plugin-priorities':
+        ensure  => present,
+      }
+      augeas { 'priorities.conf':
+        context => "/files/etc/yum/pluginconf.d/priorities.conf",
+        changes => "set main/enabled 1",
+      }
+    }
   } else {
     if $::openshift_origin::architecture == undef {
       if $::architecture =~ /arm/ {
@@ -120,10 +129,12 @@ class openshift_origin::yum_install_method {
       "set origin-base/baseurl ${repo_path_1}",
       "set origin-base/gpgcheck 0",
       "set origin-base/enabled 1",
+      "set origin-base/priority 1",
       "set origin-deps/id origin-deps",
       "set origin-deps/baseurl ${deps_path}",
       "set origin-deps/gpgcheck 0",
       "set origin-deps/enabled 1",
+      "set origin-deps/priority 1",
     ]
   }
   
