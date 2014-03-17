@@ -150,7 +150,7 @@ class openshift_origin::yum_install_method {
   }
 
   if ( $::openshift_origin::jboss_repo_base != undef ) {
-    augeas { 'Jboss repository':
+    augeas { 'JBoss Repository':
       context => "/files/etc/yum.repos.d/jboss_repo.repo",
       changes => [
         "set jboss_repo/id jboss-repo",
@@ -161,12 +161,12 @@ class openshift_origin::yum_install_method {
   }
 
   if ( $::openshift_origin::optional_repo != undef ) {
-    augeas { 'Optional Repo':
+    augeas { 'Optional Repository':
       context => "/files/etc/yum.repos.d/optional.repo",
       changes => [
-        "set jboss_repo/id optional",
-        "set jboss_repo/baseurl ${::openshift_origin::optional_repo}",
-        "set jboss_repo/gpgcheck 0",
+        "set optional_repo/id optional",
+        "set optional_repo/baseurl ${::openshift_origin::optional_repo}",
+        "set optional_repo/gpgcheck 0",
       ],
     }
   }
