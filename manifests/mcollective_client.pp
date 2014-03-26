@@ -31,4 +31,13 @@ class openshift_origin::mcollective_client {
     mode    => '0644',
     require => Package['mcollective-client'],
   }
+
+  file { 'mcollective log file':
+    ensure  => present,
+    path    => "/var/log/openshift/broker/${::openshift_origin::params::ruby_scl_prefix}mcollective-client.log",
+    owner   => 'apache',
+    group   => 'root',
+    mode    => '0644',
+    require => Package['mcollective-client'],
+  }
 }
