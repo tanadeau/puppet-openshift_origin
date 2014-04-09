@@ -16,6 +16,8 @@
 class openshift_origin::avahi {
   include openshift_origin::params
 
+  # TODO: Farm work out to Avahi module
+
   package { ['avahi-cname-manager']:
     ensure => present,
     require => Class['openshift_origin::install_method'],

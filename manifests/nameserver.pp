@@ -13,13 +13,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-class openshift_origin::named {
+class openshift_origin::nameserver {
   include openshift_origin::params
+  if $::openshift_origin::manage_firewall {
+    include openshift_origin::firewall::dns
+  }
 
   package { ['bind', 'bind-utils']:
     ensure => present,
     require => Class['openshift_origin::install_method'],
   }
+
+  # TODO: Replace with Bind puppet module
 
   file { 'dynamic zone':
     path    => "/var/named/dynamic/${openshift_origin::domain}.db",
@@ -75,7 +80,7 @@ class openshift_origin::named {
     require => File['/var/named'],
   }
 
-  file { 'Named configs':
+  file { 'named configs':
     path    => '/etc/named.conf',
     owner   => 'root',
     group   => 'named',
@@ -128,17 +133,6 @@ class openshift_origin::named {
       content => '// no openshift infrastructure zone',
       require => File['/var/named']
     }
-  
-  }
-  
-  firewall{ 'dns-tcp':
-    port     => 53,
-    protocol => 'tcp',
-  }
-
-  firewall{ 'dns-udp':
-    port     => 53,
-    protocol => 'udp',
   }
 
   exec { 'named restorecon':
@@ -151,7 +145,7 @@ class openshift_origin::named {
       File['/var/named/dynamic'],
       File['dynamic zone'],
       File['named key'],
-      File['Named configs'],
+      File['named configs'],
       Exec['create rndc.key'],
     ],
   }

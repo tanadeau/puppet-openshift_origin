@@ -14,17 +14,13 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::auth::kerberos {
-  ensure_resource('package', 'rubygem-openshift-origin-auth-remote-user', {
-      ensure  => present,
-      require => Class['openshift_origin::install_method'],
-    }
-  )
+  include openshift_origin::plugins::auth::remote_user
 
   package { 'mod_auth_kerb':
     ensure => installed,
     require => Class['openshift_origin::install_method'],
   }
-  
+
   file {'broker http keytab':
     ensure => present,
     path => $::openshift_origin::broker_krb_keytab,

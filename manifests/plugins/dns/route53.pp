@@ -14,11 +14,10 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::dns::route53 {
-  ensure_resource( 'package' , 'rubygem-openshift-origin-dns-route53', {
+  package { 'rubygem-openshift-origin-dns-route53':
       require => Class['openshift_origin::install_method'],
-    } 
-  )
-  
+  }
+
   file { 'plugin openshift-origin-dns-route53.conf':
     path    => '/etc/openshift/plugins.d/openshift-origin-dns-route53.conf',
     content => template('openshift_origin/broker/plugins/dns/route53/route53.conf.erb'),

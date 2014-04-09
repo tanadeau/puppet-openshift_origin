@@ -1,11 +1,11 @@
 #MDNS management server IP
-MDNS_SERVER=<%= scope.lookupvar('::openshift_origin::named_ip_addr') %>
+MDNS_SERVER=<%= scope.lookupvar('::openshift_origin::nameserver_ip_addr') %>
 
 #MDNS management server port
 MDNS_PORT=8053
 
 #MDNS management server key name
-MDNS_KEYNAME=<%= scope.lookupvar('::openshift_origin::named_hostname') %>
+MDNS_KEYNAME=<%= scope.lookupvar('::openshift_origin::nameserver_hostname') %>
 
 #MDNS management server key value
 MDNS_KEYVALUE=<%= scope.lookupvar('::openshift_origin::domain') %>

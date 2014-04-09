@@ -1,4 +1,4 @@
-BIND_SERVER="<%= scope.lookupvar('::openshift_origin::named_ip_addr') %>"
+BIND_SERVER="<%= scope.lookupvar('::openshift_origin::nameserver_ip_addr') %>"
 BIND_PORT=53
 BIND_ZONE="<%= scope.lookupvar('::openshift_origin::domain') %>"
 BIND_KRB_PRINCIPAL="DNS/<%= scope.lookupvar('::openshift_origin::broker_krb_service_name') %>@<%= scope.lookupvar('::openshift_origin::broker_krb_auth_realms') %>"

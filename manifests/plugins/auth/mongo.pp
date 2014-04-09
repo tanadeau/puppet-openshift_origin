@@ -14,11 +14,10 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::auth::mongo {
-  ensure_resource('package', 'rubygem-openshift-origin-auth-mongo', {
-      ensure  => present,
-      require => Class['openshift_origin::install_method'],
-    }
-  )
+  package { 'rubygem-openshift-origin-auth-mongo':
+    ensure  => present,
+    require => Class['openshift_origin::install_method'],
+  }
 
   file { 'Auth plugin config':
     ensure  => present,

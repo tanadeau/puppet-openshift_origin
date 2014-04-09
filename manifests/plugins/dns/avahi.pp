@@ -14,6 +14,10 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::dns::avahi {
+  if $::openshift_origin::manage_firewall {
+    include openshift_origin::firewall::mdns
+  }
+
   file { 'plugin openshift-origin-dns-avahi.conf':
     path    => '/etc/openshift/plugins.d/openshift-origin-dns-avahi.conf',
     content => template('openshift_origin/broker/plugins/dns/avahi/avahi.conf.erb'),
@@ -35,28 +39,14 @@ class openshift_origin::plugins::dns::avahi {
     ]
   }
 
-  ensure_resource('package', 'avahi-cname-manager', {
-      ensure  => present,
-      require => Class['openshift_origin::install_method'],
-    }
-  )
+  package { 'avahi-cname-manager':
+    ensure  => present,
+    require => Class['openshift_origin::install_method'],
+  }
 
-  ensure_resource('package', 'avahi', {
-      ensure  => present,
-      require => Class['openshift_origin::install_method'],
-    }
-  )
-
-  exec { "Open mdns port":
-    command => "${::openshift_origin::params::iptables} -A INPUT -p udp --dport 5353 -d 224.0.0.251 -j ACCEPT;
-                ${::openshift_origin::params::iptables} -A OUTPUT -p udp --dport 5353 -d 224.0.0.251 -j ACCEPT;
-                ${::openshift_origin::params::iptables_save_command};",
-    require =>  [
-                  Package[$::openshift_origin::params::iptables_requires],
-                  Exec['initial iptables setup'],
-                  Package['avahi'],
-                ],
-    before  => Exec['final iptables setup'],
+  package { 'avahi':
+    ensure  => present,
+    require => Class['openshift_origin::install_method'],
   }
 
   service { ['avahi-daemon', 'avahi-cname-manager']:

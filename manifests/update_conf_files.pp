@@ -1,9 +1,11 @@
 class openshift_origin::update_conf_files {
   augeas { 'network-scripts':
     context => "/files/etc/sysconfig/network-scripts/ifcfg-${::openshift_origin::conf_node_external_eth_dev}",
+    lens    => 'Shellvars.lns',
+    incl    => "/etc/sysconfig/network-scripts/ifcfg-${::openshift_origin::conf_node_external_eth_dev}",
     changes => [
       'set PEERDNS no',
-      "set DNS1 ${::openshift_origin::named_ip_addr}",
+      "set DNS1 ${::openshift_origin::nameserver_ip_addr}",
     ],
   }
 
@@ -17,6 +19,6 @@ class openshift_origin::update_conf_files {
   }
 
   file { '/etc/resolv.conf':
-    content => "search ${::openshift_origin::domain}\nnameserver ${::openshift_origin::named_ip_addr}"
+    content => "search ${::openshift_origin::domain}\nnameserver ${::openshift_origin::nameserver_ip_addr}"
   }
 }

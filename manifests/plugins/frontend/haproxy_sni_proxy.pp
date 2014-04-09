@@ -14,11 +14,10 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::frontend::haproxy_sni_proxy {
-  ensure_resource( 'package', 'rubygem-openshift-origin-frontend-haproxy-sni-proxy', {
-      require => Class['openshift_origin::install_method'],
-    }
-  )
-  
+  package { 'rubygem-openshift-origin-frontend-haproxy-sni-proxy':
+    require => Class['openshift_origin::install_method'],
+  }
+
   service { 'openshift-sni-proxy':
     enable     => true,
     ensure     => true,

@@ -13,67 +13,42 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-class openshift_origin::cartridges {
+define openshift_origin::openshift_cartridge  {
+  $cart_prefix = 'openshift-origin-cartridge-'
+  case $name {
+    'jenkins', 'jenkins-client': {
+      include openshift_origin::cartridges::jenkins
+      $full_cart_name = "${cart_prefix}${name}"
+    }
+    'mariadb', 'mysql': {
+      case $::operatingsystem {
+        'Fedora' : {
+          $full_cart_name = "${cart_prefix}mariadb"
+        }
+        default  : {
+          $full_cart_name = "${cart_prefix}mysql"
+        }
+      }
+    }
+    default: {
+      $full_cart_name = "${cart_prefix}${name}"
+    }
+  }
+  package { $full_cart_name:
+    ensure  => present,
+    require => Class['openshift_origin::install_method'],
+    notify  => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"],
+  }
+}
 
+class openshift_origin::cartridges {
   package { 'yum-plugin-versionlock':
     ensure  => present,
   }
 
-  define openshiftCartridge  {
-    case $name {
-      'jenkins', 'jenkins-client': {
-        ensure_resource( 'package', 'jenkins', {
-            ensure  => "1.510-1.1",
-            require => Class['openshift_origin::install_method'],
-          }
-        )
-            
-        ensure_resource( 'exec', '/usr/bin/yum versionlock jenkins', {
-            require => [
-              Package['jenkins'],
-              Package['yum-plugin-versionlock'],
-            ]
-          }
-        )
-        
-        ensure_resource( 'package', "openshift-origin-cartridge-${name}", {
-            ensure  => present,
-            require => Class['openshift_origin::install_method'],
-            notify  => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"],
-          }
-        )
-      }
-      'mariadb', 'mysql': {
-        case $::operatingsystem {
-          'Fedora' : {
-            $mariadb_cart = 'openshift-origin-cartridge-mariadb'
-          }
-          default  : {
-            $mariadb_cart = 'openshift-origin-cartridge-mysql'    
-          }
-        }
-        
-        ensure_resource( 'package', $mariadb_cart, {
-            ensure  => present,
-            require => Class['openshift_origin::install_method'],
-            notify  => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"],
-          } 
-        )
-      }
-      default: {
-        ensure_resource( 'package', "openshift-origin-cartridge-${name}", {
-            ensure  => present,
-            require => Class['openshift_origin::install_method'],
-            notify  => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"],
-          }
-        )
-      }
-    }
-  }
+  openshift_origin::openshift_cartridge { $::openshift_origin::install_cartridges: }
 
-  openshiftCartridge { $::openshift_origin::install_cartridges: }
-  
   if( $::openshift_origin::development_mode == true ) {
-    openshiftCartridge { [ 'mock', 'mock-plugin' ]: }
+    openshift_origin::openshift_cartridge { [ 'mock', 'mock-plugin' ]: }
   }
 }

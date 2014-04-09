@@ -15,10 +15,9 @@
 #
 class openshift_origin::plugins::frontend::apache {
 
-  ensure_resource ( 'package', 'httpd', {
-      require => Class['openshift_origin::install_method'],
-    }
-  )
+  package { 'httpd':
+    require => Class['openshift_origin::install_method'],
+  }
 
   if 'broker' in $::openshift_origin::roles {
     $httpd_servername_path    = '/etc/httpd/conf.d/000002_openshift_origin_broker_servername.conf'

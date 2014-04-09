@@ -1,5 +1,5 @@
 (
-  echo server <%= scope.lookupvar('::openshift_origin::named_ip_addr') %>
+  echo server <%= scope.lookupvar('::openshift_origin::nameserver_ip_addr') %>
   echo update delete <%= scope.lookupvar('fqdn') %> A
   echo update add <%= scope.lookupvar('fqdn') %> 180 A <%= scope.lookupvar('::openshift_origin::node_ip_addr') %>
   echo send

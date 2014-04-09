@@ -20,17 +20,15 @@ class openshift_origin::login_shell {
     fail 'Custom OpenShift Origin shell is only available on Fedora systems'
   }
 
-  ensure_resource('package', 'rubygem-highline', {
-      ensure   => 'present',
-      require => Class['openshift_origin::install_method'],
-    }
-  )
+  package { 'rubygem-highline':
+    ensure   => 'present',
+    require => Class['openshift_origin::install_method'],
+  }
 
-  ensure_resource('package', 'rubygem-httpclient', {
-      ensure   => 'present',
-      require => Class['openshift_origin::install_method'],
-    }
-  )
+  package { 'rubygem-httpclient':
+    ensure   => 'present',
+    require => Class['openshift_origin::install_method'],
+  }
 
   file { 'getty.service':
     ensure  => present,

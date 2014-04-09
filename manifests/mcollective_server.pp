@@ -16,14 +16,13 @@
 class openshift_origin::mcollective_server {
   include openshift_origin::params
   
-  ensure_resource( 'package' , "${::openshift_origin::params::ruby_scl_prefix}mcollective", {
-      alias => 'mcollective',
-      require => Class['openshift_origin::install_method'],
-    } 
-  )
+  package { "${::openshift_origin::params::ruby_scl_prefix}mcollective":
+    alias => 'mcollective',
+    require => Class['openshift_origin::install_method'],
+  }
 
   # Ensure classes are run in order
-  Class['Openshift_origin::Role']               -> Class['Openshift_origin::Mcollective_server']
+  Class['Openshift_origin::Role']              -> Class['Openshift_origin::Mcollective_server']
   Class['Openshift_origin::Update_conf_files'] -> Class['Openshift_origin::Mcollective_server']
 
   file { 'mcollective server config':
@@ -36,7 +35,7 @@ class openshift_origin::mcollective_server {
     require => Package['mcollective'],
     notify  => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"],
   }
-  
+
   if( $::operatingsystem == 'Fedora' ) {
     $require_real = [
       File['mcollective server config', '/usr/lib/systemd/system/mcollective.service'],
@@ -46,14 +45,8 @@ class openshift_origin::mcollective_server {
     file { '/usr/lib/systemd/system/mcollective.service':
       content => template('openshift_origin/mcollective/mcollective.service'),
       require => Package['mcollective'],
-      notify  => Exec['systemd-daemon-reload']
-    }
-    
-    exec { 'systemd-daemon-reload':
-      command     => '/bin/systemctl --system daemon-reload',
-      refreshonly => true,
-      notify      => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"],
-    }
+      notify  => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"]
+    }    
   } else {
     $require_real = File['mcollective server config']
   }
@@ -66,7 +59,7 @@ class openshift_origin::mcollective_server {
     require    => $require_real,
     provider   => $::openshift_origin::params::os_init_provider,
   }
-  
+
   exec { 'openshift-facts':
     command     => "/usr/bin/oo-exec-ruby ${::openshift_origin::params::ruby_scl_path_prefix}/usr/libexec/mcollective/update_yaml.rb ${::openshift_origin::params::ruby_scl_path_prefix}/etc/mcollective/facts.yaml",
     environment => ['LANG=en_US.UTF-8', 'LC_ALL=en_US.UTF-8'],

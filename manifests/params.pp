@@ -74,12 +74,12 @@ class openshift_origin::params {
     'Fedora' => '/usr/bin/echo',
     default  => '/bin/echo',
   }
-  
+
   $ruby_scl_prefix = $::operatingsystem ? {
     'Fedora' => '',
     default  => 'ruby193-',
   }
-  
+
   $ruby_scl_path_prefix = $::operatingsystem ? {
     'Fedora' => '',
     default  => '/opt/rh/ruby193/root',
@@ -89,26 +89,12 @@ class openshift_origin::params {
     'Fedora' => '/usr/sbin/sysctl',
     default  => '/sbin/sysctl',
   }
-  
-  $iptables    = $::operatingsystem ? {
-    'Fedora' => '/usr/sbin/iptables',
-    default  => '/sbin/iptables',
-  }
-  
-  $iptables_save_command = $operatingsystem ? {
-    'Fedora' => "/usr/libexec/iptables/iptables.init save",
-    default  => "/sbin/service iptables save",
-  }
-  
-  $iptables_requires     = $operatingsystem ? {
-    'Fedora' => ['iptables', 'iptables-services'],
-    default  => ['iptables'],
-  }
 
   $node_shmmax_default = $::architecture ? {
     'x86_64' => 68719476736,
     default  => 33554432,
   }
+
   $_node_shmmax = $::openshift_origin::node_shmmax ? {
     undef   => $node_shmmax_default,
     default => $::openshift_origin::node_shmmax,
@@ -118,6 +104,7 @@ class openshift_origin::params {
     'x86_64' => 4294967296,
     default  => 2097152,
   }
+
   $_node_shmall = $::openshift_origin::node_shmall ? {
     undef   => $node_shmall_default,
     default => $::openshift_origin::node_shmall,
