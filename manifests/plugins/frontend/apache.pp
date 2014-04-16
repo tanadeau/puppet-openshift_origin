@@ -27,6 +27,23 @@ class openshift_origin::plugins::frontend::apache {
     $servername_conf_template = 'openshift_origin/plugins/frontend/apache/node_servername.conf.erb'
   }
 
+  if 'broker' and 'load_balancer' in $::openshift_origin::roles {
+    exec { 'httpd_conf':
+      path    => ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'],
+      command => "sed -ri \'s/Listen 80/Listen ${openshift_origin::broker_ip_addr}:80/\' /etc/httpd/conf/httpd.conf",
+      unless  => "grep \"Listen ${openshift_origin::broker_ip_addr}:80\" /etc/httpd/conf/httpd.conf",
+      require => Package['httpd'],
+      notify  => Service['httpd'],
+    }
+    exec { 'ssl_conf':
+      path    => ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'],
+      command => "sed -ri \'s/Listen 443/Listen ${openshift_origin::broker_ip_addr}:443/\' /etc/httpd/conf.d/ssl.conf",
+      unless  => "grep \"Listen ${openshift_origin::broker_ip_addr}:443\" /etc/httpd/conf.d/ssl.conf",
+      require => Package['httpd'],
+      notify  => Service['httpd'],
+    }
+  }
+
   service { 'httpd':
     ensure     => true,
     enable     => true,
