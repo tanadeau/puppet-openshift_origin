@@ -13,12 +13,8 @@
 #  limitations under the License.
 #
 class openshift_origin::firewall {
-  include lokkit::clear
-  if ! defined(Service['iptables']) {
-    service { 'iptables':
-      ensure    => true,
-      enable    => true,
-      subscribe => Exec['lokkit_clear'],
-    }
+  service { 'iptables':
+    ensure    => true,
+    enable    => true,
   }
 }

@@ -1,0 +1,2 @@
+-A INPUT -d 224.0.0.251/32 -p udp -m udp --dport 5353 -j ACCEPT
+-A OUTPUT -d 224.0.0.251/32 -p udp -m udp --dport 5353 -j ACCEPT
