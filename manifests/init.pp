@@ -21,12 +21,12 @@
 # === Parameters
 # [*roles*]
 #   Choose from the following roles to be configured on this node.
-#     * broker    - Installs the broker and console.
-#     * node      - Installs the node and cartridges.
-#     * activemq  - Installs activemq message broker.
-#     * datastore - Installs MongoDB (not sharded/replicated)
-#     * named     - Installs a BIND dns server configured with a TSIG key for updates.
-#   Default: ['broker','node','activemq','datastore','named']
+#     * broker     - Installs the broker and console.
+#     * node       - Installs the node and cartridges.
+#     * msgserver  - Installs ActiveMQ message broker.
+#     * datastore  - Installs MongoDB (not sharded/replicated)
+#     * nameserver - Installs a BIND dns server configured with a TSIG key for updates.
+#   Default: ['broker','node','msgserver','datastore','nameserver']
 # 
 # [*install_method*]
 #   Choose from the following ways to provide packages:
@@ -92,11 +92,11 @@
 # 
 # [*broker_hostname*]
 # [*node_hostname*]
-# [*named_hostname*]
-# [*activemq_hostname*]
+# [*nameserver_hostname*]
+# [*msgserver_hostname*]
 # [*datastore_hostname*]
 #   Default: the root plus the domain, e.g. broker.example.com - except
-#   named=ns1.example.com 
+#   nameserver=ns1.example.com 
 # 
 #   These supply the FQDN of the hosts containing these components. Used
 #   for configuring the host's name at install, and also for configuring
@@ -107,8 +107,8 @@
 #   installed on this host as well. If you are using a nameserver set
 #   up separately, you are responsible for all necessary DNS entries.
 # 
-# [*named_ip_addr*]
-#   Default: IP of a named instance or current IP if installing on this 
+# [*nameserver_ip_addr*]
+#   Default: IP of a nameserver instance or current IP if installing on this 
 #   node. This is used by every node to configure its primary name server.
 #   Default: the current IP (at install)  
 #   
@@ -141,8 +141,8 @@
 #
 #   http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html
 #
-# [*conf_named_upstream_dns*]
-#   List of upstream DNS servers to use when installing named on this node.
+# [*conf_nameserver_upstream_dns*]
+#   List of upstream DNS servers to use when installing nameserver on this node.
 #   Default: ['8.8.8.8']
 # 
 # [*broker_ip_addr*]
@@ -174,7 +174,7 @@
 # errors depending on context. If non-alphanumeric values are required,
 # update them separately after installation.
 # 
-# [*activemq_admin_password*]
+# [*msgserver_admin_password*]
 #   Default: scrambled
 #   This is the admin password for the ActiveMQ admin console, which is
 #   not needed by OpenShift but might be useful in troubleshooting.
@@ -365,7 +365,7 @@
 #   Install a Getty shell which displays DNS, IP and login information. Used for 
 #   all-in-one VM installation.
 # 
-# [*register_host_with_named*]
+# [*register_host_with_nameserver*]
 #   Setup DNS entries for this host in a locally installed bind DNS instance.
 #   Default: false
 #
@@ -409,13 +409,8 @@
 #       {hostname => '10.0.0.13', ipaddr => 'node3'},       
 #     ]
 #
-# [*firewall_provider*]
-#   Select the firewall provider to configure OpenShift with.
-#   Options:
-#
-#   * none
-#   * iptables
-#   * lokkit
+# [*manage_firewall*]
+#   Indicate whether or not this module will configure the firewall for you
 #
 # [*install_cartridges*]
 #   List of cartridges to be installed on the node. Options:
@@ -475,7 +470,7 @@
 #    one node host to all the rest (or, if using the same image for all
 #    hosts, just keep the keys from the image).
 class openshift_origin (
-  $roles                                = ['broker','node','activemq','datastore','named'],
+  $roles                                = ['broker','node','msgserver','datastore','nameserver'],
   $install_method                       = 'yum',
   $repos_base                           = $::operatingsystem ? {
                                             'Fedora' => 'https://mirror.openshift.com/pub/origin-server/nightly/fedora-19',
@@ -491,10 +486,10 @@ class openshift_origin (
   $domain                               = 'example.com',
   $broker_hostname                      = "broker.${domain}",
   $node_hostname                        = "node.${domain}",
-  $named_hostname                       = "ns1.${domain}",
-  $activemq_hostname                    = "activemq.${domain}",
+  $nameserver_hostname                  = "ns1.${domain}",
+  $msgserver_hostname                   = "msgserver.${domain}",
   $datastore_hostname                   = "mongodb.${domain}",
-  $named_ip_addr                        = $ipaddress,
+  $nameserver_ip_addr                   = $ipaddress,
   $bind_key                             = '',
   $bind_krb_keytab                      = '',
   $bind_krb_principal                   = '',
@@ -505,7 +500,7 @@ class openshift_origin (
   $node_ip_addr                         = $ipaddress,
   $configure_ntp                        = true,  
   $ntp_servers                          = ['time.apple.com iburst', 'pool.ntp.org iburst', 'clock.redhat.com iburst'],
-  $activemq_admin_password              = inline_template('<%= require "securerandom"; SecureRandom.base64 %>'),
+  $msgserver_admin_password             = inline_template('<%= require "securerandom"; SecureRandom.base64 %>'),
   $mcollective_user                     = 'mcollective',
   $mcollective_password                 = 'marionette',
   $mongodb_admin_user                   = 'admin',
@@ -539,43 +534,68 @@ class openshift_origin (
   $conf_node_external_eth_dev           = 'eth0',
   $conf_node_supplementary_posix_groups = '',
   $development_mode                     = false,
-  $conf_named_upstream_dns              = ['8.8.8.8'],
+  $conf_nameserver_upstream_dns         = ['8.8.8.8'],
   $install_login_shell                  = false,
-  $register_host_with_named             = false,
+  $register_host_with_nameserver        = false,
   $dns_infrastructure_zone              = '',
   $dns_infrastructure_key               = '',
   $dns_infrastructure_names             = [],
-  $firewall_provider                    = 'iptables',
   $install_cartridges                   = ['10gen-mms-agent','cron','diy','haproxy','mongodb',
                                            'nodejs','perl','php','phpmyadmin','postgresql',
                                            'python','ruby','jenkins','jenkins-client','mariadb'],
   $update_conf_files                    = true,
+  $manage_firewall                      = true,
 ){
   include openshift_origin::role
-  if member( $roles, 'named' ) {
-    class{ 'openshift_origin::role::named': 
+  if member( $roles, 'nameserver' ) {
+    class{ 'openshift_origin::role::nameserver': 
       before => Class['openshift_origin::update_conf_files'],
     } 
-    if member( $roles, 'broker' )    { Class['openshift_origin::role::named']    -> Class['openshift_origin::role::broker'] }
-    if member( $roles, 'node' )      { Class['openshift_origin::role::named']    -> Class['openshift_origin::role::node'] }
-    if member( $roles, 'activemq' )  { Class['openshift_origin::role::named']    -> Class['openshift_origin::role::activemq'] }
-    if member( $roles, 'datastore' ) { Class['openshift_origin::role::named']    -> Class['openshift_origin::role::datastore'] }
+    if member( $roles, 'broker' ) {
+      Class['openshift_origin::role::nameserver'] -> Class['openshift_origin::role::broker']
+    }
+    if member( $roles, 'node' ) {
+      Class['openshift_origin::role::nameserver'] -> Class['openshift_origin::role::node']
+    }
+    if member( $roles, 'msgserver' ) {
+      Class['openshift_origin::role::nameserver'] -> Class['openshift_origin::role::msgserver']
+    }
+    if member( $roles, 'datastore' ) {
+      Class['openshift_origin::role::nameserver'] -> Class['openshift_origin::role::datastore']
+    }
   }
-  if member( $roles, 'broker' ) {    class{ 'openshift_origin::role::broker': require => Class['openshift_origin::update_conf_files'] } }
-  if member( $roles, 'node' ) {      class{ 'openshift_origin::role::node': require => Class['openshift_origin::update_conf_files'] } }
-  if member( $roles, 'activemq' ) {  class{ 'openshift_origin::role::activemq': require => Class['openshift_origin::update_conf_files'] } }
-  if member( $roles, 'datastore' ) { class{ 'openshift_origin::role::datastore': require => Class['openshift_origin::update_conf_files'] } }
-  
+
+  # Anchors for containing the implementation class
+  anchor { 'openshift_origin::begin': }
+
+  Exec { path => '/usr/bin:/usr/sbin:/bin:/sbin' }
+
+  if $::openshift_origin::manage_firewall {
+    include openshift_origin::firewall
+  }
+
+  if member( $roles, 'broker' ) {
+    class { 'openshift_origin::role::broker':
+      require => Class['openshift_origin::update_conf_files']
+    }
+  }
+  if member( $roles, 'node' ) {
+    class { 'openshift_origin::role::node':
+      require => Class['openshift_origin::update_conf_files']
+    }
+  }
+  if member( $roles, 'msgserver' ) {
+    class{ 'openshift_origin::role::msgserver':
+      require => Class['openshift_origin::update_conf_files']
+    }
+  }
+  if member( $roles, 'datastore' ) {
+    class{ 'openshift_origin::role::datastore':
+      require => Class['openshift_origin::update_conf_files']
+    }
+  }
+
   class{ 'openshift_origin::update_conf_files': }
 
-  if $::operatingsystem == 'Fedora' {
-    package { 'NetworkManager':
-      ensure  => present,
-    }
-    service { 'NetworkManager-wait-online':
-      require => Package['NetworkManager'],
-      enable  => true,
-    }
-  }
-
+  anchor { 'openshift_origin::end': }
 }

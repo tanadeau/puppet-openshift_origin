@@ -14,20 +14,18 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::container::libvirt {
-  ensure_resource('package', 'libvirt-daemon', {
-      ensure  => present,
-      require => Class['openshift_origin::install_method'],
-    }
-  )
-  
-  ensure_resource('package', 'libvirt-sandbox', {
-      ensure  => present,
-      require => Class['openshift_origin::install_method'],
-    }
-  )
-  
+  package { 'libvirt-daemon':
+    ensure  => present,
+    require => Class['openshift_origin::install_method'],
+  }
+
+  package { 'libvirt-sandbox':
+    ensure  => present,
+    require => Class['openshift_origin::install_method'],
+  }
+
   service { 'libvirtd':
     enable  => true,
-    require => [Package['libvirt-daemon'], Package['libvirt-sandbox']]
+    require => Package['libvirt-daemon','libvirt-sandbox'],
   }
 }

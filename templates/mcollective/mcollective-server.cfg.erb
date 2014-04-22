@@ -14,7 +14,7 @@ plugin.psk = unset
 
 connector = activemq
 plugin.activemq.pool.size = 1
-plugin.activemq.pool.1.host = <%= scope.lookupvar('::openshift_origin::activemq_hostname') %>
+plugin.activemq.pool.1.host = <%= scope.lookupvar('::openshift_origin::msgserver_hostname') %>
 plugin.activemq.pool.1.port = 61613
 plugin.activemq.pool.1.user = <%= scope.lookupvar('::openshift_origin::mcollective_user') %>
 plugin.activemq.pool.1.password = <%= scope.lookupvar('::openshift_origin::mcollective_password') %>

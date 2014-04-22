@@ -14,11 +14,11 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::auth::htpasswd {
-  ensure_resource('package', ['rubygem-openshift-origin-auth-remote-user', 'httpd-tools'], {
-      ensure  => present,
-      require => Class['openshift_origin::install_method'],
-    }
-  )
+  include openshift_origin::plugins::auth::remote_user
+
+  package { 'httpd-tools':
+    ensure => present,
+  }
 
   file { 'htpasswd':
     path     => "/etc/openshift/htpasswd",

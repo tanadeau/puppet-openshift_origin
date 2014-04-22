@@ -1,3 +1,3 @@
-prepend domain-name-servers <%= scope.lookupvar('::openshift_origin::named_ip_addr') %>;
+prepend domain-name-servers <%= scope.lookupvar('::openshift_origin::nameserver_ip_addr') %>;
 supersede host-name "<%= @hostname %>";
 supersede domain-name "<%= scope.lookupvar('::openshift_origin::domain') %>";

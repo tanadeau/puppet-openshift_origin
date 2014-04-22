@@ -15,13 +15,11 @@
 #
 class openshift_origin::plugins::frontend::apache_mod_rewrite {
   include ::openshift_origin::params
-
-  ensure_resource( 'package', 'rubygem-openshift-origin-frontend-apache-mod-rewrite', {
-      require => Class['openshift_origin::install_method'],
-    }
-  )
-  
   include openshift_origin::plugins::frontend::apache
+
+  package { 'rubygem-openshift-origin-frontend-apache-mod-rewrite':
+    require => Class['openshift_origin::install_method'],
+  }
 
   if member( $openshift_origin::roles, 'broker' ) {
     file { 'broker and console route for node':
@@ -35,7 +33,7 @@ class openshift_origin::plugins::frontend::apache_mod_rewrite {
         Package['rubygem-openshift-origin-frontend-apache-mod-rewrite'],
       ],
     }
-    
+
     exec { 'regen node routes':
       command => "${::openshift_origin::params::cat} /etc/httpd/conf.d/openshift/nodes.txt /tmp/nodes.broker_routes.txt > /etc/httpd/conf.d/openshift/nodes.txt.new && \
                   ${::openshift_origin::params::mv} /etc/httpd/conf.d/openshift/nodes.txt.new /etc/httpd/conf.d/openshift/nodes.txt && \

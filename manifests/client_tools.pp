@@ -15,11 +15,10 @@
 #
 class openshift_origin::client_tools {
   # Install rhc tools. On RHEL/CentOS, this will install under ruby 1.8 environment
-  ensure_resource('package', 'rhc', {
-      ensure  => present,
-      require => Class['openshift_origin::install_method'],
-    }
-  )
+  package { 'rhc':
+    ensure  => present,
+    require => Class['openshift_origin::install_method'],
+  }
 
   file { '/etc/openshift/express.conf':
     content => inline_template("libra_server = '${openshift_origin::broker_hostname}'"),
@@ -29,6 +28,7 @@ class openshift_origin::client_tools {
     require => Package['rhc'],
   }
 
+  # This just quietly wraps rhc commands in SCL on behalf of the CLI user.
   case $::operatingsystem {
     'RedHat', 'CentOS' : {
       file { '/etc/profile.d/rhc.sh':

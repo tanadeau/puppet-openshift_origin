@@ -14,11 +14,9 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::frontend::apache_vhost {
-  ensure_resource( 'package', 'rubygem-openshift-origin-frontend-apache-vhost', {
-      require => Class['openshift_origin::install_method'],
-    }
-  )
-  
   include openshift_origin::plugins::frontend::apache
 
+  package { 'rubygem-openshift-origin-frontend-apache-vhost':
+    require => Class['openshift_origin::install_method'],
+  }
 }

@@ -14,16 +14,12 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::auth::ldap {
+  include openshift_origin::plugins::auth::remote_user
+
   if $::openshift_origin::broker_ldap_uri == '' {
     fail 'No LDAP URI specified (see ldap_uri).'
   }
-  
-  ensure_resource('package', 'rubygem-openshift-origin-auth-remote-user', {
-      ensure  => present,
-      require => Class['openshift_origin::install_method'],
-    }
-  )
-  
+
   file { 'Broker httpd config':
     path    => '/var/www/openshift/broker/httpd/conf.d/openshift-origin-auth-remote-user-ldap.conf',
     content => template('openshift_origin/broker/plugins/auth/ldap/openshift-origin-auth-remote-user-ldap.conf.erb'),

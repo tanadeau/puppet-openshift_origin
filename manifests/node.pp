@@ -15,29 +15,32 @@
 #
 class openshift_origin::node {
   include openshift_origin::params
-  class { 'openshift_origin::modprobe': }
-
-  ensure_resource('package', [
-      'rubygem-openshift-origin-node',
-      "${::openshift_origin::params::ruby_scl_prefix}rubygem-passenger-native",
-      'openshift-origin-node-util',
-      'policycoreutils-python',
-      'openshift-origin-msg-node-mcollective',
-      'git',
-      'make',
-      'oddjob',
-      'vim-enhanced',
-      'mlocate',
-      'screen',
-    ], {
-      ensure  => present,
-      require => Class['openshift_origin::install_method'],
-    }
-  )
-  
   include openshift_origin::cartridges
-  include openshift_origin::mcollective_server  
+  include openshift_origin::mcollective_server
+  if $::openshift_origin::manage_firewall {
+    include openshift_origin::firewall::apache
+    include openshift_origin::firewall::apache_node
+    include openshift_origin::firewall::node
+}
+  include openshift_origin::selbooleans
+  include openshift_origin::selbooleans::node
 
+  package {
+    ['rubygem-openshift-origin-node',
+     "${::openshift_origin::params::ruby_scl_prefix}rubygem-passenger-native",
+     'openshift-origin-node-util',
+     'policycoreutils-python',
+     'openshift-origin-msg-node-mcollective',
+     'git',
+     'make',
+     'oddjob',
+     'vim-enhanced',
+     'mlocate',
+     'screen',
+    ]:
+    ensure  => present,
+    require => Class['openshift_origin::install_method'],
+  }
   file { 'openshift node config':
     ensure  => present,
     path    => '/etc/openshift/node.conf',
@@ -48,64 +51,40 @@ class openshift_origin::node {
     mode    => '0644',
     notify  => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"],
   }
-    
-  # We combine these setsebool commands into a single semanage command
-  # because separate commands take a long time to run.
-  exec { 'node selinux booleans':
-    command  => template('openshift_origin/selinux/node.erb'),
-    provider => 'shell',
-    require  => [
-      Package['rubygem-openshift-origin-node'],
-      File['openshift node config'],
-    ]
-  }
-  
   exec { 'Initialize quota DB':
     command => '/usr/sbin/oo-init-quota',
     require => Package['openshift-origin-node-util'],
     path    => ['/usr/sbin', '/usr/bin', '/sbin', '/bin'],
     unless  => '/usr/bin/quota -f $(df /var/lib/openshift/ | tail -1 | tr -s \' \' | cut -d\' \' -f 6 | sort -u) -q 2>/dev/null',
   }
-  
-  augeas { 'Tune Sysctl knobs':
-    context  => "/files/etc/sysctl.conf",
-    changes  => [
-      # Increase kernel semaphores to accomodate many httpds.
-      "set kernel.sem '250  32000 32  4096'",
-
-      # Move ephemeral port range to accommodate app proxies.
-      "set net.ipv4.ip_local_port_range '15000 35530'",
-
-      # Increase the connection tracking table size.
-      "set net.netfilter.nf_conntrack_max 1048576",
-      
-      #IPTables port proxy
-      "set net.ipv4.ip_forward 1",
-      "set net.ipv4.conf.all.route_localnet 1",
-      
-      #Shared memory limits
-      "set kernel.shmall ${::openshift_origin::params::_node_shmall}",
-      "set kernel.shmmax ${::openshift_origin::params::_node_shmmax}",
-
-      #IPC Message queue limits
-      "set kernel.msgmnb 65536",
-      "set kernel.msgmax 65536",
-    ],
-    notify  => Exec['Reload sysctl'],
+  sysctl::value { 'kernel.sem':
+      value => "250\t32000\t32\t4096",
   }
-  
-  # Reload sysctl.conf to get the new settings.
-  #
-  # Note: We could add -e here to ignore errors that are caused by
-  # options appearing in sysctl.conf that correspond to kernel modules
-  # that are not yet loaded.  On the other hand, adding -e might cause
-  # us to miss some important error messages.
-  exec{ 'Reload sysctl':
-    command     => "${::openshift_origin::params::sysctl} -p /etc/sysctl.conf",
-    refreshonly => true,
-    require     => Class['openshift_origin::modprobe'],
+  sysctl::value { 'net.ipv4.ip_local_port_range':
+      value => "15000\t35530",
   }
-  
+  sysctl::value { 'net.netfilter.nf_conntrack_max':
+      value => '1048576',
+  }
+  sysctl::value { 'net.ipv4.ip_forward':
+      value => '1',
+  }
+  sysctl::value { 'net.ipv4.conf.all.route_localnet':
+      value => '1',
+  }
+  sysctl::value { 'kernel.shmall':
+      value => "${::openshift_origin::params::_node_shmall}",
+  }
+  sysctl::value { 'kernel.shmmax':
+      value => "${::openshift_origin::params::_node_shmmax}",
+  }
+  sysctl::value { 'kernel.msgmnb':
+      value => 65536,
+  }
+  sysctl::value { 'kernel.msgmax':
+      value => '65536',
+  }
+      
   case $::openshift_origin::node_container_plugin {
     'selinux': { include openshift_origin::plugins::container::selinux }
     'libvirt': { include openshift_origin::plugins::container::libvirt }
@@ -125,7 +104,9 @@ class openshift_origin::node {
   }
  
   augeas { 'Tune sshd config':
-    context => "/files/etc/ssh/sshd_config",
+    context => '/files/etc/ssh/sshd_config',
+    lens    => 'Sshd.lns',
+    incl    => '/etc/ssh/sshd_config',
     changes => [
       'set MaxSessions 40',
       'set MaxStartups 40',
@@ -133,7 +114,7 @@ class openshift_origin::node {
     ],
     onlyif => "match AcceptEnv[*]/*[. = 'GIT_SSH'] size == 0"
   }
-  
+
   service { [
       'openshift-iptables-port-proxy',
       'openshift-tc',
@@ -159,7 +140,8 @@ class openshift_origin::node {
       mode    => '0644',
       notify  => Exec['prepare cgroups']
     }
-    
+
+    # TODO: Investigate if restorecons are necessary    
     exec { 'prepare cgroups':
       command     => '/sbin/restorecon -rv /etc/cgconfig.conf; mkdir -p /cgroup; restorecon -rv /cgroup',
       refreshonly => true
@@ -179,28 +161,18 @@ class openshift_origin::node {
     provider => $::openshift_origin::params::os_init_provider,
   }
 
-  file { 'create node setting markers dir':
+  file { ['/var/lib/openshift/.settings','/etc/openshift/env/']:
     ensure  => 'directory',
-    path    => '/var/lib/openshift/.settings',
     owner   => 'root',
     group   => 'root',
     mode    => '0755',
     require => Package['rubygem-openshift-origin-node']
   }
 
-  file { 'openshift env dir':
-    ensure  => 'directory',
-    path    => '/etc/openshift/env/',
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0755',
-    require => Package['rubygem-openshift-origin-node'],
-  }
-
   file { '/etc/openshift/env/OPENSHIFT_UMASK':
     ensure  => present,
     content => template('openshift_origin/node/ENV_OPENSHIFT_UMASK'),
-    require => File['openshift env dir'],
+    require => File['/etc/openshift/env/'],
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
@@ -209,29 +181,9 @@ class openshift_origin::node {
   file { '/etc/openshift/env/OPENSHIFT_CLOUD_DOMAIN':
     ensure  => present,
     content => $::openshift_origin::domain,
-    require => File['openshift env dir'],
+    require => File['/etc/openshift/env/'],
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-  }
-  
-  ensure_resource( 'firewall', 'http', {
-      service => 'http',
-    }
-  )
-  
-  ensure_resource( 'firewall', 'https', {
-      service => 'https',
-    }
-  )
-  
-  firewall{ 'node-http':
-    port      => '8000',
-    protocol  => 'tcp',
-  }
-
-  firewall{ 'node-https':
-    port      => '8443',
-    protocol  => 'tcp',
   }
 }

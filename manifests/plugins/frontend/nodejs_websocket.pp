@@ -14,25 +14,16 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::frontend::nodejs_websocket {
-  ensure_resource( 'package', 'openshift-origin-node-proxy', {
-      require => Class['openshift_origin::install_method'],
-    }
-  )
+  package { ['openshift-origin-node-proxy','rubygem-openshift-origin-frontend-nodejs-websocket']:
+    require => Class['openshift_origin::install_method'],
+  }
 
-  ensure_resource( 'package', 'rubygem-openshift-origin-frontend-nodejs-websocket', {
-      require => Class['openshift_origin::install_method'],
-    }
-  )
-  
   service { 'openshift-node-web-proxy':
     enable     => true,
     ensure     => true,
     hasstatus  => true,
     hasrestart => true,
-    require    => [
-      Package['openshift-origin-node-proxy'],      
-      Package['openshift-origin-node-util'],
-    ],
+    require    => Package['openshift-origin-node-proxy','openshift-origin-node-util'],
     provider   => $openshift_origin::params::os_init_provider,
   }
 }

@@ -14,18 +14,19 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::container::selinux {
-  ensure_resource('package', 'pam_openshift', {
-      ensure  => present,
-      require => Class['openshift_origin::install_method'],
-    }
-  )
+  package { 'pam_openshift':
+    ensure  => present,
+    require => Class['openshift_origin::install_method'],
+  }
 
   package { 'rubygem-openshift-origin-container-selinux':
     notify => Exec['openshift-facts']
   }
-  
+
   augeas { 'update login.defs with min gear uid/gid':
-    context   => "/files/etc/login.defs",
+    context   => '/files/etc/login.defs',
+    incl      => '/etc/login.defs',
+    lens      => 'Login_defs.lns',
     changes   => [
       "set /files/etc/login.defs/UID_MIN 1000",
       "set /files/etc/login.defs/GID_MIN 1000",
@@ -34,7 +35,9 @@ class openshift_origin::plugins::container::selinux {
   }
 
   augeas { 'openshift node pam sshd':
-    context => "/files/etc/pam.d/sshd",
+    context => '/files/etc/pam.d/sshd',
+    incl    => '/etc/pam.d/sshd',
+    lens    => 'Pam.lns',
     changes => [
       "set /files/etc/pam.d/sshd/#comment[.='pam_selinux.so close should be the first session rule'] 'pam_openshift.so close should be the first session rule'",
       "ins 01 before *[argument='close']",
@@ -84,7 +87,9 @@ class openshift_origin::plugins::container::selinux {
   }
   
   augeas { 'openshift node pam runuser':
-    context => "/files/etc/pam.d/runuser",
+    context => '/files/etc/pam.d/runuser',
+    incl    => '/etc/pam.d/runuser',
+    lens    => 'Pam.lns',
     changes => [
       "set 01/type session",
       "set 01/control '[default=1 success=ignore]'",
@@ -105,7 +110,9 @@ class openshift_origin::plugins::container::selinux {
   }
 
   augeas { 'openshift node pam runuser-l':
-    context => "/files/etc/pam.d/runuser-l",
+    context => '/files/etc/pam.d/runuser-l',
+    incl    => '/etc/pam.d/runuser-l',
+    lens    => 'Pam.lns',
     changes => [
     "set 01/type session",
     "set 01/control '[default=1 success=ignore]'",
@@ -126,7 +133,9 @@ class openshift_origin::plugins::container::selinux {
   }
   
   augeas { 'openshift node pam su':
-    context => "/files/etc/pam.d/su",
+    context => '/files/etc/pam.d/su',
+    incl    => '/etc/pam.d/su',
+    lens    => 'Pam.lns',
     changes => [
     "set 01/type session",
     "set 01/control '[default=1 success=ignore]'",
@@ -147,7 +156,9 @@ class openshift_origin::plugins::container::selinux {
   }
   
   augeas { 'openshift node pam system-auth-ac':
-    context => "/files/etc/pam.d/system-auth-ac",
+    context => '/files/etc/pam.d/system-auth-ac',
+    incl    => '/etc/pam.d/system-auth-ac',
+    lens    => 'Pam.lns',
     changes => [
     "set 01/type session",
     "set 01/control '[default=1 success=ignore]'",

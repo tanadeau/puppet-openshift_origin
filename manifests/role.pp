@@ -14,7 +14,7 @@
 #  limitations under the License.
 #
 define register_dns( $fqdn ) {
-  if $::openshift_origin::register_host_with_named {
+  if $::openshift_origin::register_host_with_nameserver {
     if $fqdn != 'localhost' {
       ensure_resource( 'exec', "Register ${fqdn}", {
           command => template("openshift_origin/register_dns.erb"),
@@ -30,68 +30,78 @@ class openshift_origin::install_method {
 
   case $::openshift_origin::install_method {
     'none' : {}
-    'yum'  : { include openshift_origin::yum_install_method }
+    'yum'  : {
+      include openshift_origin::yum_install_method
+      # TODO: This is a major hack intended to ensure that all yum repos are defined before we try to do anything else.
+      file { '/tmp':
+        ensure  => directory,
+        require => Class['openshift_origin::yum_install_method'],
+      }
+    }
   }
 }
 
 class openshift_origin::role {
   include openshift_origin::params
-  
-  if ( $::openshift_origin::configure_ntp ) {
-    ensure_resource('package', 'ntpdate', {
-        ensure => 'present',
-      }
-    )
-
-    ensure_resource('class', 'ntp', {
-        servers    => $::openshift_origin::ntp_servers,
-        autoupdate => true,
-      }
-    )
+  include openshift_origin::install_method
+  if $::openshift_origin::manage_firewall {
+    include openshift_origin::firewall::ssh
   }
-  
-  ensure_resource( 'firewall', 'ssh', {
-      service => 'ssh',
-    }
-  )
 
-  ensure_resource( 'class', 'openshift_origin::install_method', {} )
+  if ( $::openshift_origin::configure_ntp ) {
+    package { 'ntpdate':
+      ensure => 'present',
+    }
+    class { 'ntp':
+      servers    => $::openshift_origin::ntp_servers,
+      autoupdate => true,
+    }
+  }
 }
 
 class openshift_origin::role::broker inherits openshift_origin::role {
+  include openshift_origin::client_tools
+  include openshift_origin::broker
+  include openshift_origin::console
+
   register_dns{ 'register broker dns':
-    fqdn => $::openshift_origin::broker_hostname 
+    fqdn    => $::openshift_origin::broker_hostname,
+    require => Class['openshift_origin::client_tools','openshift_origin::broker','openshift_origin::console']
   }
-  ensure_resource( 'class', 'openshift_origin::client_tools', {} )
-  ensure_resource( 'class', 'openshift_origin::broker', {} )
-  ensure_resource( 'class', 'openshift_origin::console', {} )
 }
 
-class openshift_origin::role::named inherits openshift_origin::role {
-  ensure_resource( 'class', 'openshift_origin::named', {} )
-  register_dns{ 'register named dns':
-    fqdn    => $::openshift_origin::named_hostname,
-    require => Class['openshift_origin::named']
+class openshift_origin::role::nameserver inherits openshift_origin::role {
+  include openshift_origin::nameserver
+  
+  register_dns{ 'register nameserver dns':
+    fqdn    => $::openshift_origin::nameserver_hostname,
+    require => Class['openshift_origin::nameserver']
   }
 }
 
 class openshift_origin::role::node inherits openshift_origin::role {
+  include openshift_origin::node
+
   register_dns{ 'register node dns':
-    fqdn => $::openshift_origin::node_hostname 
+    fqdn    => $::openshift_origin::node_hostname,
+    require => Class['openshift_origin::node'],
   }
-  ensure_resource( 'class', 'openshift_origin::node', {} )
 }
 
-class openshift_origin::role::activemq inherits openshift_origin::role {
-  register_dns{ 'register activemq dns':
-    fqdn => $::openshift_origin::activemq_hostname 
+class openshift_origin::role::msgserver inherits openshift_origin::role {
+  include openshift_origin::msgserver
+
+  register_dns{ 'register msgserver dns':
+    fqdn    => $::openshift_origin::msgserver_hostname,
+    require => Class['openshift_origin::msgserver'],
   }
-  ensure_resource( 'class', 'openshift_origin::activemq', {} )
 }
 
 class openshift_origin::role::datastore inherits openshift_origin::role {
+  include openshift_origin::datastore
+
   register_dns{ 'register datastore dns':
-    fqdn => $::openshift_origin::datastore_hostname 
+    fqdn    => $::openshift_origin::datastore_hostname,
+    require => Class['openshift_origin::datastore'],
   }
-  ensure_resource( 'class', 'openshift_origin::mongo', {} ) 
 }

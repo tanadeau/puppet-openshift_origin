@@ -14,77 +14,31 @@
 #  limitations under the License.
 #
 class openshift_origin::yum_install_method {
-  if ( $::openshift_origin::os_repo != undef ) {
-    case $::operatingsystem {
-      'Fedora' : {
-        augeas { 'Custom OS repository':
-          context => "/files/etc/yum.repos.d/fedora.repo",
-          changes => [
-            "set fedora/baseurl ${::openshift_origin::os_repo}",
-            "set fedora/gpgcheck 0",
-            "rm  fedora/mirrorlist",
-          ],
-        }
-      }
-      'CentOS' : {
-        augeas { 'Custom OS repository':
-          context => "/files/etc/yum.repos.d/CentOS-Base.repo",
-          changes => [
-            "set base/baseurl ${::openshift_origin::os_repo}",
-            "set base/gpgcheck 0",
-            "rm  base/mirrorlist",
-          ],
-        }
-      }
-      default  : {
-        augeas { 'Custom OS repository':
-          context => "/files/etc/yum.repos.d/RHEL-Base.repo",
-          changes => [
-            "set base/baseurl ${::openshift_origin::os_repo}",
-            "set base/gpgcheck 0",
-            "rm  base/mirrorlist",
-          ],
-        }
-      }
+  package { 'yum-plugin-priorities':
+    ensure => present,
+  }
+
+  if "$::openshift_origin::os_repo" != undef {
+    yumrepo { 'OpenShift-OS-Base.repo':
+      name       => 'openshift-os-base',
+      baseurl    => $::openshift_origin::os_repo,
+      priority   => 1,
+      gpgcheck   => 0,
+      mirrorlist => absent,
+      require => Package['yum-plugin-priorities'],
     }
   }
-  
-  if ( $::openshift_origin::os_updates_repo != undef ) {
-    case $::operatingsystem {
-      'Fedora' : {
-        augeas { 'Custom OS Update repository':
-          context => "/files/etc/yum.repos.d/fedora-updates.repo",
-          changes => [
-            "set updates/baseurl ${::openshift_origin::os_updates_repo}",
-            "set updates/gpgcheck 0",
-            "rm  updates/mirrorlist",
-          ],
-        }
-      }
-      'CentOS' : {
-        augeas { 'Custom OS Update repository':
-          context => "/files/etc/yum.repos.d/CentOS-Base.repo",
-          changes => [
-            "set updates/baseurl ${::openshift_origin::os_updates_repo}",
-            "set updates/gpgcheck 0",            
-            "rm  updates/mirrorlist",
-          ],
-        }
-      }
-      default  : {
-        augeas { 'Custom OS Update repository':
-          context => "/files/etc/yum.repos.d/RHEL-Base.repo",
-          changes => [
-            "set updates/baseurl ${::openshift_origin::os_updates_repo}",
-            "set updates/gpgcheck 0",          
-            "rm  updates/mirrorlist",
-          ],
-        }
-      }
+  if "$::openshift_origin::os_updates_repo" != undef {
+    yumrepo { 'OpenShift-OS-Updates.repo':
+      name       => 'openshift-os-updates',
+      baseurl    => $::openshift_origin::os_updates_repo,
+      priority   => 1,
+      gpgcheck   => 0,
+      mirrorlist => absent,
+      require => Package['yum-plugin-priorities'],
     }
   }
-  
-  if $::openshift_origin::repos_base =~ /nightly/ {
+  if "$::openshift_origin::repos_base" =~ /nightly/ {
     if $::openshift_origin::architecture == undef {
       $repo_path = "${::openshift_origin::repos_base}/packages/latest/${::architecture}"
       $deps_path = "${::openshift_origin::repos_base}/dependencies/${::architecture}"
@@ -92,18 +46,17 @@ class openshift_origin::yum_install_method {
       $repo_path = "${::openshift_origin::repos_base}/packages/latest/${::openshift_origin::architecture}"
       $deps_path = "${::openshift_origin::repos_base}/dependencies/${::openshift_origin::architecture}"
     }
-    if $::operatingsystem == 'Fedora' {
-      package { 'yum-plugin-priorities':
-        ensure  => present,
-      }
+    if "$::operatingsystem" == 'Fedora' {
       augeas { 'priorities.conf':
-        context => "/files/etc/yum/pluginconf.d/priorities.conf",
-        changes => "set main/enabled 1",
+        context => '/files/etc/yum/pluginconf.d/priorities.conf',
+        lens    => 'Yum.lns',
+        incl    => '/etc/yum/pluginconf.d/priorities.conf',
+        changes => 'set main/enabled 1',
       }
     }
   } else {
-    if $::openshift_origin::architecture == undef {
-      if $::architecture =~ /arm/ {
+    if "$::openshift_origin::architecture" == undef {
+      if "$::architecture" =~ /arm/ {
           $repo_path = "${::openshift_origin::repos_base}/packages/armhfp"
           $deps_path = "${::openshift_origin::repos_base}/dependencies/armhfp"
       } else {
@@ -116,58 +69,55 @@ class openshift_origin::yum_install_method {
     }
   }
 
-  if $::openshift_origin::override_install_repo != undef {
+  if "$::openshift_origin::override_install_repo" != undef {
     $repo_path_1 = $::openshift_origin::override_install_repo
   } else {
     $repo_path_1 = $repo_path
   }
 
-  augeas { 'OpenShift Repository':
-    context => "/files/etc/yum.repos.d/openshift.repo",
-    changes => [
-      "set origin-base/id origin-base",
-      "set origin-base/baseurl ${repo_path_1}",
-      "set origin-base/gpgcheck 0",
-      "set origin-base/enabled 1",
-      "set origin-base/priority 1",
-      "set origin-deps/id origin-deps",
-      "set origin-deps/baseurl ${deps_path}",
-      "set origin-deps/gpgcheck 0",
-      "set origin-deps/enabled 1",
-      "set origin-deps/priority 1",
-    ]
+  yumrepo { 'OpenShift.repo':
+    name       => 'openshift',
+    baseurl    => $repo_path_1,
+    priority   => 1,
+    gpgcheck   => 0,
+    mirrorlist => absent,
+    require    => Package['yum-plugin-priorities'],
   }
-  
-  if ( $::openshift_origin::jenkins_repo_base != undef ) {
-    augeas { 'Jenkins repository':
-      context => "/files/etc/yum.repos.d/jenkins_repo.repo",
-      changes => [
-        "set jenkins_repo/id jenkins-repo",
-        "set jenkins_repo/baseurl ${::openshift_origin::jenkins_repo_base}",
-        "set jenkins_repo/gpgcheck 0",
-      ],
+
+  yumrepo { 'OpenShift-Deps.repo':
+    name       => 'openshift-deps',
+    baseurl    => $deps_path,
+    priority   => 1,
+    gpgcheck   => 0,
+    mirrorlist => absent,
+    require    => Package['yum-plugin-priorities'],
+  }
+
+  if "$::openshift_origin::jenkins_repo_base" != undef {
+    yumrepo { 'Jenkins.repo':
+      name     => 'jenkins-repo',
+      baseurl  => $::openshift_origin::jenkins_repo_base,
+      gpgcheck => 0,
+      require  => Package['yum-plugin-priorities'],
     }
   }
 
-  if ( $::openshift_origin::jboss_repo_base != undef ) {
-    augeas { 'JBoss Repository':
-      context => "/files/etc/yum.repos.d/jboss_repo.repo",
-      changes => [
-        "set jboss_repo/id jboss-repo",
-        "set jboss_repo/baseurl ${::openshift_origin::jboss_repo_base}",
-        "set jboss_repo/gpgcheck 0",
-      ],
+  if "$::openshift_origin::jboss_repo_base" != undef {
+    yumrepo { 'JBoss.repo':
+      name     => 'jboss-repo',
+      baseurl  => $::openshift_origin::jboss_repo_base,
+      gpgcheck => 0,
+      require  => Package['yum-plugin-priorities'],
     }
   }
 
-  if ( $::openshift_origin::optional_repo != undef ) {
-    augeas { 'Optional Repository':
-      context => "/files/etc/yum.repos.d/optional.repo",
-      changes => [
-        "set optional_repo/id optional",
-        "set optional_repo/baseurl ${::openshift_origin::optional_repo}",
-        "set optional_repo/gpgcheck 0",
-      ],
+  if "$::openshift_origin::optional_repo" != undef {
+    yumrepo { 'OpenShift-Optional.repo':
+      name     => 'openshift-optional',
+      baseurl  => $::openshift_origin::optional_repo,
+      priority => 1,
+      gpgcheck => 0,
+      require  => Package['yum-plugin-priorities'],
     }
   }
 }

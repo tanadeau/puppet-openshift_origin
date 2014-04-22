@@ -13,21 +13,24 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-class openshift_origin::activemq {
+class openshift_origin::msgserver (
+  $using_systemd = false
+) {
   include openshift_origin::params
-  ensure_resource('package', 'activemq', {
+  if $::openshift_origin::manage_firewall {
+    include openshift_origin::firewall::activemq
+  }
+
+  package { ['activemq','activemq-client']:
       ensure  => present,
       require => Class['openshift_origin::install_method'],
-    }
-  )
+  }
 
-  ensure_resource('package', 'activemq-client', {
-      ensure  => present,
-      require => Class['openshift_origin::install_method'],
-    }
-  )
+  # TODO: This module _should_ be setting up ActiveMQ for OpenShift and then passing along
+  # the actual work to the Puppet ActiveMQ module. Also allows for dispatch to other msgserver
+  # choices down the road.
 
-  if $::operatingsystem == 'Fedora' {
+  if $using_systemd {
     file { '/etc/tmpfiles.d/activemq.conf':
       path    => '/etc/tmpfiles.d/activemq.conf',
       content => template('openshift_origin/activemq/tmp-activemq.conf.erb'),
@@ -77,20 +80,10 @@ class openshift_origin::activemq {
     notify  => Service['activemq'],
   }
 
-  ensure_resource('service', 'activemq', {
-      require    => [
-        File['activemq.xml config'],
-        File['jetty.xml config'],
-        File['jetty-realm.properties config'],
-      ],
-      hasstatus  => true,
-      hasrestart => true,
-      enable     => true,
-    }
-  )
-
-  firewall{ 'activemq':
-    port      => '61613',
-    protocol  => 'tcp',
+  service { 'activemq':
+    require    => File['activemq.xml config','jetty.xml config','jetty-realm.properties config'],
+    hasstatus  => true,
+    hasrestart => true,
+    enable     => true,
   }
 }

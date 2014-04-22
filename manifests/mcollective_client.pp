@@ -16,11 +16,12 @@
 class openshift_origin::mcollective_client {
   include openshift_origin::params
   
-  ensure_resource( 'package' , "${::openshift_origin::params::ruby_scl_prefix}mcollective-client", {
-      alias => 'mcollective-client',
-      require => Class['openshift_origin::install_method'],
-    } 
-  )
+  package { "${::openshift_origin::params::ruby_scl_prefix}mcollective-client":
+    alias => 'mcollective-client',
+    require => Class['openshift_origin::install_method'],
+  }
+  
+  # TODO: Replace with MCollective puppet module call
 
   file { 'mcollective client config':
     ensure  => present,

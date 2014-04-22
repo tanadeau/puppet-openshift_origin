@@ -1,0 +1,8 @@
+fixfiles -R ruby193-rubygem-passenger restore
+fixfiles -R ruby193-mod_passenger restore
+fixfiles -R rubygem-passenger restore
+fixfiles -R mod_passenger restore
+
+restorecon -rv /var/run
+restorecon -rv /opt
+restorecon -vr /var/log/openshift
