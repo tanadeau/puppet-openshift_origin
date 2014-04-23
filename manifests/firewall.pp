@@ -13,8 +13,13 @@
 #  limitations under the License.
 #
 class openshift_origin::firewall {
+  package { 'iptables':
+    ensure => present,
+    before => Service['iptables'],
+  }
   service { 'iptables':
-    ensure    => true,
-    enable    => true,
+    ensure  => true,
+    enable  => true,
+    require => Package['iptables'],
   }
 }
