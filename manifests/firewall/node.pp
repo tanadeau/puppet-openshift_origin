@@ -1,5 +1,7 @@
 class openshift_origin::firewall::node {
-  lokkit::ports { 'Node Port Range':
-    tcpPorts => ['35531-65535'],
+  lokkit::custom { 'openshift_node_rules':
+    type   => 'ipv4',
+    table  => 'filter',
+    source => 'puppet:///openshift_origin/firewall/node_iptables.txt',
   }
 }
