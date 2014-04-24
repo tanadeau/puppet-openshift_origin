@@ -19,8 +19,7 @@ class openshift_origin::yum_install_method {
   }
 
   if "$::openshift_origin::os_repo" != undef {
-    yumrepo { 'OpenShift-OS-Base.repo':
-      name       => 'openshift-os-base',
+    yumrepo { 'openshift-os-base':
       baseurl    => $::openshift_origin::os_repo,
       priority   => 1,
       gpgcheck   => 0,
@@ -29,8 +28,7 @@ class openshift_origin::yum_install_method {
     }
   }
   if "$::openshift_origin::os_updates_repo" != undef {
-    yumrepo { 'OpenShift-OS-Updates.repo':
-      name       => 'openshift-os-updates',
+    yumrepo { 'openshift-os-updates':
       baseurl    => $::openshift_origin::os_updates_repo,
       priority   => 1,
       gpgcheck   => 0,
@@ -75,8 +73,7 @@ class openshift_origin::yum_install_method {
     $repo_path_1 = $repo_path
   }
 
-  yumrepo { 'OpenShift.repo':
-    name       => 'openshift',
+  yumrepo { 'openshift-origin':
     baseurl    => $repo_path_1,
     priority   => 1,
     gpgcheck   => 0,
@@ -84,8 +81,7 @@ class openshift_origin::yum_install_method {
     require    => Package['yum-plugin-priorities'],
   }
 
-  yumrepo { 'OpenShift-Deps.repo':
-    name       => 'openshift-deps',
+  yumrepo { 'openshift-deps':
     baseurl    => $deps_path,
     priority   => 1,
     gpgcheck   => 0,
@@ -94,8 +90,7 @@ class openshift_origin::yum_install_method {
   }
 
   if "$::openshift_origin::jenkins_repo_base" != undef {
-    yumrepo { 'Jenkins.repo':
-      name     => 'jenkins-repo',
+    yumrepo { 'jenkins-repo':
       baseurl  => $::openshift_origin::jenkins_repo_base,
       gpgcheck => 0,
       require  => Package['yum-plugin-priorities'],
@@ -103,8 +98,7 @@ class openshift_origin::yum_install_method {
   }
 
   if "$::openshift_origin::jboss_repo_base" != undef {
-    yumrepo { 'JBoss.repo':
-      name     => 'jboss-repo',
+    yumrepo { 'jboss-repo':
       baseurl  => $::openshift_origin::jboss_repo_base,
       gpgcheck => 0,
       require  => Package['yum-plugin-priorities'],
@@ -112,8 +106,7 @@ class openshift_origin::yum_install_method {
   }
 
   if "$::openshift_origin::optional_repo" != undef {
-    yumrepo { 'OpenShift-Optional.repo':
-      name     => 'openshift-optional',
+    yumrepo { 'openshift-optional':
       baseurl  => $::openshift_origin::optional_repo,
       priority => 1,
       gpgcheck => 0,
