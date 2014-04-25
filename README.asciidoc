@@ -12,21 +12,22 @@ services, and ntp.
 * Ben Klang
 * Ben Langfeld
 * Krishna Raman
+* N. Harrison Ripps
 
 == Requirements
 
 * Puppet >= 3
 * Facter >= 1.6.17
-* Puppetlabs/stdlib module.  Can be obtained
-  http://forge.puppetlabs.com/puppetlabs/stdlib[here] or with the command
-  `puppet module install puppetlabs/stdlib`
-* Puppetlabs/ntp module.  Can be obtained
-  http://forge.puppetlabs.com/puppetlabs/ntp[here] or with the command
-  `puppet module install puppetlabs/ntp`
 
 == Installation
 
-The module can be obtained from the
+The module can be installed directly via the `puppet` utility from PuppetForge:
+
+----
+puppet module install openshift/openshift_origin
+----
+
+Additionally, the module can be obtained from the
 https://github.com/openshift/puppet-openshift_origin[github repository].
 
 1. Download the https://github.com/openshift/puppet-openshift_origin/archive/master.zip[Zip file from github]
@@ -145,35 +146,33 @@ Default: Fedora-19 Nightlies
 CPU Architecture to use for the definition OpenShift Origin yum repositories
 Defaults: $::architecture (from facter)
 
-*Fedora:
-**x86_64
-**armv7hl
-*RHEL:
-**x86_64
-
+* RHEL:
+** x86_64
+* CentOS:
+** x86_64
 
 ==== override_install_repo
 Repository path override. Uses dependencies from repos_base but uses 
 override_install_repo path for OpenShift RPMs. Used when doing local builds.
 
 Default: none
-  
+
 ==== os_repo
 The URL for a Fedora 19/RHEL 6 yum repository used with the "yum" install method.
 Should end in x86_64/os/.
 
 Default: no change
-  
+
 ==== os_updates
 The URL for a Fedora 19/RHEL 6 yum updates repository used with the "yum" install method.
 Should end in x86_64/.
 
 Default: no change
-  
+
 ==== jboss_repo_base
 The URL for a JBoss repositories used with the "yum" install method.
 Does not install repository if not specified.
-  
+
 ==== jenkins_repo_base
 The URL for a Jenkins repositories used with the "yum" install method.
 Does not install repository if not specified.
