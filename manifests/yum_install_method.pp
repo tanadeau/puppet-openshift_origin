@@ -1,12 +1,12 @@
 # Copyright 2013 Mojo Lingo LLC.
 # Modifications by Red Hat, Inc.
-# 
+#
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 #  Unless required by applicable law or agreed to in writing, software
 #  distributed under the License is distributed on an "AS IS" BASIS,
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,25 +18,25 @@ class openshift_origin::yum_install_method {
     ensure => present,
   }
 
-  if "$::openshift_origin::os_repo" != undef {
+  if $::openshift_origin::os_repo != undef {
     yumrepo { 'openshift-os-base':
       baseurl    => $::openshift_origin::os_repo,
       priority   => 1,
       gpgcheck   => 0,
       mirrorlist => absent,
-      require => Package['yum-plugin-priorities'],
+      require    => Package['yum-plugin-priorities'],
     }
   }
-  if "$::openshift_origin::os_updates_repo" != undef {
+  if $::openshift_origin::os_updates_repo != undef {
     yumrepo { 'openshift-os-updates':
       baseurl    => $::openshift_origin::os_updates_repo,
       priority   => 1,
       gpgcheck   => 0,
       mirrorlist => absent,
-      require => Package['yum-plugin-priorities'],
+      require    => Package['yum-plugin-priorities'],
     }
   }
-  if "$::openshift_origin::repos_base" =~ /nightly/ {
+  if $::openshift_origin::repos_base =~ /nightly/ {
     if $::openshift_origin::architecture == undef {
       $repo_path = "${::openshift_origin::repos_base}/packages/latest/${::architecture}"
       $deps_path = "${::openshift_origin::repos_base}/dependencies/${::architecture}"
@@ -44,7 +44,7 @@ class openshift_origin::yum_install_method {
       $repo_path = "${::openshift_origin::repos_base}/packages/latest/${::openshift_origin::architecture}"
       $deps_path = "${::openshift_origin::repos_base}/dependencies/${::openshift_origin::architecture}"
     }
-    if "$::operatingsystem" == 'Fedora' {
+    if $::operatingsystem == 'Fedora' {
       augeas { 'priorities.conf':
         context => '/files/etc/yum/pluginconf.d/priorities.conf',
         lens    => 'Yum.lns',
@@ -53,8 +53,8 @@ class openshift_origin::yum_install_method {
       }
     }
   } else {
-    if "$::openshift_origin::architecture" == undef {
-      if "$::architecture" =~ /arm/ {
+    if $::openshift_origin::architecture == undef {
+      if $::architecture =~ /arm/ {
           $repo_path = "${::openshift_origin::repos_base}/packages/armhfp"
           $deps_path = "${::openshift_origin::repos_base}/dependencies/armhfp"
       } else {
@@ -67,7 +67,7 @@ class openshift_origin::yum_install_method {
     }
   }
 
-  if "$::openshift_origin::override_install_repo" != undef {
+  if $::openshift_origin::override_install_repo != undef {
     $repo_path_1 = $::openshift_origin::override_install_repo
   } else {
     $repo_path_1 = $repo_path
@@ -89,7 +89,7 @@ class openshift_origin::yum_install_method {
     require    => Package['yum-plugin-priorities'],
   }
 
-  if "$::openshift_origin::jenkins_repo_base" != undef {
+  if $::openshift_origin::jenkins_repo_base != undef {
     yumrepo { 'jenkins-repo':
       baseurl  => $::openshift_origin::jenkins_repo_base,
       gpgcheck => 0,
@@ -97,7 +97,7 @@ class openshift_origin::yum_install_method {
     }
   }
 
-  if "$::openshift_origin::jboss_repo_base" != undef {
+  if $::openshift_origin::jboss_repo_base != undef {
     yumrepo { 'jboss-repo':
       baseurl  => $::openshift_origin::jboss_repo_base,
       gpgcheck => 0,
@@ -105,7 +105,7 @@ class openshift_origin::yum_install_method {
     }
   }
 
-  if "$::openshift_origin::optional_repo" != undef {
+  if $::openshift_origin::optional_repo != undef {
     yumrepo { 'openshift-optional':
       baseurl  => $::openshift_origin::optional_repo,
       priority => 1,

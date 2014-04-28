@@ -1,12 +1,12 @@
 # Copyright 2013 Mojo Lingo LLC.
 # Modifications by Red Hat, Inc.
-# 
+#
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 #  Unless required by applicable law or agreed to in writing, software
 #  distributed under the License is distributed on an "AS IS" BASIS,
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,15 +21,15 @@ class openshift_origin::plugins::auth::htpasswd {
   }
 
   file { 'htpasswd':
-    path     => "/etc/openshift/htpasswd",
-    ensure   => file,
-    require  => Package['openshift-origin-broker'],
+    ensure  => file,
+    path    => '/etc/openshift/htpasswd',
+    require => Package['openshift-origin-broker'],
   }
 
   $mkdir = $::operatingsystem ? {
     'Fedora' => '/usr/bin/mkdir',
     default  => '/bin/mkdir',
-  } 
+  }
 
   exec { 'create /etc/openshift dir and set first OpenShift user password':
     command  => "${mkdir} -p /etc/openshift && /usr/bin/htpasswd -bc /etc/openshift/htpasswd ${::openshift_origin::openshift_user1} ${::openshift_origin::openshift_password1}",
@@ -53,12 +53,11 @@ class openshift_origin::plugins::auth::htpasswd {
   }
 
   file {'Console htpasswd config':
-    path => '/var/www/openshift/console/httpd/conf.d/openshift-origin-auth-remote-user-basic.conf',
-    content =>
-      template('openshift_origin/console/plugins/auth/basic/openshift-origin-auth-remote-user-basic.conf.erb'),
-    owner => 'apache',
-    group => 'apache',
-    mode => '0644',
+    path    => '/var/www/openshift/console/httpd/conf.d/openshift-origin-auth-remote-user-basic.conf',
+    content => template('openshift_origin/console/plugins/auth/basic/openshift-origin-auth-remote-user-basic.conf.erb'),
+    owner   => 'apache',
+    group   => 'apache',
+    mode    => '0644',
     require => [
       Package['rubygem-openshift-origin-auth-remote-user','openshift-origin-console'],
       File['Broker htpasswd config'],
@@ -76,7 +75,7 @@ class openshift_origin::plugins::auth::htpasswd {
     require => [
       Package['rubygem-openshift-origin-auth-remote-user'],
     ],
-    notify  => Service["openshift-broker"],
+    notify  => Service['openshift-broker'],
     before  => Exec['Console gem dependencies'],
   }
 }

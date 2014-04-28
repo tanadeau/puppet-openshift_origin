@@ -5,16 +5,17 @@
 #
 class openshift_origin::selbooleans::broker_console {
   selboolean {
-    ['httpd_execmem',
-     'allow_ypbind',
-     'httpd_verify_dns',
+    [
+      'httpd_execmem',
+      'allow_ypbind',
+      'httpd_verify_dns',
     ]:
     value      => 'on',
     persistent => true,
   }
   exec { 'Broker / Console restorecon commands':
-    command  => template('openshift_origin/selinux/broker_console_restorecons.erb'),
-    require  => Package['openshift-origin-broker','openshift-origin-console'],
-    notify    => Service['openshift-broker'],
+    command => template('openshift_origin/selinux/broker_console_restorecons.erb'),
+    require => Package['openshift-origin-broker','openshift-origin-console'],
+    notify  => Service['openshift-broker'],
   }
 }
