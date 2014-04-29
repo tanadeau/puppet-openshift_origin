@@ -1,0 +1,9 @@
+fixtures:
+  repositories:
+    lokkit:        "git://github.com/rharrison10/puppet-lokkit.git"
+    ntp:           "git://github.com/puppetlabs/puppetlabs-ntp.git"
+    selinux_types: "git://github.com/blentz/puppet-selinux_types.git"
+    stdlib:        "git://github.com/puppetlabs/puppetlabs-stdlib.git"
+    sysctl:        "git://github.com/duritong/puppet-sysctl.git"
+  symlinks:
+    openshift_origin: "#{source_dir}"

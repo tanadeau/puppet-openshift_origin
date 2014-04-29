@@ -5,3 +5,4 @@ metadata.json
 *~
 *.swp
 pkg
+Gemfile.lock
