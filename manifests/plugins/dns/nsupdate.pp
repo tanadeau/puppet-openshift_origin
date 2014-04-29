@@ -1,12 +1,12 @@
 # Copyright 2013 Mojo Lingo LLC.
 # Modifications by Red Hat, Inc.
-# 
+#
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 #  Unless required by applicable law or agreed to in writing, software
 #  distributed under the License is distributed on an "AS IS" BASIS,
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,7 @@ class openshift_origin::plugins::dns::nsupdate {
   }
   if $::openshift_origin::bind_krb_principal and $::openshift_origin::bind_krb_keytab == '' {
     warning "Kerberos keytab for the DNS service was not found. Please generate a keytab for DNS/${::openshift_origin::nameserver_hostname}"
-    fail "bind_krb_keytab is required."
+    fail 'bind_krb_keytab is required.'
   }
 
   package { 'rubygem-openshift-origin-dns-nsupdate':
@@ -30,15 +30,15 @@ class openshift_origin::plugins::dns::nsupdate {
 
   if $::openshift_origin::broker_dns_gsstsig {
     file { 'broker-dns-keytab':
-      ensure => present,
-      path => $::openshift_origin::bind_krb_keytab,
-      owner => 'apache',
-      group => 'apache',
-      mode => '0664',
+      ensure  => present,
+      path    => $::openshift_origin::bind_krb_keytab,
+      owner   => 'apache',
+      group   => 'apache',
+      mode    => '0664',
       require => Package['rubygem-openshift-origin-dns-nsupdate'],
     }
     file { 'plugin openshift-origin-dns-nsupdate.conf':
-      path   => '/etc/openshift/plugins.d/openshift-origin-dns-nsupdate.conf',
+      path    => '/etc/openshift/plugins.d/openshift-origin-dns-nsupdate.conf',
       content => template('openshift_origin/broker/plugins/dns/nsupdate/nsupdate-kerb.conf.erb'),
       owner   => 'root',
       group   => 'root',

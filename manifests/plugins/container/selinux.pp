@@ -1,12 +1,12 @@
 # Copyright 2013 Mojo Lingo LLC.
 # Modifications by Red Hat, Inc.
-# 
+#
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 #  Unless required by applicable law or agreed to in writing, software
 #  distributed under the License is distributed on an "AS IS" BASIS,
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,8 +28,8 @@ class openshift_origin::plugins::container::selinux {
     incl      => '/etc/login.defs',
     lens      => 'Login_defs.lns',
     changes   => [
-      "set /files/etc/login.defs/UID_MIN 1000",
-      "set /files/etc/login.defs/GID_MIN 1000",
+      'set /files/etc/login.defs/UID_MIN 1000',
+      'set /files/etc/login.defs/GID_MIN 1000',
     ],
     subscribe => File['openshift node config']
   }
@@ -46,7 +46,7 @@ class openshift_origin::plugins::container::selinux {
       "set 01/module pam_openshift.so",
       "set 01/argument close",
       "set 01/#comment 'Managed by puppet:openshift_origin'",
-      
+
       "set /files/etc/pam.d/sshd/#comment[.='pam_selinux.so open should only be followed by sessions to be executed in the user context'] 'pam_openshift.so open should only be followed by sessions to be executed in the user context'",
       "ins 02 before *[argument='open']",
       "set 02/type session",
@@ -55,9 +55,9 @@ class openshift_origin::plugins::container::selinux {
       "set 02/argument[1] open",
       "set 02/argument[2] env_params",
       "set 02/#comment 'Managed by puppet:openshift_origin'",
-      
+
       "rm *[module='pam_selinux.so']",
-      
+
       # We add two rules.  The first checks whether the user's shell is
       # /usr/bin/oo-trap-user, which indicates that this is a gear user,
       # and skips the second rule if it is not.
@@ -69,7 +69,7 @@ class openshift_origin::plugins::container::selinux {
       "set 03/argument[3] '='",
       "set 03/argument[4] '/usr/bin/oo-trap-user'",
       "set 03/#comment 'Managed by puppet:openshift_origin'",
-      
+
       # The second rule enables polyinstantiation so that the user gets
       # private /tmp and /dev/shm directories.
       "set 04/type session",
@@ -77,15 +77,15 @@ class openshift_origin::plugins::container::selinux {
       "set 04/module pam_namespace.so",
       "set 04/argument[1] no_unmount_on_close",
       "set 04/#comment 'Managed by puppet:openshift_origin'",
-      
+
       "set 05/type session",
       "set 05/control optional",
       "set 05/module pam_cgroup.so",
       "set 05/#comment 'Managed by puppet:openshift_origin'",
     ],
-    onlyif => "match *[#comment='Managed by puppet:openshift_origin'] size == 0"
+    onlyif  => "match *[#comment='Managed by puppet:openshift_origin'] size == 0",
   }
-  
+
   augeas { 'openshift node pam runuser':
     context => '/files/etc/pam.d/runuser',
     incl    => '/etc/pam.d/runuser',
@@ -99,14 +99,14 @@ class openshift_origin::plugins::container::selinux {
       "set 01/argument[3] '='",
       "set 01/argument[4] '/usr/bin/oo-trap-user'",
       "set 01/#comment 'Managed by puppet:openshift_origin'",
-    
+
       "set 02/type session",
       "set 02/control required",
       "set 02/module pam_namespace.so",
       "set 02/argument[1] no_unmount_on_close",
       "set 02/#comment 'Managed by puppet:openshift_origin'",
     ],
-    onlyif => "match *[#comment='Managed by puppet:openshift_origin'] size == 0"
+    onlyif  => "match *[#comment='Managed by puppet:openshift_origin'] size == 0",
   }
 
   augeas { 'openshift node pam runuser-l':
@@ -114,76 +114,76 @@ class openshift_origin::plugins::container::selinux {
     incl    => '/etc/pam.d/runuser-l',
     lens    => 'Pam.lns',
     changes => [
-    "set 01/type session",
-    "set 01/control '[default=1 success=ignore]'",
-    "set 01/module pam_succeed_if.so",
-    "set 01/argument[1] quiet",
-    "set 01/argument[2] shell",
-    "set 01/argument[3] '='",
-    "set 01/argument[4] '/usr/bin/oo-trap-user'",
-    "set 01/#comment 'Managed by puppet:openshift_origin'",
-  
-    "set 02/type session",
-    "set 02/control required",
-    "set 02/module pam_namespace.so",
-    "set 02/argument[1] no_unmount_on_close",
-    "set 02/#comment 'Managed by puppet:openshift_origin'",
+      "set 01/type session",
+      "set 01/control '[default=1 success=ignore]'",
+      "set 01/module pam_succeed_if.so",
+      "set 01/argument[1] quiet",
+      "set 01/argument[2] shell",
+      "set 01/argument[3] '='",
+      "set 01/argument[4] '/usr/bin/oo-trap-user'",
+      "set 01/#comment 'Managed by puppet:openshift_origin'",
+
+      "set 02/type session",
+      "set 02/control required",
+      "set 02/module pam_namespace.so",
+      "set 02/argument[1] no_unmount_on_close",
+      "set 02/#comment 'Managed by puppet:openshift_origin'",
     ],
-    onlyif => "match *[#comment='Managed by puppet:openshift_origin'] size == 0"
+    onlyif  => "match *[#comment='Managed by puppet:openshift_origin'] size == 0",
   }
-  
+
   augeas { 'openshift node pam su':
     context => '/files/etc/pam.d/su',
     incl    => '/etc/pam.d/su',
     lens    => 'Pam.lns',
     changes => [
-    "set 01/type session",
-    "set 01/control '[default=1 success=ignore]'",
-    "set 01/module pam_succeed_if.so",
-    "set 01/argument[1] quiet",
-    "set 01/argument[2] shell",
-    "set 01/argument[3] '='",
-    "set 01/argument[4] '/usr/bin/oo-trap-user'",
-    "set 01/#comment 'Managed by puppet:openshift_origin'",
-  
-    "set 02/type session",
-    "set 02/control required",
-    "set 02/module pam_namespace.so",
-    "set 02/argument[1] no_unmount_on_close",
-    "set 02/#comment 'Managed by puppet:openshift_origin'",
+      "set 01/type session",
+      "set 01/control '[default=1 success=ignore]'",
+      "set 01/module pam_succeed_if.so",
+      "set 01/argument[1] quiet",
+      "set 01/argument[2] shell",
+      "set 01/argument[3] '='",
+      "set 01/argument[4] '/usr/bin/oo-trap-user'",
+      "set 01/#comment 'Managed by puppet:openshift_origin'",
+
+      "set 02/type session",
+      "set 02/control required",
+      "set 02/module pam_namespace.so",
+      "set 02/argument[1] no_unmount_on_close",
+      "set 02/#comment 'Managed by puppet:openshift_origin'",
     ],
-    onlyif => "match *[#comment='Managed by puppet:openshift_origin'] size == 0"
+    onlyif  => 'match *[#comment=\'Managed by puppet:openshift_origin\'] size == 0',
   }
-  
+
   augeas { 'openshift node pam system-auth-ac':
     context => '/files/etc/pam.d/system-auth-ac',
     incl    => '/etc/pam.d/system-auth-ac',
     lens    => 'Pam.lns',
     changes => [
-    "set 01/type session",
-    "set 01/control '[default=1 success=ignore]'",
-    "set 01/module pam_succeed_if.so",
-    "set 01/argument[1] quiet",
-    "set 01/argument[2] shell",
-    "set 01/argument[3] '='",
-    "set 01/argument[4] '/usr/bin/oo-trap-user'",
-    "set 01/#comment 'Managed by puppet:openshift_origin'",
-  
-    "set 02/type session",
-    "set 02/control required",
-    "set 02/module pam_namespace.so",
-    "set 02/argument[1] no_unmount_on_close",
-    "set 02/#comment 'Managed by puppet:openshift_origin'",
+      "set 01/type session",
+      "set 01/control '[default=1 success=ignore]'",
+      "set 01/module pam_succeed_if.so",
+      "set 01/argument[1] quiet",
+      "set 01/argument[2] shell",
+      "set 01/argument[3] '='",
+      "set 01/argument[4] '/usr/bin/oo-trap-user'",
+      "set 01/#comment 'Managed by puppet:openshift_origin'",
+
+      "set 02/type session",
+      "set 02/control required",
+      "set 02/module pam_namespace.so",
+      "set 02/argument[1] no_unmount_on_close",
+      "set 02/#comment 'Managed by puppet:openshift_origin'",
     ],
-    onlyif => "match *[#comment='Managed by puppet:openshift_origin'] size == 0"
-  }  
-  
+    onlyif  => 'match *[#comment=\'Managed by puppet:openshift_origin\'] size == 0',
+  }
+
   # Configure the pam_namespace module to polyinstantiate the /tmp and
   # /dev/shm directories.  Above, we only enable pam_namespace for
   # OpenShift users, but to be safe, blacklist the root and adm users
   # to be sure we don't polyinstantiate their directories.
   $os_all_unmanaged_users = [['root', 'adm', 'apache'], $::openshift_origin::node_unmanaged_users]
-  
+
   file { 'openshift node pam-namespace tmp.conf':
     ensure  => present,
     path    => '/etc/security/namespace.d/tmp.conf',
@@ -193,7 +193,7 @@ class openshift_origin::plugins::container::selinux {
     mode    => '0644',
     require => Package['pam_openshift'],
   }
-  
+
   file { 'openshift node pam-namespace vartmp.conf':
     ensure  => present,
     path    => '/etc/security/namespace.d/vartmp.conf',
@@ -203,7 +203,7 @@ class openshift_origin::plugins::container::selinux {
     mode    => '0644',
     require => Package['pam_openshift'],
   }
-  
+
   file { 'openshift node pam-namespace shm.conf':
     ensure  => present,
     path    => '/etc/security/namespace.d/shm.conf',
@@ -213,5 +213,5 @@ class openshift_origin::plugins::container::selinux {
     mode    => '0644',
     require => Package['pam_openshift'],
   }
-  
+
 }

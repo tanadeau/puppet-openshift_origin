@@ -116,7 +116,7 @@ class openshift_origin::broker {
     file { 'broker auth public key':
       ensure  => present,
       path    => '/etc/openshift/server_pub.pem',
-      content => "${::openshift_origin::conf_broker_auth_public_key}",
+      content => $::openshift_origin::conf_broker_auth_public_key,
       owner   => 'root',
       group   => 'root',
       mode    => '0644',
@@ -126,7 +126,7 @@ class openshift_origin::broker {
     file { 'broker auth private key':
       ensure  => present,
       path    => '/etc/openshift/server_priv.pem',
-      content => "${::openshift_origin::conf_broker_auth_private_key}",
+      content => $::openshift_origin::conf_broker_auth_private_key,
       owner   => 'root',
       group   => 'root',
       mode    => '0644',

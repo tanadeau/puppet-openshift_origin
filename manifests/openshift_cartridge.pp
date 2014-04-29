@@ -13,19 +13,30 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-class openshift_origin::plugins::container::libvirt {
-  package { 'libvirt-daemon':
+define openshift_origin::openshift_cartridge  {
+  $cart_prefix = 'openshift-origin-cartridge-'
+  case $name {
+    'jenkins', 'jenkins-client': {
+      include openshift_origin::cartridges::jenkins
+      $full_cart_name = "${cart_prefix}${name}"
+    }
+    'mariadb', 'mysql': {
+      case $::operatingsystem {
+        'Fedora' : {
+          $full_cart_name = "${cart_prefix}mariadb"
+        }
+        default  : {
+          $full_cart_name = "${cart_prefix}mysql"
+        }
+      }
+    }
+    default: {
+      $full_cart_name = "${cart_prefix}${name}"
+    }
+  }
+  package { $full_cart_name:
     ensure  => present,
     require => Class['openshift_origin::install_method'],
-  }
-
-  package { 'libvirt-sandbox':
-    ensure  => present,
-    require => Class['openshift_origin::install_method'],
-  }
-
-  service { 'libvirtd':
-    enable  => true,
-    require => Package['libvirt-daemon','libvirt-sandbox'],
+    notify  => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"],
   }
 }

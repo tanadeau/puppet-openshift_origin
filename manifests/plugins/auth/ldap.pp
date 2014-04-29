@@ -1,12 +1,12 @@
 # Copyright 2013 Mojo Lingo LLC.
 # Modifications by Red Hat, Inc.
-# 
+#
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 #  Unless required by applicable law or agreed to in writing, software
 #  distributed under the License is distributed on an "AS IS" BASIS,
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +32,7 @@ class openshift_origin::plugins::auth::ldap {
     notify  => Service['openshift-broker'],
     before  => Exec['Broker gem dependencies'],
   }
-  
+
   file { 'Auth plugin config':
     path    => '/etc/openshift/plugins.d/openshift-origin-auth-remote-user.conf',
     content => template('openshift_origin/broker/plugins/auth/basic/remote-user.conf.plugin.erb'),
@@ -45,7 +45,7 @@ class openshift_origin::plugins::auth::ldap {
     notify  => Service['openshift-broker'],
     before  => Exec['Broker gem dependencies'],
   }
-  
+
   file { 'Console httpd config':
     path    => '/var/www/openshift/console/httpd/conf.d/openshift-origin-auth-remote-user-ldap.conf',
     content => template('openshift_origin/console/plugins/auth/ldap/openshift-origin-auth-remote-user-ldap.conf.erb'),

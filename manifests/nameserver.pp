@@ -1,12 +1,12 @@
 # Copyright 2013 Mojo Lingo LLC.
 # Modifications by Red Hat, Inc.
-# 
+#
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 #  Unless required by applicable law or agreed to in writing, software
 #  distributed under the License is distributed on an "AS IS" BASIS,
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,7 @@ class openshift_origin::nameserver {
   }
 
   package { ['bind', 'bind-utils']:
-    ensure => present,
+    ensure  => present,
     require => Class['openshift_origin::install_method'],
   }
 
@@ -90,13 +90,13 @@ class openshift_origin::nameserver {
   }
 
   # create named/adddress mappings for infrastructure hosts
-  if "${openshift_origin::dns_infrastructure_zone}" != '' {
+  if $openshift_origin::dns_infrastructure_zone != '' {
 
     file { 'infrastructure host configuration':
-      path => '/var/named/oo_infrastructure.conf',
-      owner => 'root',
-      group => 'named',
-      mode => '644',
+      path    => '/var/named/oo_infrastructure.conf',
+      owner   => 'root',
+      group   => 'named',
+      mode    => '0644',
       content => template('openshift_origin/named/oo_infrastructure.conf.erb'),
       replace => false,
       require => File['/var/named']
@@ -112,24 +112,24 @@ class openshift_origin::nameserver {
     }
 
     file { 'infrastructure zone contents':
-      path => "/var/named/dynamic/${openshift_origin::dns_infrastructure_zone}.db",
-      owner => 'named',
-      group => 'named',
-      mode => '664',
+      path    => "/var/named/dynamic/${openshift_origin::dns_infrastructure_zone}.db",
+      owner   => 'named',
+      group   => 'named',
+      mode    => '0664',
       content => template('openshift_origin/named/oo_infrastructure.db.erb'),
       replace => false,
       require => File['infrastructure host configuration']
     }
 
   } else {
-  
+
     file { 'infrastructure host configuration (empty)':
-      ensure => present,
+      ensure  => present,
       replace => false,
-      path => '/var/named/oo_infrastructure.conf',
-      owner => 'root',
-      group => 'named',
-      mode => '644',
+      path    => '/var/named/oo_infrastructure.conf',
+      owner   => 'root',
+      group   => 'named',
+      mode    => '0644',
       content => '// no openshift infrastructure zone',
       require => File['/var/named']
     }

@@ -1,12 +1,12 @@
 # Copyright 2013 Mojo Lingo LLC.
 # Modifications by Red Hat, Inc.
-# 
+#
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 #  Unless required by applicable law or agreed to in writing, software
 #  distributed under the License is distributed on an "AS IS" BASIS,
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,16 +27,16 @@ class openshift_origin::node {
 
   package {
     ['rubygem-openshift-origin-node',
-     "${::openshift_origin::params::ruby_scl_prefix}rubygem-passenger-native",
-     'openshift-origin-node-util',
-     'policycoreutils-python',
-     'openshift-origin-msg-node-mcollective',
-     'git',
-     'make',
-     'oddjob',
-     'vim-enhanced',
-     'mlocate',
-     'screen',
+      "${::openshift_origin::params::ruby_scl_prefix}rubygem-passenger-native",
+      'openshift-origin-node-util',
+      'policycoreutils-python',
+      'openshift-origin-msg-node-mcollective',
+      'git',
+      'make',
+      'oddjob',
+      'vim-enhanced',
+      'mlocate',
+      'screen',
     ]:
     ensure  => present,
     require => Class['openshift_origin::install_method'],
@@ -58,38 +58,39 @@ class openshift_origin::node {
     unless  => '/usr/bin/quota -f $(df /var/lib/openshift/ | tail -1 | tr -s \' \' | cut -d\' \' -f 6 | sort -u) -q 2>/dev/null',
   }
   sysctl::value { 'kernel.sem':
-      value => "250\t32000\t32\t4096",
+    value => "250\t32000\t32\t4096",
   }
   sysctl::value { 'net.ipv4.ip_local_port_range':
-      value => "15000\t35530",
+    value => "15000\t35530",
   }
   sysctl::value { 'net.netfilter.nf_conntrack_max':
-      value => '1048576',
+    value => '1048576',
   }
   sysctl::value { 'net.ipv4.ip_forward':
-      value => '1',
+    value => '1',
   }
   sysctl::value { 'net.ipv4.conf.all.route_localnet':
-      value => '1',
+    value => '1',
   }
   sysctl::value { 'kernel.shmall':
-      value => "${::openshift_origin::params::_node_shmall}",
+    value => $::openshift_origin::params::_node_shmall,
   }
   sysctl::value { 'kernel.shmmax':
-      value => "${::openshift_origin::params::_node_shmmax}",
+    value => $::openshift_origin::params::_node_shmmax,
   }
   sysctl::value { 'kernel.msgmnb':
-      value => 65536,
+    value => 65536,
   }
   sysctl::value { 'kernel.msgmax':
-      value => '65536',
+    value => '65536',
   }
-      
+
   case $::openshift_origin::node_container_plugin {
     'selinux': { include openshift_origin::plugins::container::selinux }
     'libvirt': { include openshift_origin::plugins::container::libvirt }
+    default: {}
   }
-  
+
   if member( $::openshift_origin::node_frontend_plugins, 'apache-mod-rewrite' ) {
     include openshift_origin::plugins::frontend::apache_mod_rewrite
   }
@@ -102,7 +103,7 @@ class openshift_origin::node {
   if member( $::openshift_origin::node_frontend_plugins, 'haproxy-sni-proxy' ) and ($::operatingsystem != 'Fedora') {
     include openshift_origin::plugins::frontend::haproxy_sni_proxy
   }
- 
+
   augeas { 'Tune sshd config':
     context => '/files/etc/ssh/sshd_config',
     lens    => 'Sshd.lns',
@@ -112,7 +113,7 @@ class openshift_origin::node {
       'set MaxStartups 40',
       'set AcceptEnv[5]/01 GIT_SSH',
     ],
-    onlyif => "match AcceptEnv[*]/*[. = 'GIT_SSH'] size == 0"
+    onlyif  => 'match AcceptEnv[*]/*[. = \'GIT_SSH\'] size == 0',
   }
 
   service { [
@@ -124,10 +125,10 @@ class openshift_origin::node {
     ]:
     enable  => true,
     require => [
-      Package['rubygem-openshift-origin-node'],      
+      Package['rubygem-openshift-origin-node'],
       Package['openshift-origin-node-util'],
-      Package["mcollective"],
-      Package["oddjob"],
+      Package['mcollective'],
+      Package['oddjob'],
     ],
   }
 
@@ -141,7 +142,7 @@ class openshift_origin::node {
       notify  => Exec['prepare cgroups']
     }
 
-    # TODO: Investigate if restorecons are necessary    
+    # TODO: Investigate if restorecons are necessary
     exec { 'prepare cgroups':
       command     => '/sbin/restorecon -rv /etc/cgconfig.conf; mkdir -p /cgroup; restorecon -rv /cgroup',
       refreshonly => true
@@ -149,13 +150,13 @@ class openshift_origin::node {
 
     service { ['cgconfig', 'cgred']:
       enable => true
-    } 
+    }
   }
 
   service { ['openshift-gears']:
-    enable  => true,
-    require => [
-      Package['rubygem-openshift-origin-node'],      
+    enable   => true,
+    require  => [
+      Package['rubygem-openshift-origin-node'],
       Package['openshift-origin-node-util'],
     ],
     provider => $::openshift_origin::params::os_init_provider,

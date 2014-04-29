@@ -5,12 +5,13 @@
 #
 class openshift_origin::selbooleans {
   selboolean {
-    ['httpd_unified',
-     'httpd_can_network_connect',
-     'httpd_can_network_relay',
-     'httpd_run_stickshift',
-     'httpd_read_user_content',
-     'httpd_enable_homedirs',
+    [
+      'httpd_unified',
+      'httpd_can_network_connect',
+      'httpd_can_network_relay',
+      'httpd_run_stickshift',
+      'httpd_read_user_content',
+      'httpd_enable_homedirs',
     ]:
     value      => 'on',
     persistent => true,
