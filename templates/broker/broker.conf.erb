@@ -4,6 +4,8 @@ CLOUD_DOMAIN="<%= scope.lookupvar('::openshift_origin::domain') %>"
 # Eg: "small,medium,large"
 VALID_GEAR_SIZES="<%= scope.lookupvar('::openshift_origin::conf_valid_gear_sizes').join(',') %>"
 
+# Default number of domains to assign to a new user
+DEFAULT_MAX_DOMAINS="10"
 # Default number of gears to assign to a new user
 DEFAULT_MAX_GEARS="100"
 # Default gear sizes (comma-separated) allowed to a new user
@@ -75,7 +77,6 @@ AUTH_RSYNC_KEY_FILE="/etc/openshift/rsync_id_rsa"
 #
 AUTH_SCOPE_TIMEOUTS="session=1.days|7.days, *=1.months|6.months"
 
-
 # This session must be shared amongst all Brokers but otherwise secret.  If
 # this value is changed sessions will be dropped.  This value is used for
 # setting the rails secret_token (or the secret_key_base for Rails 4.0).
@@ -96,6 +97,17 @@ MAX_DOWNLOAD_REDIRECTS="2"
 MAX_DOWNLOAD_TIME="10"
 # Maximum size for downloadable manifest file (in bytes)
 MAX_CART_SIZE="20480"
+# Maximum number of seconds for connection to be established when downloading
+# a cartridge.
+CART_DOWNLOAD_CONN_TIMEOUT="2"
+
+# Set a HTTP proxy server for downloading cartridges
+#
+# HTTP_PROXY="proxy.server.com:3128"
+
+# Team collaboration settings
+MAX_MEMBERS_PER_RESOURCE="100"
+MAX_TEAMS_PER_RESOURCE="5"
 
 # Whether cartridges that specify direct SSL connection to the gear
 # are allowed, denied or forced.
@@ -106,7 +118,26 @@ SSL_ENDPOINT="allow"
 # Config flag to allow scalable applications to become Highly Available
 ALLOW_HA_APPLICATIONS="true"
 
+# Should OpenShift handle the registration and deregistration of HA DNS entries pointing to the external router?
+# This flag applies in cases where an external router is using to route application traffic to the gears
+# Set this to "true" if you want OpenShift to create/delete HA DNS entries upon application creation/deletion.
+# When using an external router, if this flag is set to "false", the HA DNS entries will need to be created externally.
+# Failure to do that could prevent the application from receiving traffic through the external router
+MANAGE_HA_DNS="false"
+
+# This is the public hostname that the HA DNS entries for an application point to
+# This allows setting up an external router and routing application traffic to the application's gears
+ROUTER_HOSTNAME="www.example.com"
+
+# Prefix/Suffix used for Highly Available application URL
+# http://${HA_DNS_PREFIX}${APP_NAME}-${DOMAIN_NAME}${HA_DNS_SUFFIX}.${CLOUD_DOMAIN}
+HA_DNS_PREFIX="ha-"
+HA_DNS_SUFFIX=""
+
 # Determine whether or not multiple HA proxy gears for a given application can be spun up on the same node
 ALLOW_MULTIPLE_HAPROXY_ON_NODE=<%= scope.lookupvar('::openshift_origin::conf_broker_multi_haproxy_per_node') %>
 
-ROUTER_HOSTNAME="www.example.com"
+# Whether to allow users to create aliases that are under the cloud domain. Note:
+# Aliases of the form word-word.<domain> are rejected to prevent conflicts with app names.
+# Also this still will not create any DNS entry for the alias; that is an external step.
+ALLOW_ALIAS_IN_DOMAIN="false"
