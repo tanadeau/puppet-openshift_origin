@@ -141,7 +141,6 @@ class openshift_origin::nameserver {
     require => [
       File['/etc/rndc.key'],
       File['/var/named/forwarders.conf'],
-      File['/etc/named.conf'],
       File['/var/named'],
       File['/var/named/dynamic'],
       File['dynamic zone'],
@@ -153,7 +152,7 @@ class openshift_origin::nameserver {
 
   service { 'named':
     ensure    => running,
-    subscribe => File['/etc/named.conf'],
+    subscribe => File['named configs'],
     enable    => true,
     require   => Exec['named restorecon'],
   }
