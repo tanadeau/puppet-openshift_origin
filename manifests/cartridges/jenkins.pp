@@ -14,7 +14,7 @@
 #
 class openshift_origin::cartridges::jenkins {
   package { 'jenkins':
-    ensure  => '1.510-1.1',
+    ensure  => present,
     require => Class['openshift_origin::install_method'],
   }
   exec { '/usr/bin/yum versionlock jenkins':
