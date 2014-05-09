@@ -23,7 +23,10 @@ class openshift_origin::console {
 
   package { 'openshift-origin-console':
     ensure  => present,
-    require => Class['openshift_origin::install_method'],
+    require => [
+      Class['openshift_origin::install_method'],
+      Package['httpd'],
+    ]
   }
 
   # These dirs should be created by the package.
@@ -64,6 +67,7 @@ class openshift_origin::console {
   File['/var/www/openshift/console/httpd/run'] {
     seltype => 'httpd_var_run_t',
     require => [
+      Package['httpd'],
       Class['openshift_origin::broker_console_dirs'],
       Selinux_fcontext['/var/www/openshift/console/httpd/run(/.*)?'],
     ],

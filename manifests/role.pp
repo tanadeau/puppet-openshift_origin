@@ -25,8 +25,8 @@ class openshift_origin::role {
       ensure => 'present',
     }
     class { 'ntp':
-      servers    => $::openshift_origin::ntp_servers,
-      autoupdate => true,
+      servers        => $::openshift_origin::ntp_servers,
+      package_ensure => 'latest',
     }
   }
 }

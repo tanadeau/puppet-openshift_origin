@@ -45,7 +45,10 @@ class openshift_origin::broker {
       'rubygem-openshift-origin-admin-console',
     ]:
     ensure  => present,
-    require => Class['openshift_origin::install_method'],
+    require => [
+      Class['openshift_origin::install_method'],
+      Package['httpd'],
+    ]
   }
 
   # declare all resources with the common set of parameters
@@ -80,6 +83,7 @@ class openshift_origin::broker {
   File['/var/www/openshift/broker/httpd/run'] {
       seltype => 'httpd_var_run_t',
       require => [
+        Package['httpd'],
         Class['openshift_origin::broker_console_dirs'],
         Selinux_fcontext['/var/www/openshift/broker/httpd/run(/.*)?'],
       ]
@@ -90,6 +94,7 @@ class openshift_origin::broker {
     recurse => true,
     seltype => 'httpd_tmp_t',
     require => [
+      Package['httpd'],
       Class['openshift_origin::broker_console_dirs'],
       Selinux_fcontext['/var/www/openshift/broker/tmp(/.*)?'],
       Exec['Broker gem dependencies'],
@@ -207,6 +212,7 @@ class openshift_origin::broker {
     owner     => 'apache',
     group     => 'apache',
     mode      => '0644',
+    require   => Package['openshift-origin-broker'],
     subscribe => Exec['Broker gem dependencies'],
   }
 

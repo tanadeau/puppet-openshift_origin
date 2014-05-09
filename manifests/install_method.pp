@@ -15,14 +15,15 @@
 class openshift_origin::install_method {
   include openshift_origin::params
 
+  stage { 'first':
+    before => Stage['main'],
+  }
+
   case $::openshift_origin::install_method {
     'none' : {}
     'yum'  : {
-      include openshift_origin::yum_install_method
-      # TODO: This is a major hack intended to ensure that all yum repos are defined before we try to do anything else.
-      file { '/tmp':
-        ensure  => directory,
-        require => Class['openshift_origin::yum_install_method'],
+      class { 'openshift_origin::yum_install_method':
+        stage => 'first',
       }
     }
     default: {}
