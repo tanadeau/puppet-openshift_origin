@@ -21,6 +21,9 @@ class openshift_origin::msgserver (
     include openshift_origin::firewall::activemq
   }
 
+  $cluster_members        = $::openshift_origin::msgserver_cluster_members
+  $cluster_remote_members = delete($cluster_members, $::openshift_origin::msgserver_hostname)
+
   package { ['activemq','activemq-client']:
       ensure  => present,
       require => Class['openshift_origin::install_method'],
@@ -50,9 +53,15 @@ class openshift_origin::msgserver (
     require => Package['activemq'],
   }
 
+  if $::openshift_origin::msgserver_cluster {
+    $activemq_config_template_real = 'openshift_origin/activemq/activemq-network.xml.erb'
+  } else {
+    $activemq_config_template_real = 'openshift_origin/activemq/activemq.xml.erb'
+  }
+
   file { 'activemq.xml config':
     path    => '/etc/activemq/activemq.xml',
-    content => template('openshift_origin/activemq/activemq.xml.erb'),
+    content => template($activemq_config_template_real),
     owner   => 'root',
     group   => 'root',
     mode    => '0444',

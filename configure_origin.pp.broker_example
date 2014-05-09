@@ -30,4 +30,9 @@ class { 'openshift_origin' :
 
   #Enable development mode for more verbose logs
   development_mode           => true,
+
+  # Uncomment msgserver_cluster and msgserver_cluster_members for ActiveMQ High-Availability
+  # Clustering requires a minimum of 3 servers.
+  #msgserver_cluster         => true,
+  #msgserver_cluster_members => ['<MSGSERVER_HOSTNAME01>', '<MSGSERVER_HOSTNAME02>', '<MSGSERVER_HOSTNAME03>'],
 }

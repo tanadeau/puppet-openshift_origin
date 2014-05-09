@@ -209,6 +209,27 @@
 # only alphanumeric values in this script as others may cause syntax
 # errors depending on context. If non-alphanumeric values are required,
 # update them separately after installation.
+# 
+# [*msgserver_cluster*]
+#   Default: false
+#   Set to true to cluster ActiveMQ for high-availability and scalability
+#   of OpenShift message queues.
+#
+# [*msgserver_cluster_members*]
+#   Default: undef
+#   An array of ActiveMQ server hostnames.  Required when parameter
+#   msgserver_cluster is set to true.
+#
+# [*mcollective_cluster_members*]
+#   Default: $msgserver_cluster_members
+#   An array of ActiveMQ server hostnames.  Required when parameter
+#   msgserver_cluster is set to true.
+#
+# [*msgserver_password*]
+#   Default 'changeme'
+#   Password used by ActiveMQ's amquser.  The amquser is used to authenticate
+#   ActiveMQ inter-cluster communication.  Only used when msgserver_cluster
+#   is true.
 #
 # [*msgserver_admin_password*]
 #   Default: scrambled
@@ -580,6 +601,10 @@ class openshift_origin (
   $node_ip_addr                         = $ipaddress,
   $configure_ntp                        = true,
   $ntp_servers                          = ['time.apple.com iburst', 'pool.ntp.org iburst', 'clock.redhat.com iburst'],
+  $msgserver_cluster                    = false,
+  $msgserver_cluster_members            = undef,
+  $mcollective_cluster_members          = $msgserver_cluster_members,
+  $msgserver_password                   = 'changeme',
   $msgserver_admin_password             = inline_template('<%= require "securerandom"; SecureRandom.base64 %>'),
   $mcollective_user                     = 'mcollective',
   $mcollective_password                 = 'marionette',
@@ -635,6 +660,11 @@ class openshift_origin (
   $manage_firewall                      = true,
 ){
   include openshift_origin::role
+
+  if $msgserver_cluster and ! $msgserver_cluster_members and ! $mcollective_cluster_members {
+    fail('msgserver_cluster_members and mcollective_cluster_members parameters are required when msgserver_cluster is set')
+  }
+
   if member( $roles, 'nameserver' ) {
     class{ 'openshift_origin::role::nameserver':
       before => Class['openshift_origin::update_conf_files'],

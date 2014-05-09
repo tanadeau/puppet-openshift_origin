@@ -23,6 +23,14 @@ class openshift_origin::mcollective_client {
 
   # TODO: Replace with MCollective puppet module call
 
+  $cluster_members = $::openshift_origin::mcollective_cluster_members
+
+  if $cluster_members {
+    $pool_size = size($cluster_members)
+  } else {
+    $pool_size = '1'
+  }
+
   file { 'mcollective client config':
     ensure  => present,
     path    => "${::openshift_origin::params::ruby_scl_path_prefix}/etc/mcollective/client.cfg",
