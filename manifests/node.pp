@@ -34,6 +34,7 @@ class openshift_origin::node {
       'git',
       'make',
       'oddjob',
+      'dbus',
       'vim-enhanced',
       'mlocate',
       'screen',
@@ -129,6 +130,7 @@ class openshift_origin::node {
       Package['openshift-origin-node-util'],
       Package['mcollective'],
       Package['oddjob'],
+      Package['dbus'],
     ],
   }
 

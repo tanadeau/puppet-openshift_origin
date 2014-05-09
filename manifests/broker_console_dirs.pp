@@ -19,6 +19,7 @@ class openshift_origin::broker_console_dirs {
       '/var/log/openshift',
       '/var/www/openshift',
     ]:
-    ensure => directory
+    ensure  => directory,
+    require => Package['httpd'],
   }
 }
