@@ -21,13 +21,16 @@
 # === Parameters
 # [*roles*]
 #   Choose from the following roles to be configured on this node.
-#     * broker     - Installs the broker and console.
-#     * node       - Installs the node and cartridges.
-#     * msgserver  - Installs ActiveMQ message broker.
-#     * datastore  - Installs MongoDB (not sharded/replicated)
-#     * nameserver - Installs a BIND dns server configured with a TSIG key for updates.
+#     * broker        - Installs the broker and console.
+#     * node          - Installs the node and cartridges.
+#     * msgserver     - Installs ActiveMQ message broker.
+#     * datastore     - Installs MongoDB (not sharded/replicated)
+#     * nameserver    - Installs a BIND dns server configured with a TSIG key for updates.
+#     * load_balancer - Installs HAProxy and Keepalived for Broker API high-availability.
 #   Default: ['broker','node','msgserver','datastore','nameserver']
 #
+#   Note: Multiple servers are required when using the load_balancer role.
+# 
 # [*install_method*]
 #   Choose from the following ways to provide packages:
 #     none - install sources are already set up when the script executes (default)
@@ -150,6 +153,34 @@
 #   This is used for the node to record its broker. Also is the default
 #   for the nameserver IP if none is given.
 #
+# [*broker_cluster_members*]
+#   Default: undef
+#   An array of broker hostnames that will be load-balanced for high-availability.
+#
+# [*broker_cluster_ip_addresses*]
+#   Default: undef
+#   An array of Broker IP addresses within the load-balanced cluster.
+#
+# [*broker_virtual_ip_address*]
+#   Default: undef
+#   The virtual IP address that will front-end the Broker cluster.
+#
+# [*broker_virtual_hostname*]
+#   Default: "broker.${domain}"
+#   The hostame that represents the Broker API cluster.  This name is associated
+#   to broker_virtual_ip_address and added to Named for DNS resolution.
+#
+# [*load_balancer_master*]
+#   Default: false
+#   Sets the state of the load-balancer.  Valid options are true or false.
+#   true sets load_balancer_master as the active listener for the Broker Cluster
+#   Virtual IP address.
+#
+# [*load_balancer_auth_password*]
+#   Default: 'changeme'
+#   The password used to secure communication between the load-balancers
+#   within a Broker cluster.
+# 
 # [*node_ip_addr*]
 #   Default: the current IP (at install)
 #   This is used for the node to give a public IP, if different from the
@@ -497,6 +528,12 @@ class openshift_origin (
   $aws_secret_key                       = '',
   $aws_zone_id                          = '',
   $broker_ip_addr                       = $ipaddress,
+  $broker_cluster_members               = undef,
+  $broker_cluster_ip_addresses          = undef,
+  $broker_virtual_ip_address            = undef,
+  $broker_virtual_hostname              = "broker.${domain}",
+  $load_balancer_master                 = false,
+  $load_balancer_auth_password          = 'changeme',
   $node_ip_addr                         = $ipaddress,
   $configure_ntp                        = true,
   $ntp_servers                          = ['time.apple.com iburst', 'pool.ntp.org iburst', 'clock.redhat.com iburst'],
@@ -563,6 +600,9 @@ class openshift_origin (
     if member( $roles, 'datastore' ) {
       Class['openshift_origin::role::nameserver'] -> Class['openshift_origin::role::datastore']
     }
+    if member( $roles, 'load_balancer' ) {
+      Class['openshift_origin::role::nameserver'] -> Class['openshift_origin::role::load_balancer']
+    }
   }
 
   # Anchors for containing the implementation class
@@ -591,6 +631,11 @@ class openshift_origin (
   }
   if member( $roles, 'datastore' ) {
     class{ 'openshift_origin::role::datastore':
+      require => Class['openshift_origin::update_conf_files']
+    }
+  }
+  if member( $roles, 'load_balancer' ) {
+    class{ 'openshift_origin::role::load_balancer':
       require => Class['openshift_origin::update_conf_files']
     }
   }

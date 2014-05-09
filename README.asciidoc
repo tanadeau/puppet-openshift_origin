@@ -108,11 +108,12 @@ $ d.register_application "appname", "namespace", "node_fqdn"
 
 Choose from the following roles to be configured on this node.
 
-* broker     - Installs the broker and console.
-* node       - Installs the node and cartridges.
-* msgserver  - Installs ActiveMQ message broker.
-* datastore  - Installs MongoDB (not sharded/replicated)
-* nameserver - Installs a BIND dns server configured with a TSIG key for updates.
+* broker        - Installs the broker and console.
+* node          - Installs the node and cartridges.
+* msgserver     - Installs ActiveMQ message broker.
+* datastore     - Installs MongoDB (not sharded/replicated)
+* nameserver    - Installs a BIND dns server configured with a TSIG key for updates.
+* load_balancer - Installs HAProxy and Keepalived for Broker API high-availability.
 
 Default: ['broker','node','msgserver','datastore','nameserver']
 
@@ -232,6 +233,40 @@ This is used for the node to record its broker. Also is the default
 for the nameserver IP if none is given.
 
 Default: the current IP (at install)
+
+==== broker_cluster_members
+An array of broker hostnames that will be load-balanced for high-availability.
+
+Default: undef
+
+==== broker_cluster_ip_addresses
+An array of Broker IP addresses within the load-balanced cluster.
+
+Default: undef
+
+==== broker_virtual_ip_address
+The virtual IP address that will front-end the Broker cluster.
+
+Default: undef
+
+==== broker_virtual_hostname
+The hostame that represents the Broker API cluster.  This name is associated
+to broker_virtual_ip_address and added to Named for DNS resolution.
+
+Default: "broker.${domain}"
+
+==== load_balancer_master
+Sets the state of the load-balancer.  Valid options are true or false.
+true sets the load-balancer as the active listener for the Broker cluster
+Virtual IP address. Only 1 load_balancer_master is allowed within a Broker cluster.
+
+Default: false
+
+==== load_balancer_auth_password
+The password used to secure communication between the load-balancers
+within a Broker cluster.
+
+Default: 'changeme'
 
 ==== node_ip_addr
 This is used for the node to give a public IP, if different from the
