@@ -30,7 +30,6 @@ class openshift_origin::plugins::auth::ldap {
       Package['rubygem-openshift-origin-auth-remote-user'],
     ],
     notify  => Service['openshift-broker'],
-    before  => Exec['Broker gem dependencies'],
   }
 
   file { 'Auth plugin config':
@@ -43,7 +42,6 @@ class openshift_origin::plugins::auth::ldap {
       Package['rubygem-openshift-origin-auth-remote-user'],
     ],
     notify  => Service['openshift-broker'],
-    before  => Exec['Broker gem dependencies'],
   }
 
   file { 'Console httpd config':
@@ -56,6 +54,5 @@ class openshift_origin::plugins::auth::ldap {
       Package['rubygem-openshift-origin-auth-remote-user'],
     ],
     notify  => Service['openshift-console'],
-    before  => Exec['Console gem dependencies'],
   }
 }
