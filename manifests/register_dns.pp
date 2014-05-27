@@ -12,10 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-define openshift_origin::register_dns($fqdn) {
+define openshift_origin::register_dns($fqdn, $role) {
   if $::openshift_origin::register_host_with_nameserver {
     if $fqdn != 'localhost' {
-      exec { "Register ${fqdn}":
+      exec { "Register ${fqdn} - ${role}":
         command  => template('openshift_origin/register_dns.erb'),
         provider => 'shell'
       }
