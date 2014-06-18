@@ -18,7 +18,7 @@ class openshift_origin::datastore {
     include openshift_origin::firewall::mongodb
   }
 
-  package { ['mongodb', 'mongodb-server']:
+  package { ['mongodb', 'mongodb-server', 'rubygem-open4']:
     ensure  => present,
     require => Class['openshift_origin::install_method'],
   }
@@ -37,6 +37,7 @@ class openshift_origin::datastore {
     require => [
       Package['mongodb'],
       Package['mongodb-server'],
+      Package['rubygem-open4'],
     ],
   }
 
