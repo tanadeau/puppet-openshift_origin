@@ -92,7 +92,6 @@ class openshift_origin::nameserver {
 
   # create named/adddress mappings for infrastructure hosts
   if $openshift_origin::dns_infrastructure_zone != '' {
-
     file { 'infrastructure host configuration':
       path    => '/var/named/oo_infrastructure.conf',
       owner   => 'root',
@@ -122,9 +121,24 @@ class openshift_origin::nameserver {
       require => File['infrastructure host configuration']
     }
 
+    exec { 'named restorecon':
+      command => '/sbin/restorecon -rv /etc/rndc.* /etc/named.* /var/named /var/named/forwarders.conf',
+      require => [
+        File['/etc/rndc.key'],
+        File['/var/named/forwarders.conf'],
+        File['/var/named'],
+        File['/var/named/dynamic'],
+        File['dynamic zone'],
+        File['named key'],
+        File['named configs'],
+        File['infrastructure host configuration'],
+        File['named infrastructure key'],
+        File['infrastructure zone contents'],
+        Exec['create rndc.key'],
+      ]
+    }
   } else {
-
-    file { 'infrastructure host configuration (empty)':
+    file { 'empty infrastructure host configuration':
       ensure  => present,
       replace => false,
       path    => '/var/named/oo_infrastructure.conf',
@@ -134,20 +148,21 @@ class openshift_origin::nameserver {
       content => '// no openshift infrastructure zone',
       require => File['/var/named']
     }
-  }
 
-  exec { 'named restorecon':
-    command => '/sbin/restorecon -rv /etc/rndc.* /etc/named.* /var/named /var/named/forwarders.conf',
-    require => [
-      File['/etc/rndc.key'],
-      File['/var/named/forwarders.conf'],
-      File['/var/named'],
-      File['/var/named/dynamic'],
-      File['dynamic zone'],
-      File['named key'],
-      File['named configs'],
-      Exec['create rndc.key'],
-    ],
+    exec { 'named restorecon':
+      command => '/sbin/restorecon -rv /etc/rndc.* /etc/named.* /var/named /var/named/forwarders.conf',
+      require => [
+        File['/etc/rndc.key'],
+        File['/var/named/forwarders.conf'],
+        File['/var/named'],
+        File['/var/named/dynamic'],
+        File['dynamic zone'],
+        File['named key'],
+        File['named configs'],
+        File['empty infrastructure host configuration'],
+        Exec['create rndc.key'],
+      ],
+    }
   }
 
   service { 'named':
