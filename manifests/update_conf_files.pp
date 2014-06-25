@@ -33,7 +33,7 @@ class openshift_origin::update_conf_files {
   }
 
   file { '/etc/resolv.conf':
-    content => template('openshift_origin/resolv.conf.erb')
+    content => template('openshift_origin/resolv.conf.erb'),
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
