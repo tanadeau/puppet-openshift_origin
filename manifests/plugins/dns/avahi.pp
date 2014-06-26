@@ -39,6 +39,11 @@ class openshift_origin::plugins::dns::avahi {
     ]
   }
 
+  package { 'rubygem-openshift-origin-dns-avahi':
+    ensure  => present,
+    require => Class['openshift_origin::install_method'],
+  }
+
   package { 'avahi-cname-manager':
     ensure  => present,
     require => Class['openshift_origin::install_method'],
