@@ -33,6 +33,9 @@ class openshift_origin::update_conf_files {
   }
 
   file { '/etc/resolv.conf':
-    content => "search ${::openshift_origin::domain}\nnameserver ${::openshift_origin::nameserver_ip_addr}"
+    content => template('openshift_origin/resolv.conf.erb'),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
   }
 }
