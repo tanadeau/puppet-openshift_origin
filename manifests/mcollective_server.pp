@@ -45,6 +45,11 @@ class openshift_origin::mcollective_server {
   }
 
   if( $::operatingsystem == 'Fedora' ) {
+    exec { 'systemd-daemon-reload':
+      command     => '/usr/bin/systemctl daemon-reload',
+      refreshonly => true,
+    }
+
     $require_real = [
       File['mcollective server config', '/usr/lib/systemd/system/mcollective.service'],
       Exec['systemd-daemon-reload']
