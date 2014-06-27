@@ -43,6 +43,15 @@
 #       * optional_repo
 #   Default: yum
 #
+# [*parallel_deployment*]
+#   This flag is used to control some module behaviors when an outside utility
+#   (like oo-install) is managing the deployment of OpenShift across multiple
+#   hosts simultaneously. Some configuration tasks can't be performed during
+#   a multi-host parallel installation and this boolean enables the user to
+#   indicate whether or not thos tasks should be attempted.
+#
+#   Default: false
+#
 # [*repos_base*]
 #   Base path to repository for OpenShift Origin
 #   Nightlies:
@@ -565,6 +574,7 @@
 class openshift_origin (
   $roles                                = ['broker','node','msgserver','datastore','nameserver'],
   $install_method                       = 'yum',
+  $parallel_deployment                  = false,
   $repos_base                           = $::operatingsystem ? {
                                             'Fedora' => 'https://mirror.openshift.com/pub/origin-server/nightly/fedora-19',
                                             default  => 'https://mirror.openshift.com/pub/origin-server/nightly/rhel-6',

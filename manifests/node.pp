@@ -38,6 +38,7 @@ class openshift_origin::node {
       'vim-enhanced',
       'mlocate',
       'screen',
+      'libcgroup',
     ]:
     ensure  => present,
     require => Class['openshift_origin::install_method'],
@@ -151,7 +152,8 @@ class openshift_origin::node {
     }
 
     service { ['cgconfig', 'cgred']:
-      enable => true
+      enable  => true,
+      require => Package['libcgroup'],
     }
   }
 
