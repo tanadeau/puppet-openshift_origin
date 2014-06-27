@@ -2,14 +2,14 @@
 CLOUD_DOMAIN="<%= scope.lookupvar('::openshift_origin::domain') %>"
 # Comma-separated list of valid gear sizes
 # Eg: "small,medium,large"
-VALID_GEAR_SIZES="<%= scope.lookupvar('::openshift_origin::conf_valid_gear_sizes').join(',') %>"
+VALID_GEAR_SIZES="<%= scope.lookupvar('::openshift_origin::conf_valid_gear_sizes') %>"
 
 # Default number of domains to assign to a new user
 DEFAULT_MAX_DOMAINS="10"
 # Default number of gears to assign to a new user
 DEFAULT_MAX_GEARS="100"
 # Default gear sizes (comma-separated) allowed to a new user
-DEFAULT_GEAR_CAPABILITIES="<%= scope.lookupvar('::openshift_origin::conf_default_gear_capabilities').join(',') %>"
+DEFAULT_GEAR_CAPABILITIES="<%= scope.lookupvar('::openshift_origin::conf_default_gear_capabilities') %>"
 # Default gear size for a new gear
 DEFAULT_GEAR_SIZE="<%= scope.lookupvar('::openshift_origin::conf_default_gear_size') %>"
 
