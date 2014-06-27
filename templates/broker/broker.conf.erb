@@ -2,7 +2,7 @@
 CLOUD_DOMAIN="<%= scope.lookupvar('::openshift_origin::domain') %>"
 # Comma-separated list of valid gear sizes
 # Eg: "small,medium,large"
-VALID_GEAR_SIZES="<%= scope.lookupvar('::openshift_origin::conf_valid_gear_sizes').join(',) %>"
+VALID_GEAR_SIZES="<%= scope.lookupvar('::openshift_origin::conf_valid_gear_sizes').join(',') %>"
 
 # Default number of domains to assign to a new user
 DEFAULT_MAX_DOMAINS="10"
