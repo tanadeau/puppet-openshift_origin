@@ -2,22 +2,14 @@
 CLOUD_DOMAIN="<%= scope.lookupvar('::openshift_origin::domain') %>"
 # Comma-separated list of valid gear sizes
 # Eg: "small,medium,large"
-<% if is_array(scope.lookupvar('::openshift_origin::conf_valid_gear_sizes')) == true %>
-VALID_GEAR_SIZES="<%= scope.lookupvar('::openshift_origin::conf_valid_gear_sizes').join(',') %>"
-<% else %>
-VALID_GEAR_SIZES="<%= scope.lookupvar('::openshift_origin::conf_valid_gear_sizes') %>"
-<% end %>
+VALID_GEAR_SIZES="<%= flatten([scope.lookupvar('::openshift_origin::conf_valid_gear_sizes')]).join(',') %>"
 
 # Default number of domains to assign to a new user
 DEFAULT_MAX_DOMAINS="10"
 # Default number of gears to assign to a new user
 DEFAULT_MAX_GEARS="100"
 # Default gear sizes (comma-separated) allowed to a new user
-<% if is_array(scope.lookupvar('::openshift_origin::conf_default_gear_capabilities')) == true %>
-DEFAULT_GEAR_CAPABILITIES="<%= scope.lookupvar('::openshift_origin::conf_default_gear_capabilities').join(',') %>"
-<% else %>
-DEFAULT_GEAR_CAPABILITIES="<%= scope.lookupvar('::openshift_origin::conf_default_gear_capabilities') %>"
-<% end %>
+DEFAULT_GEAR_CAPABILITIES="<%= flatten([scope.lookupvar('::openshift_origin::conf_default_gear_capabilities')]).join(',') %>"
 
 # Default gear size for a new gear
 DEFAULT_GEAR_SIZE="<%= scope.lookupvar('::openshift_origin::conf_default_gear_size') %>"
@@ -26,7 +18,7 @@ DEFAULT_GEAR_SIZE="<%= scope.lookupvar('::openshift_origin::conf_default_gear_si
 MONGO_REPLICA_SETS=<%= scope.lookupvar('::openshift_origin::mongodb_replicasets') %>
 <% if scope.lookupvar('::openshift_origin::mongodb_replicasets') == true %>
 # Replica set example: "<host-1>:<port-1> <host-2>:<port-2> ..."
-MONGO_HOST_PORT="<%= scope.lookupvar('::openshift_origin::mongodb_replicasets_members').join(',') %>"
+MONGO_HOST_PORT="<%= flatten([scope.lookupvar('::openshift_origin::mongodb_replicasets_members')]).join(',') %>"
 <% else %>
 # Replica set example: "<host-1>:<port-1> <host-2>:<port-2> ..."
 MONGO_HOST_PORT="<%= scope.lookupvar('::openshift_origin::datastore_hostname') %>:27017"
