@@ -389,9 +389,17 @@
 #   is expected in /var/www/openshift/broker/httpd/conf.d/http.keytab
 #
 # [*broker_ldap_uri*]
-#   URI to the LDAP server (e.g. ldap://ldap.example.com:389/ou=People,dc=my-domain,dc=com).
+#   URI to the LDAP server (e.g. ldap://ldap.example.com:389/ou=People,dc=my-domain,dc=com?uid?sub?(objectClass=*)).
 #   Set <code>broker_auth_plugin</code> to <code>ldap</code> to enable
 #   this feature.
+#
+# [*broker_ldap_bind_dn*]
+# LDAP DN (Distinguished name) of user to bind to the directory with. (e.g. cn=administrator,cn=Users,dc=domain,dc=com)
+# Default is anonymous bind.
+#
+# [*broker_ldap_bind_password*]
+# Password of bind user set in broker_ldap_bind_dn.
+# Default is anonymous bind with a blank password.
 #
 # [*node_shmmax*]
 #   kernel.shmmax sysctl setting for /etc/sysctl.conf
@@ -650,6 +658,8 @@ class openshift_origin (
   $broker_krb_auth_realms               = '',
   $broker_krb_keytab                    = '',
   $broker_ldap_uri                      = '',
+  $broker_ldap_bind_dn                  = '',
+  $broker_ldap_bind_password            = '',
   $node_shmmax                          = undef,
   $node_shmall                          = undef,
   $node_container_plugin                = 'selinux',

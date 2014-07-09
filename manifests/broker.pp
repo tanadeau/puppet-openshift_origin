@@ -34,6 +34,7 @@ class openshift_origin::broker {
     'mongo'    : { include openshift_origin::plugins::auth::mongo }
     'htpasswd' : { include openshift_origin::plugins::auth::htpasswd }
     'kerberos' : { include openshift_origin::plugins::auth::kerberos }
+    'ldap'     : { include openshift_origin::plugins::auth::ldap }
     default    : { include openshift_origin::plugins::auth::htpasswd }
   }
 
