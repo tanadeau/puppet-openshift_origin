@@ -54,11 +54,16 @@ class openshift_origin::plugins::dns::avahi {
     require => Class['openshift_origin::install_method'],
   }
 
-  service { ['avahi-daemon', 'avahi-cname-manager']:
+  service { 'avahi-cname-manager':
+    ensure    => running,
+    enable    => true,
+    subscribe => File['avahi-cname-manager config'],
+    require   => Package['avahi-cname-manager'],
+  }
+
+  service { 'avahi-daemon':
+    ensure  => running,
     enable  => true,
-    require => [
-      Package['avahi'],
-      Package['avahi-cname-manager'],
-    ]
+    require => Package['avahi'],
   }
 }
