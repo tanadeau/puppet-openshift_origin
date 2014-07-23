@@ -105,6 +105,11 @@ class openshift_origin::plugins::container::selinux {
       'set 02/module pam_namespace.so',
       'set 02/argument[1] no_unmount_on_close',
       'set 02/#comment \'Managed by puppet:openshift_origin\'',
+
+      'set 03/type session',
+      'set 03/control optional',
+      'set 03/module pam_cgroup.so',
+      'set 03/#comment \'Managed by puppet:openshift_origin\'',
     ],
     onlyif  => 'match *[#comment=\'Managed by puppet:openshift_origin\'] size == 0',
   }
@@ -128,7 +133,12 @@ class openshift_origin::plugins::container::selinux {
       'set 02/module pam_namespace.so',
       'set 02/argument[1] no_unmount_on_close',
       'set 02/#comment \'Managed by puppet:openshift_origin\'',
-    ],
+
+      'set 03/type session',
+      'set 03/control optional',
+      'set 03/module pam_cgroup.so',
+      'set 03/#comment \'Managed by puppet:openshift_origin\'',
+   ],
     onlyif  => 'match *[#comment=\'Managed by puppet:openshift_origin\'] size == 0',
   }
 
@@ -174,7 +184,12 @@ class openshift_origin::plugins::container::selinux {
       'set 02/module pam_namespace.so',
       'set 02/argument[1] no_unmount_on_close',
       'set 02/#comment \'Managed by puppet:openshift_origin\'',
-    ],
+
+      'set 03/type session',
+      'set 03/control optional',
+      'set 03/module pam_cgroup.so',
+      'set 03/#comment \'Managed by puppet:openshift_origin\'',
+   ],
     onlyif  => 'match *[#comment=\'Managed by puppet:openshift_origin\'] size == 0',
   }
 
