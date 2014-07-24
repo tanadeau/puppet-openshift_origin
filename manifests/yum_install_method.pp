@@ -108,7 +108,6 @@ class openshift_origin::yum_install_method {
   if $::openshift_origin::optional_repo != undef {
     yumrepo { 'openshift-optional':
       baseurl  => $::openshift_origin::optional_repo,
-      priority => 1,
       gpgcheck => 0,
       require  => Package['yum-plugin-priorities'],
     }
