@@ -37,7 +37,7 @@ class openshift_origin::mcollective_client {
     content => template('openshift_origin/mcollective/mcollective-client.cfg.erb'),
     owner   => 'root',
     group   => 'root',
-    mode    => '0644',
+    mode    => '0640',
     require => Package['mcollective-client'],
   }
 

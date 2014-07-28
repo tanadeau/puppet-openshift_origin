@@ -33,13 +33,18 @@ class openshift_origin::mcollective_server {
   Class['Openshift_origin::Role']              -> Class['Openshift_origin::Mcollective_server']
   Class['Openshift_origin::Update_conf_files'] -> Class['Openshift_origin::Mcollective_server']
 
+  file { "${::openshift_origin::params::ruby_scl_path_prefix}/var/run":
+    ensure  => "directory",
+    require => Package['mcollective'],
+  }
+
   file { 'mcollective server config':
     ensure  => present,
     path    => "${::openshift_origin::params::ruby_scl_path_prefix}/etc/mcollective/server.cfg",
     content => template('openshift_origin/mcollective/mcollective-server.cfg.erb'),
     owner   => 'root',
     group   => 'root',
-    mode    => '0644',
+    mode    => '0640',
     require => Package['mcollective'],
     notify  => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"],
   }

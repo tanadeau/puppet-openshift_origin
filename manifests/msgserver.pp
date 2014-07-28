@@ -64,7 +64,7 @@ class openshift_origin::msgserver (
     content => template($activemq_config_template_real),
     owner   => 'root',
     group   => 'root',
-    mode    => '0444',
+    mode    => '0440',
     require => Package['activemq'],
     notify  => Service['activemq'],
   }
@@ -84,7 +84,7 @@ class openshift_origin::msgserver (
     content => template('openshift_origin/activemq/jetty-realm.properties.erb'),
     owner   => 'root',
     group   => 'root',
-    mode    => '0444',
+    mode    => '0440',
     require => Package['activemq'],
     notify  => Service['activemq'],
   }
