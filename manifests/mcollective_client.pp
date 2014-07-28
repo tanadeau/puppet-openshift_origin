@@ -35,7 +35,7 @@ class openshift_origin::mcollective_client {
     ensure  => present,
     path    => "${::openshift_origin::params::ruby_scl_path_prefix}/etc/mcollective/client.cfg",
     content => template('openshift_origin/mcollective/mcollective-client.cfg.erb'),
-    owner   => 'root',
+    owner   => 'apache',
     group   => 'root',
     mode    => '0640',
     require => Package['mcollective-client'],
