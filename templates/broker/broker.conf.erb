@@ -9,9 +9,9 @@ VALID_GEAR_SIZES="<%= scope.lookupvar('::openshift_origin::conf_valid_gear_sizes
 <% end %>
 
 # Default number of domains to assign to a new user
-DEFAULT_MAX_DOMAINS="10"
+DEFAULT_MAX_DOMAINS="<%= scope.lookupvar('::openshift_origin::conf_default_max_domains') %>"
 # Default number of gears to assign to a new user
-DEFAULT_MAX_GEARS="100"
+DEFAULT_MAX_GEARS="<%= scope.lookupvar('::openshift_origin::conf_default_max_gears') %>"
 # Default gear sizes (comma-separated) allowed to a new user
 <% if scope.lookupvar('::openshift_origin::conf_default_gear_capabilities').is_a?(Array) %>
 DEFAULT_GEAR_CAPABILITIES="<%= scope.lookupvar('::openshift_origin::conf_default_gear_capabilities').join(',') %>"
