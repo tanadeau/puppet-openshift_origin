@@ -179,3 +179,10 @@ DEFAULT_APP_TEMPLATES=
 # All node platforms must be present in the node network.
 # In the case of conflicting cartridges, priority is given to the platforms with a lower index.
 # NODE_PLATFORMS=linux
+
+# Default region for new applications
+DEFAULT_REGION_NAME="<%= scope.lookupvar('::openshift_origin::conf_broker_default_region_name') %>"
+
+# Allow region selection when creating applications. Default is true
+ALLOW_REGION_SELECTION="<%= scope.lookupvar('::openshift_origin::conf_broker_allow_region_selection') %>"
+

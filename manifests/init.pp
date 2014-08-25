@@ -433,6 +433,34 @@
 #   Session secrets used to encode cookies used by console and broker. This
 #   value must be the same on all broker nodes.
 #
+# [*conf_broker_default_region_name*]
+#  Default region if one is not specified.
+# 
+#  Default: ""
+# 
+# [*conf_broker_allow_region_selection*]
+#  Should the user be allowed to select the region the application is placed in.
+# 
+#  Default: true
+# 
+# [*conf_broker_require_districts*]
+#  When true, gear placement will fail if there are no available districts
+#  with the correct gear profile.
+# 
+#  Default: true
+# 
+# [*conf_broker_require_zones*]
+#  When true, gear placement will fail if there are no available zones
+#  with the correct gear profile.
+# 
+#  Default: false
+# 
+# [*conf_broker_zone_min_gear_group*]
+#  desired minimum number of zones between which gears in application
+#  gear groups are distributed.
+# 
+#  Default: 1
+#
 # [*conf_valid_gear_sizes*]
 #   List of all gear sizes this will be used in this OpenShift installation.
 #   Default: ['small']
@@ -864,6 +892,11 @@ class openshift_origin (
   $conf_broker_auth_salt                = inline_template('<%= require "securerandom"; SecureRandom.base64 %>'),
   $conf_broker_auth_private_key         = undef,
   $conf_broker_session_secret           = undef,
+  $conf_broker_default_region_name      = '',
+  $conf_broker_allow_region_selection   = false,
+  $conf_broker_require_districts        = true,
+  $conf_broker_require_zones            = false,
+  $conf_broker_zone_min_gear_group      = '1',
   $conf_broker_multi_haproxy_per_node   = false,
   $conf_console_product_logo            = undef,
   $conf_console_product_title           = undef,
