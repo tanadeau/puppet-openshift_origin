@@ -638,6 +638,12 @@
 #             'nodejs','perl','php','phpmyadmin','postgresql',
 #             'python','ruby','jenkins','jenkins-client','mysql']
 #
+# [*update_network_conf_files*]
+#   Indicate whether or not this module will configure resolv.conf and
+#   network for you. 
+#
+#  Default: true
+#
 # == Manual Tasks
 #
 # This script attempts to automate as many tasks as it reasonably can.
@@ -795,7 +801,7 @@ class openshift_origin (
   $install_cartridges                   = ['10gen-mms-agent','cron','diy','haproxy','mongodb',
                                           'nodejs','perl','php','phpmyadmin','postgresql',
                                           'python','ruby','jenkins','jenkins-client','mysql'],
-  $update_conf_files                    = true,
+  $update_network_conf_files            = true,
   $manage_firewall                      = true,
 ){
   include openshift_origin::role
