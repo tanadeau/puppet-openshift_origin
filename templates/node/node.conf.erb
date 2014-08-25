@@ -40,3 +40,5 @@ PLATFORM_TRACE_LOG_LEVEL=DEBUG
 OPENSHIFT_FRONTEND_HTTP_PLUGINS=<%= scope.lookupvar('::openshift_origin::node_frontend_plugins').map{ |p| 'openshift-origin-frontend-' + p }.join(',') %>
 
 CONTAINERIZATION_PLUGIN=openshift-origin-container-<%= scope.lookupvar('::openshift_origin::node_container_plugin') %>
+
+REPORT_BUILD_ANALYTICS=false
