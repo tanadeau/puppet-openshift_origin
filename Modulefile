@@ -1,5 +1,5 @@
 name 'openshift-openshift_origin'
-version '4.0.8'
+version '4.0.9'
 author 'Mojo Lingo, Red Hat'
 license 'ASL'
 project_page 'https://github.com/openshift/puppet-openshift_origin'
