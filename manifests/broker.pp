@@ -110,33 +110,34 @@ class openshift_origin::broker {
     ]
   }
 
-  if $::openshift_origin::conf_broker_auth_public_key == undef {
+  if $::openshift_origin::conf_broker_auth_private_key == undef {
     exec { 'Generate self signed keys for broker auth':
       command => '/usr/bin/openssl genrsa -out /etc/openshift/server_priv.pem 2048 && \
                   /usr/bin/openssl rsa -in /etc/openshift/server_priv.pem -pubout > \
                   /etc/openshift/server_pub.pem',
       creates => '/etc/openshift/server_pub.pem',
       require => Class['openshift_origin::broker_console_dirs'],
+      notify  => Service['openshift-broker'],
     }
   } else {
-    file { 'broker auth public key':
-      ensure  => present,
-      path    => '/etc/openshift/server_pub.pem',
-      content => $::openshift_origin::conf_broker_auth_public_key,
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0644',
-      require => Package['openshift-origin-broker'],
-    }
-
     file { 'broker auth private key':
       ensure  => present,
       path    => '/etc/openshift/server_priv.pem',
       content => $::openshift_origin::conf_broker_auth_private_key,
       owner   => 'root',
       group   => 'root',
-      mode    => '0644',
-      require => Package['openshift-origin-broker'],
+      mode    => '0640',
+      require => Class['openshift_origin::broker_console_dirs'],
+      notify  => Service['openshift-broker'],
+    }
+
+    exec { 'broker auth public key':
+      command => '/usr/bin/openssl rsa -in /etc/openshift/server_priv.pem -pubout > \
+                  /etc/openshift/server_pub.pem && chown apache:apache \
+                  /etc/openshift/server_pub.pem && chmod 0640 /etc/openshift/server_pub.pem',
+      creates => '/etc/openshift/server_pub.pem',
+      require => File['broker auth private key'],
+      notify  => Service['openshift-broker'],
     }
   }
 

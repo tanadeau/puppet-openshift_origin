@@ -371,10 +371,8 @@
 #   installation (or just use a different auth method).
 #
 # [*conf_broker_auth_salt*]
-# [*conf_broker_auth_public_key*]
 # [*conf_broker_auth_private_key*]
-# [*conf_broker_auth_key_password*]
-#   Salt, public and private keys used when generating secure authentication
+#   Salt and private keys used when generating secure authentication
 #   tokens for Application to Broker communication. Requests like scale up/down
 #   and jenkins builds use these authentication tokens. This value must be the
 #   same on all broker nodes.
@@ -755,8 +753,6 @@ class openshift_origin (
   $openshift_user1                      = 'demo',
   $openshift_password1                  = 'changeme',
   $conf_broker_auth_salt                = inline_template('<%= require "securerandom"; SecureRandom.base64 %>'),
-  $conf_broker_auth_key_password        = undef,
-  $conf_broker_auth_public_key          = undef,
   $conf_broker_auth_private_key         = undef,
   $conf_broker_session_secret           = undef,
   $conf_broker_multi_haproxy_per_node   = false,
