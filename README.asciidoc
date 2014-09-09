@@ -193,14 +193,14 @@ Default: example.com
 ==== msgserver_hostname
 ==== datastore_hostname
 Default: the root plus the domain, e.g. broker.example.com - except
-nameserver=ns1.example.com 
+nameserver=ns1.example.com
 
 These supply the FQDN of the hosts containing these components. Used
 for configuring the host's name at install, and also for configuring
 the broker application to reach the services needed.
 
 NOTE: if installing a nameserver, the script will create
-DNS entries for the hostnames of the other components being 
+DNS entries for the hostnames of the other components being
 installed on this host as well. If you are using a nameserver set
 up separately, you are responsible for all necessary DNS entries.
 
@@ -211,10 +211,10 @@ IP addresses of the first 3 MongoDB servers in a replica set.
 Add datastoreX_ip_addr parameters for larger clusters.
 
 ==== nameserver_ip_addr
-Default: IP of a name server instance or current IP if installing on this 
+Default: IP of a name server instance or current IP if installing on this
 node. This is used by every node to configure its primary name server.
 
-Default: the current IP (at install)  
+Default: the current IP (at install)
 
 ==== bind_key
 When the nameserver is remote, use this to specify the key for updates.  This
@@ -319,27 +319,27 @@ districts. eg. district-small should all be using the same values.
 
 node_limits_nproc=250::
      max number of processes
-     
+
 node_tc_max_bandwidth=800::
      mbit/sec - Total bandwidth allowed for Libra
-     
+
 node_tc_user_share=2::
-     mbit/sec - one user is allotted... 
+     mbit/sec - one user is allotted...
 
 node_cpu_shares=128::
      cpu share percentage for each gear
-     
+
 node_cpu_cfs_quota_us=100000::
 
 node_memory_limit_in_bytes=536870912::
      gear memory limit in bytes (512MB)
-     
+
 node_memsw_limit_in_bytes=641728512::
      gear max memory limit including swap (512M + 100M swap)
 
 node_memory_oom_control=1::
      kill processes when hitting out of memory
-     
+
 node_throttle_cpu_shares=128::
      cpu share percentage each gear gets at throttle
 
@@ -358,10 +358,10 @@ node_boosted_cpu_shares=256::
 
 
 ==== configure_ntp
-Enabling this configures NTP.  It is important that the time be 
-synchronized across hosts because MCollective messages have a TTL 
-of 60 seconds and may be dropped if the clocks are too far out 
-of synch.  However, NTP is not necessary if the clock will be kept 
+Enabling this configures NTP.  It is important that the time be
+synchronized across hosts because MCollective messages have a TTL
+of 60 seconds and may be dropped if the clocks are too far out
+of synch.  However, NTP is not necessary if the clock will be kept
 in synch by some other means.
 
 Default: true
@@ -438,7 +438,7 @@ broker application's MongoDB plugin is also configured with these
 values.
 
 Default: openshift/mongopass
-  
+
 ==== mongodb_name
 This is the name of the database in MongoDB in which the broker will
 store data.
@@ -497,15 +497,13 @@ installation (or just use a different auth method).
 Default: demo/changeme
 
 ==== conf_broker_auth_salt
-==== conf_broker_auth_public_key
 ==== conf_broker_auth_private_key
-==== conf_broker_auth_key_password
-Salt, public and private keys used when generating secure authentication 
-tokens for Application to Broker communication. Requests like scale up/down 
-and jenkins builds use these authentication tokens. This value must be the 
+Salt and private keys used when generating secure authentication
+tokens for Application to Broker communication. Requests like scale up/down
+and jenkins builds use these authentication tokens. This value must be the
 same on all broker nodes.
 
-Default:  Self signed keys are generated. Will not work with multi-broker 
+Default:  Self signed keys are generated. Will not work with multi-broker
           setup.
 
 ==== conf_console_product_logo
@@ -520,9 +518,9 @@ Default: 'OpenShift Origin'
 
 ==== conf_broker_session_secret
 ==== conf_console_session_secret
-Session secrets used to encode cookies used by console and broker. This 
+Session secrets used to encode cookies used by console and broker. This
 value must be the same on all broker nodes.
-  
+
 ==== conf_valid_gear_sizes
 List of all gear sizes this will be used in this OpenShift installation.
 
@@ -543,10 +541,10 @@ Default: ['small']
 DNS plugin used by the broker to register application DNS entries.
 Options:
 
-* nsupdate - nsupdate based plugin. Supports TSIG and GSS-TSIG based 
-             authentication. Uses bind_key for TSIG and bind_krb_keytab, 
+* nsupdate - nsupdate based plugin. Supports TSIG and GSS-TSIG based
+             authentication. Uses bind_key for TSIG and bind_krb_keytab,
              bind_krb_principal for GSS_TSIG auth.
-* avahi    - sets up a MDNS based DNS resolution. Works only for 
+* avahi    - sets up a MDNS based DNS resolution. Works only for
              all-in-one installations.
 
 ==== broker_auth_plugin
@@ -554,7 +552,7 @@ Authentication setup for users of the OpenShift service.
 Options:
 
 * mongo       - Stores username and password in mongo.
-* kerberos    - Kerberos based authentication. Uses 
+* kerberos    - Kerberos based authentication. Uses
                 broker_krb_service_name, broker_krb_auth_realms,
                 broker_krb_keytab values.
 * htpasswd    - Stores username/password in a htaccess file.
@@ -592,15 +590,15 @@ Options:
   * selinux - This is the default OpenShift Origin container type.
 
 ==== node_frontend_plugins
-Specify one or more plugins to use register HTTP and web-socket connections 
+Specify one or more plugins to use register HTTP and web-socket connections
 for applications.
 Options:
 
-* apache-mod-rewrite  - Mod-Rewrite based plugin for HTTP and HTTPS 
-    requests. Well suited for installations with a lot of 
+* apache-mod-rewrite  - Mod-Rewrite based plugin for HTTP and HTTPS
+    requests. Well suited for installations with a lot of
     creates/deletes/scale actions.
-* apache-vhost        - VHost based plugin for HTTP and HTTPS. Suited for 
-    installations with less app create/delete activity. Easier to 
+* apache-vhost        - VHost based plugin for HTTP and HTTPS. Suited for
+    installations with less app create/delete activity. Easier to
     customize.  If apache-mod-rewrite is also selected, apache-vhost will be
     ignored
 * nodejs-websocket    - Web-socket proxy listening on ports 8000/8444
@@ -608,9 +606,9 @@ Options:
     requires /usr/sbin/haproxy15 (haproxy-1.5-dev19 or later).
 
 Default: ['apache-mod-rewrite','nodejs-websocket']
-  
+
 ==== node_unmanaged_users
-List of user names who have UIDs in the range of OpenShift gears but must be 
+List of user names who have UIDs in the range of OpenShift gears but must be
 excluded from OpenShift gear setups.
 
 Default: []
@@ -654,12 +652,12 @@ Wait at least this number of seconds since last check before checking gear state
 Default:  0
 
 ==== development_mode
-Set development mode and extra logging. 
+Set development mode and extra logging.
 
 Default: false
 
 ==== install_login_shell
-Install a Getty shell which displays DNS, IP and login information. Used for 
+Install a Getty shell which displays DNS, IP and login information. Used for
 all-in-one VM installation.
 
 ==== register_host_with_nameserver
@@ -697,7 +695,7 @@ Default: ['10gen-mms-agent','cron','diy','haproxy','mongodb',
 
 This script attempts to automate as many tasks as it reasonably can.
 Unfortunately, it is constrained to setting up only a single host at a
-time. In an assumed multi-host setup, you will need to do the 
+time. In an assumed multi-host setup, you will need to do the
 following after the script has completed.
 
 1. Set up DNS entries for hosts.
