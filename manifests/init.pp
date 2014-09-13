@@ -710,7 +710,7 @@ class openshift_origin (
   $load_balancer_auth_password          = 'changeme',
   $node_ip_addr                         = $ipaddress,
   $node_profile                         = 'small',
-  $node_quota_files                     = '8000',
+  $node_quota_files                     = '80000',
   $node_quota_blocks                    = '1048576',
   $node_max_active_gears                = '100',
   $node_no_overcommit_active            = false,
