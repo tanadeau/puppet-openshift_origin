@@ -530,6 +530,13 @@
 #   External facing network device. Used for routing and traffic control setup.
 #   Default: eth0
 #
+# [*conf_node_public_key*]
+# [*conf_node_private_key*]
+#   Public and private keys used for gears on the default domain. Both values
+#   must be defined or default self signed keys will be generated.
+#
+#   Default:  Self signed keys are generated. 
+#
 # [*conf_node_supplementary_posix_groups*]
 #   Name of supplementary UNIX group to add a gear to.
 #
@@ -787,6 +794,8 @@ class openshift_origin (
   $node_frontend_plugins                = ['apache-mod-rewrite','nodejs-websocket'],
   $node_unmanaged_users                 = [],
   $conf_node_external_eth_dev           = 'eth0',
+  $conf_node_public_key                 = undef,
+  $conf_node_private_key                = undef,
   $conf_node_supplementary_posix_groups = '',
   $conf_node_watchman_service           = true,
   $conf_node_watchman_gearretries       = '3',
