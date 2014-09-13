@@ -409,6 +409,14 @@
 #   Default gear size if one is not specified
 #   Default: 'small'
 #
+# [*conf_default_max_domains*]
+#   Default max number of domains a user is allowed to use
+#   Default: 10
+#
+# [*conf_default_max_gears*]
+#   Default max number of gears a user is allowed to use
+#   Default: 100
+#
 # [*conf_default_gear_capabilities*]
 #   List of all gear sizes that newly created users will be able to create
 #   Default: ['small']
@@ -763,6 +771,8 @@ class openshift_origin (
   $conf_valid_gear_sizes                = ['small'],
   $conf_default_gear_capabilities       = ['small'],
   $conf_default_gear_size               = 'small',
+  $conf_default_max_domains             = '10',
+  $conf_default_max_gears               = '100',
   $broker_dns_plugin                    = 'nsupdate',
   $broker_auth_plugin                   = 'htpasswd',
   $broker_krb_service_name              = '',
