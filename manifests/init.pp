@@ -529,25 +529,31 @@
 #   Enable/Disable the OpenShift Node watchman service
 #   Default: true
 #
-#  [*conf_node_watchman_gearretries*]
-#   Number of restarts to attempt before waiting RETRY_PERIOD
-#   Default: 3
+# [*conf_node_watchman_gearretries*]
+#  Number of restarts to attempt before waiting RETRY_PERIOD
+#  Default: 3
 #
-#  [*conf_node_watchman_retrydelay*]
-#   Number of seconds to wait before accepting another gear restart
-#   Default: 300
+# [*conf_node_watchman_retrydelay*]
+#  Number of seconds to wait before accepting another gear restart
+#  Default: 300
 #
-#  [*conf_node_watchman_retryperiod*]
-#   Number of seconds to wait before resetting retries
-#   Default: 28800
+# [*conf_node_watchman_retryperiod*]
+#  Number of seconds to wait before resetting retries
+#  Default: 28800
 #
-#  [*conf_node_watchman_statechangedelay*]
-#   Number of seconds a gear must remain inconsistent with it's state before Watchman attempts to reset state
-#   Default: 900
+# [*conf_node_watchman_statechangedelay*]
+#  Number of seconds a gear must remain inconsistent with it's state before Watchman attempts to reset state
+#  Default: 900
 #
-#  [*conf_node_watchman_statecheckperiod*]
-#   Wait at least this number of seconds since last check before checking gear state on the Node. Use this to reduce Watchman's GearStatePlugin's impact on the system.
-#   Default:  0
+# [*conf_node_watchman_statecheckperiod*]
+#  Wait at least this number of seconds since last check before checking gear state on the
+#  Node. Use this to reduce Watchman's GearStatePlugin's impact on the system.
+#  Default:  0
+#
+# [*conf_node_custom_motd*]
+#  Define a custom MOTD to be displayed to users who connect to their gears directly. 
+#  If undef, uses the default MOTD included with the node package.
+#  Default: undef
 #
 # [*development_mode*]
 #   Set development mode and extra logging.
@@ -784,6 +790,7 @@ class openshift_origin (
   $conf_node_watchman_retryperiod       = '28800',
   $conf_node_watchman_statechangedelay  = '900',
   $conf_node_watchman_statecheckperiod  = '0',
+  $conf_node_custom_motd                = undef,
   $development_mode                     = false,
   $conf_nameserver_upstream_dns         = ['8.8.8.8'],
   $install_login_shell                  = false,
