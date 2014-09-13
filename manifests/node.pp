@@ -68,6 +68,17 @@ class openshift_origin::node {
     notify      => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"], 
     refreshonly => true,
   }
+  if $::openshift_origin::conf_node_custom_motd != undef {
+    file { 'custom motd file':
+      ensure  => present,
+      path    => '/etc/openshift/welcome.rhcsh',
+      content => $::openshift_origin::conf_node_custom_motd,
+      require => Package['rubygem-openshift-origin-node'],
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+    }
+  }
   exec { 'Initialize quota DB':
     command => '/usr/sbin/oo-init-quota',
     require => Package['openshift-origin-node-util'],
