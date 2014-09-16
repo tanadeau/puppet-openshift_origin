@@ -563,7 +563,6 @@ Default: false
 ==== install_cartridges
 List of cartridges to be installed on the node. Options:
 
-* 10gen-mms-agent
 * cron
 * diy
 * haproxy
@@ -571,7 +570,6 @@ List of cartridges to be installed on the node. Options:
 * nodejs
 * perl
 * php
-* phpmyadmin
 * postgresql
 * python
 * ruby
@@ -579,11 +577,10 @@ List of cartridges to be installed on the node. Options:
 * jenkins-client
 * mariadb         (will install mysql on RHEL)
 * jbossews
-* jbossas
 * jbosseap
 
-Default: ['10gen-mms-agent','cron','diy','haproxy','mongodb',
-          'nodejs','perl','php','phpmyadmin','postgresql',
+Default: ['cron','diy','haproxy','mongodb',
+          'nodejs','perl','php','postgresql',
           'python','ruby','jenkins','jenkins-client','mariadb']
 
 == Manual Tasks

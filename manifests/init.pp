@@ -532,7 +532,6 @@
 # [*install_cartridges*]
 #   List of cartridges to be installed on the node. Options:
 #
-#   * 10gen-mms-agent
 #   * cron
 #   * diy
 #   * haproxy
@@ -540,7 +539,6 @@
 #   * nodejs
 #   * perl
 #   * php
-#   * phpmyadmin
 #   * postgresql
 #   * python
 #   * ruby
@@ -548,11 +546,10 @@
 #   * jenkins-client
 #   * mariadb         (will install mysql on RHEL)
 #   * jbossews
-#   * jbossas
 #   * jbosseap
 #
-#   Default: ['10gen-mms-agent','cron','diy','haproxy','mongodb',
-#             'nodejs','perl','php','phpmyadmin','postgresql',
+#   Default: ['cron','diy','haproxy','mongodb',
+#             'nodejs','perl','php','postgresql',
 #             'python','ruby','jenkins','jenkins-client','mariadb']
 #
 # == Manual Tasks
@@ -683,8 +680,8 @@ class openshift_origin (
   $dns_infrastructure_zone              = '',
   $dns_infrastructure_key               = '',
   $dns_infrastructure_names             = [],
-  $install_cartridges                   = ['10gen-mms-agent','cron','diy','haproxy','mongodb',
-                                          'nodejs','perl','php','phpmyadmin','postgresql',
+  $install_cartridges                   = ['cron','diy','haproxy','mongodb',
+                                          'nodejs','perl','php','postgresql',
                                           'python','ruby','jenkins','jenkins-client','mariadb'],
   $update_conf_files                    = true,
   $manage_firewall                      = true,
