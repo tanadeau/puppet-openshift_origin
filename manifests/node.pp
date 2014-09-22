@@ -176,9 +176,7 @@ class openshift_origin::node {
         'set freezer /cgroup/freezer',
         'set memory /cgroup/memory',
         'set net_cls /cgroup/net_cls',
-        'set #comment \'Managed by puppet:openshift_origin\'',
       ],
-      onlyif  => 'match *[#comment=\'Managed by puppet:openshift_origin\'] size == 0',
       notify  => Exec['prepare cgroups'],
     }
 
