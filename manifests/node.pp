@@ -224,6 +224,13 @@ class openshift_origin::node {
         }
     }
 
+  file { ['/var/lib/openshift/']:
+    ensure  => 'directory',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0751',
+  }
+  
   file { ['/var/lib/openshift/.settings','/etc/openshift/env/']:
     ensure  => 'directory',
     owner   => 'root',
