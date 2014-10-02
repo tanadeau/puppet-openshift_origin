@@ -74,6 +74,7 @@ class openshift_origin::yum_install_method {
   }
 
   yumrepo { 'openshift-origin':
+    descr      => 'Openshift Origin',
     baseurl    => $repo_path_1,
     priority   => 1,
     gpgcheck   => 0,
@@ -82,6 +83,7 @@ class openshift_origin::yum_install_method {
   }
 
   yumrepo { 'openshift-deps':
+    descr      => 'Openshift Dependencies',
     baseurl    => $deps_path,
     priority   => 1,
     gpgcheck   => 0,
