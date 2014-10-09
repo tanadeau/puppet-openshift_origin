@@ -78,6 +78,7 @@ class openshift_origin::datastore {
         File['mongo setup script'],
         Class['openshift_origin::update_conf_files'],
       ],
+      creates => '/etc/openshift/.mongo-setup-complete',
     }
   }
 
