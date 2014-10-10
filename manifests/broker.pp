@@ -225,7 +225,11 @@ class openshift_origin::broker {
     hasrestart => true,
     require    => Package['openshift-origin-broker'],
   }
-
+  exec { 'Remove mod_ssl default vhost':
+    command => '/bin/sed -i \'/VirtualHost/,/VirtualHost/ d\' /etc/httpd/conf.d/ssl.conf',
+    onlyif  => '/bin/grep \'VirtualHost _default\' /etc/httpd/conf.d/ssl.conf',
+    require => Package['openshift-origin-broker'],
+  }
   if $::openshift_origin::install_login_shell {
     include openshift_origin::login_shell
   }
