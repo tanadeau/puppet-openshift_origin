@@ -509,17 +509,17 @@
 #   Specify one or more plugins to use register HTTP and web-socket connections
 #   for applications.
 #   Options:
-#     * apache-mod-rewrite  - Mod-Rewrite based plugin for HTTP and HTTPS
-#         requests. Well suited for installations with a lot of
-#         creates/deletes/scale actions.
 #     * apache-vhost        - VHost based plugin for HTTP and HTTPS. Suited for
 #         installations with less app create/delete activity. Easier to
 #         customize.  If apache-mod-rewrite is also selected, apache-vhost will be
 #         ignored
+#     * apache-mod-rewrite  - Mod-Rewrite based plugin for HTTP and HTTPS
+#         requests. Well suited for installations with a lot of
+#         creates/deletes/scale actions.
 #     * nodejs-websocket    - Web-socket proxy listening on ports 8000/8444
 #     * haproxy-sni-proxy   - TLS proxy using SNI routing on ports 2303 through 2308
 #         requires /usr/sbin/haproxy15 (haproxy-1.5-dev19 or later).
-#   Default: ['apache-mod-rewrite','nodejs-websocket']
+#   Default: ['apache-vhost','nodejs-websocket']
 #
 # [*node_unmanaged_users*]
 #   List of user names who have UIDs in the range of OpenShift gears but must be
@@ -797,7 +797,7 @@ class openshift_origin (
   $node_shmmax                          = undef,
   $node_shmall                          = undef,
   $node_container_plugin                = 'selinux',
-  $node_frontend_plugins                = ['apache-mod-rewrite','nodejs-websocket'],
+  $node_frontend_plugins                = ['apache-vhost','nodejs-websocket'],
   $node_unmanaged_users                 = [],
   $conf_node_external_eth_dev           = 'eth0',
   $conf_node_public_key                 = undef,
