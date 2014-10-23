@@ -19,7 +19,7 @@ class openshift_origin::nameserver {
     include openshift_origin::firewall::dns
   }
 
-  package { ['bind', 'bind-utils']:
+  package { 'bind':
     ensure  => present,
     require => Class['openshift_origin::install_method'],
   }
