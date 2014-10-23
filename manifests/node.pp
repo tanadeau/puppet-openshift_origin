@@ -43,11 +43,35 @@ class openshift_origin::node {
     ensure  => present,
     require => Class['openshift_origin::install_method'],
   }
+
+  # If the node_frontend_has changed since our first run then we don't
+  # want to make any changes, probably want to check for existence of gears
+  # for the corner case where puppet is first run after another deployment
+  exec { 'node_frontend_marker':
+    command => "echo ${::openshift_origin::node_frontend_plugins} > /etc/openshift/.puppet_node_frontend_plugins",
+    creates => '/etc/openshift/.puppet_node_frontend_plugins',
+    require => Package['rubygem-openshift-origin-node'],
+  }
+  file { '/etc/openshift/.puppet_proposed_node_frontend_plugins':
+    content => inline_template("${openshift_origin::node_frontend_plugins}\n"),
+    require => Package['rubygem-openshift-origin-node'],
+  }
+  exec { 'prevent_node_frontend_changes':
+    command => '/usr/bin/diff /etc/openshift/.puppet_node_frontend_plugins /etc/openshift/.puppet_proposed_node_frontend_plugins',
+    require => [
+        File['/etc/openshift/.puppet_proposed_node_frontend_plugins'],
+        Exec['node_frontend_marker'],
+      ]
+  }
+
   file { 'openshift node config':
     ensure  => present,
     path    => '/etc/openshift/node.conf',
     content => template('openshift_origin/node/node.conf.erb'),
-    require => Package['rubygem-openshift-origin-node'],
+    require => [
+        Package['rubygem-openshift-origin-node'],
+        Exec['prevent_node_frontend_changes'],
+      ],
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
