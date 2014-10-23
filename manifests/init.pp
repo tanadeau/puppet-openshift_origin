@@ -406,10 +406,12 @@
 # [*conf_console_product_logo*]
 #   Relative path to product logo URL
 #   Default: '/assets/logo-origin.svg'
+#   OSE Default: '/assets/logo-enterprise-horizontal-svg'
 #
 # [*conf_console_product_title*]
 #   OpenShift Instance Name
 #   Default: 'OpenShift Origin'
+#   OSE Default: 'OpenShift Enterprise'
 #
 # [*conf_broker_session_secret*]
 # [*conf_console_session_secret*]
@@ -650,7 +652,7 @@
 # [*install_cartridges*]
 #   List of cartridges to be installed on the node. Options:
 #
-#   * 10gen-mms-agent
+#   * 10gen-mms-agent - Not included in OSE
 #   * cron
 #   * diy
 #   * haproxy
@@ -658,7 +660,7 @@
 #   * nodejs
 #   * perl
 #   * php
-#   * phpmyadmin
+#   * phpmyadmin - Not included in OSE
 #   * postgresql
 #   * python
 #   * ruby
@@ -667,12 +669,15 @@
 #   * mariadb         (for Fedora deployments)
 #   * mysql           (for CentOS / RHEL deployments)
 #   * jbossews
-#   * jbossas
+#   * jbossas - Not included in OSE
 #   * jbosseap
 #
 #   Default: ['10gen-mms-agent','cron','diy','haproxy','mongodb',
 #             'nodejs','perl','php','phpmyadmin','postgresql',
 #             'python','ruby','jenkins','jenkins-client','mysql']
+#   OSE Default : ['cron','diy','haproxy','mongodb','nodejs','perl',
+#                  'php','postgresql','python','ruby','jenkins',
+#                  'jenkins-client','mysql'],
 #
 # [*update_network_conf_files*]
 #   Indicate whether or not this module will configure resolv.conf and
@@ -801,8 +806,14 @@ class openshift_origin (
   $conf_broker_auth_private_key         = undef,
   $conf_broker_session_secret           = undef,
   $conf_broker_multi_haproxy_per_node   = false,
-  $conf_console_product_logo            = '/assets/logo-origin.svg',
-  $conf_console_product_title           = 'OpenShift Origin',
+  $conf_console_product_logo            = $ose_version ? {
+                                            'undef' => '/assets/logo-origin.svg',
+                                            default => '/assets/logo-enterprise-horizontal.svg',
+                                          },
+  $conf_console_product_title           = $ose_version ? {
+                                            'undef' => 'OpenShift Origin',
+                                            default => 'OpenShift Enterprise',
+                                        },
   $conf_console_session_secret          = undef,
   $conf_valid_gear_sizes                = ['small'],
   $conf_default_gear_capabilities       = ['small'],
@@ -841,10 +852,14 @@ class openshift_origin (
   $dns_infrastructure_key               = '',
   $dns_infrastructure_key_algorithm     = 'HMAC-MD5',
   $dns_infrastructure_names             = [],
-  $install_cartridges                   = ['10gen-mms-agent','cron','diy','haproxy','mongodb',
-                                          'nodejs','perl','php','phpmyadmin','postgresql',
-                                          'python','ruby','jenkins','jenkins-client','mysql'],
   $update_network_conf_files            = true,
+  $install_cartridges                   = $ose_version ? {
+                                            'undef' => ['10gen-mms-agent','cron','diy','haproxy','mongodb','nodejs',
+                                                        'perl','php','phpmyadmin','postgresql','python','ruby','jenkins',
+                                                        'jenkins-client','mysql',],
+                                            default => ['cron','diy','haproxy','mongodb','nodejs','perl','php',
+                                                        'postgresql','python','ruby','jenkins','jenkins-client','mysql'],
+                                          },
   $manage_firewall                      = true,
 ){
   include openshift_origin::role
