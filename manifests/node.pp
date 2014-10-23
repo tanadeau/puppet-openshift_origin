@@ -112,6 +112,13 @@ class openshift_origin::node {
   sysctl::value { 'kernel.msgmax':
     value => '65536',
   }
+  
+  # Reuse closed connections quickly
+  # As recommended elsewhere and investigated at length in https://bugzilla.redhat.com/show_bug.cgi?id=1085115
+  # this is a safe, effective way to keep lots of short requests from exhausting the connection table.
+  sysctl::value { 'net.ipv4.tcp_tw_reuse':
+    value => '1',
+  }
 
   case $::openshift_origin::node_container_plugin {
     'selinux': { include openshift_origin::plugins::container::selinux }
