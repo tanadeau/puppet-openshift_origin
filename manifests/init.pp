@@ -20,7 +20,7 @@
 #
 # === Parameters
 # [*ose_version*]
-#   If this is an Openshift Enterprise install this should be set according
+#   If this is an OpenShift Enterprise install this should be set according
 #   to the X.Y version, ie: '2.2'. Currently 2.2 is the only version for
 #   which a puppet module is supported by Red Hat. This sets various defaults
 #   to values appropriate for OSE installs and attempts to avoid unsupported
@@ -652,7 +652,7 @@
 # [*install_cartridges*]
 #   List of cartridges to be installed on the node. Options:
 #
-#   * 10gen-mms-agent - Not included in OSE
+#   * 10gen-mms-agent - Not included in OpenShift Enterprise
 #   * cron
 #   * diy
 #   * haproxy
@@ -660,7 +660,7 @@
 #   * nodejs
 #   * perl
 #   * php
-#   * phpmyadmin - Not included in OSE
+#   * phpmyadmin      - Not included in OpenShift Enterprise
 #   * postgresql
 #   * python
 #   * ruby
@@ -668,9 +668,9 @@
 #   * jenkins-client
 #   * mariadb         (for Fedora deployments)
 #   * mysql           (for CentOS / RHEL deployments)
-#   * jbossews
-#   * jbossas - Not included in OSE
-#   * jbosseap
+#   * jbossews        - Not supported by Red Hat in either Origin or Centos
+#   * jbossas         - Not included in OpenShift Enterprise
+#   * jbosseap        - Not included by Red Hat in either Origin or Centos
 #
 #   Default: ['10gen-mms-agent','cron','diy','haproxy','mongodb',
 #             'nodejs','perl','php','phpmyadmin','postgresql',
@@ -855,10 +855,11 @@ class openshift_origin (
   $update_network_conf_files            = true,
   $install_cartridges                   = $ose_version ? {
                                             'undef' => ['10gen-mms-agent','cron','diy','haproxy','mongodb','nodejs',
-                                                        'perl','php','phpmyadmin','postgresql','python','ruby','jenkins',
-                                                        'jenkins-client','mysql',],
+                                                        'perl','php','phpmyadmin','postgresql','python','ruby',
+                                                        'jenkins','jenkins-client','mysql',],
                                             default => ['cron','diy','haproxy','mongodb','nodejs','perl','php',
-                                                        'postgresql','python','ruby','jenkins','jenkins-client','mysql'],
+                                                        'postgresql','python','ruby','jenkins','jenkins-client',
+                                                        'jbossews','mysql'],
                                           },
   $manage_firewall                      = true,
 ){
