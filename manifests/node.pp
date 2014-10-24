@@ -207,6 +207,7 @@ class openshift_origin::node {
         'set freezer /cgroup/freezer',
         'set memory /cgroup/memory',
         'set net_cls /cgroup/net_cls',
+        'rm #comment \'Managed by puppet:openshift_origin\'',
       ],
       notify  => Exec['prepare cgroups'],
     }
