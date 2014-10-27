@@ -1,7 +1,6 @@
 .DS_Store
 .project
 .vagrant
-metadata.json
 *~
 *.swp
 pkg
