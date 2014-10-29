@@ -27,8 +27,8 @@ class openshift_origin::plugins::auth::htpasswd {
   }
 
   exec { 'Set first OpenShift user password':
-    command  => "/usr/bin/htpasswd -b /etc/openshift/htpasswd ${::openshift_origin::openshift_user1} ${::openshift_origin::openshift_password1}",
-    require  => [
+    command => "/usr/bin/htpasswd -b /etc/openshift/htpasswd ${::openshift_origin::openshift_user1} ${::openshift_origin::openshift_password1}",
+    require => [
       Package['httpd-tools'],
       File['htpasswd'],
     ],
@@ -54,7 +54,7 @@ class openshift_origin::plugins::auth::htpasswd {
     group   => 'apache',
     mode    => '0644',
     require => [
-      Package['rubygem-openshift-origin-auth-remote-user','openshift-origin-console'],
+      Package['rubygem-openshift-origin-auth-remote-user','openshift-origin-console','httpd'],
       File['Broker htpasswd config'],
     ],
     notify  => Service['openshift-console'],

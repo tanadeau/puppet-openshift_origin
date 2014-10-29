@@ -82,6 +82,7 @@ class openshift_origin::console {
     require => [
       Package['openshift-origin-console'],
       Class['openshift_origin::broker_console_dirs'],
+      Package['httpd'],
     ],
     notify  => Service['openshift-console'],
   }
@@ -96,6 +97,7 @@ class openshift_origin::console {
       require => [
         Package['openshift-origin-console'],
         Class['openshift_origin::broker_console_dirs'],
+        Package['httpd'],
       ],
       notify  => Service['openshift-console'],
     }
@@ -105,11 +107,11 @@ class openshift_origin::console {
   # by the following Exec has the appropriate permissions (otherwise
   # it is created as owned by root:root)
   file { '/var/www/openshift/console/Gemfile.lock':
-    ensure    => 'present',
-    owner     => 'apache',
-    group     => 'apache',
-    mode      => '0644',
-    require   => Package['openshift-origin-console'],
+    ensure  => 'present',
+    owner   => 'apache',
+    group   => 'apache',
+    mode    => '0644',
+    require => Package['openshift-origin-console','httpd'],
   }
 
   # SCL and Puppet don't play well together; the 'default' here
@@ -133,7 +135,7 @@ class openshift_origin::console {
     ${::openshift_origin::params::rm} -rf tmp/cache/* && \
     ${console_asset_rake_cmd} && \
     ${::openshift_origin::params::chown} -R apache:apache /var/www/openshift/console",
-    require     => Package['openshift-origin-console'],
+    require     => Package['openshift-origin-console','httpd'],
     subscribe   => [
       Package['openshift-origin-console'],
       File['/var/www/openshift/console/Gemfile.lock'],
