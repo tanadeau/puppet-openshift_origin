@@ -807,11 +807,11 @@ class openshift_origin (
   $conf_broker_session_secret           = undef,
   $conf_broker_multi_haproxy_per_node   = false,
   $conf_console_product_logo            = $ose_version ? {
-                                            'undef' => '/assets/logo-origin.svg',
+                                            undef => '/assets/logo-origin.svg',
                                             default => '/assets/logo-enterprise-horizontal.svg',
                                           },
   $conf_console_product_title           = $ose_version ? {
-                                            'undef' => 'OpenShift Origin',
+                                            undef => 'OpenShift Origin',
                                             default => 'OpenShift Enterprise',
                                         },
   $conf_console_session_secret          = undef,
@@ -854,7 +854,7 @@ class openshift_origin (
   $dns_infrastructure_names             = [],
   $update_network_conf_files            = true,
   $install_cartridges                   = $ose_version ? {
-                                            'undef' => ['10gen-mms-agent','cron','diy','haproxy','mongodb','nodejs',
+                                            undef => ['10gen-mms-agent','cron','diy','haproxy','mongodb','nodejs',
                                                         'perl','php','phpmyadmin','postgresql','python','ruby',
                                                         'jenkins','jenkins-client','mysql',],
                                             default => ['cron','diy','haproxy','mongodb','nodejs','perl','php',
