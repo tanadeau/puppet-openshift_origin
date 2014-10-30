@@ -1,7 +1,7 @@
 == Openshift Enterprise Specific notes
 
 If you wish to perform an Openshift Enterprise install you should set ose_version appropriately as this will
-assist in ensuring supported configurations. Currently any value other than 'undef' has the same effect, however
+assist in ensuring supported configurations. Currently any value other than undef has the same effect, however
 version specific parameters may be introduced in the future.
 
 While this module will assist in providing supported configruations please refer to Openshift Enterprise
