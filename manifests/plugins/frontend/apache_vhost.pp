@@ -19,4 +19,12 @@ class openshift_origin::plugins::frontend::apache_vhost {
   package { 'rubygem-openshift-origin-frontend-apache-vhost':
     require => Class['openshift_origin::install_method'],
   }
+
+  if member( $openshift_origin::roles, 'broker' ) {
+    exec { 'Remove default 443 vhost when both broker and vhost plugin exist':
+      command => '/bin/sed -i -e \'/<VirtualHost \*:443>/,/<\/VirtualHost/ s/^/#/\' /etc/httpd/conf.d/000001_openshift_origin_frontend_vhost.conf',
+      onlyif => '/bin/grep \'^<VirtualHost \*:443>\' /etc/httpd/conf.d/000001_openshift_origin_frontend_vhost.conf',
+      require => Package['rubygem-openshift-origin-frontend-apache-vhost'],
+    }
+  }
 }
