@@ -1,9 +1,13 @@
-(
+  (
+<% scope.lookupvar('::openshift_origin::roles').each do |role|
+  role_hostname = scope.lookupvar("openshift_origin::#{role}_hostname")
+%>
   echo server <%= scope.lookupvar('::openshift_origin::nameserver_ip_addr') %>
-  echo update delete <%= scope.lookupvar('fqdn') %> A
-  echo update add <%= scope.lookupvar('fqdn') %> 180 A <%= scope.lookupvar('::openshift_origin::node_ip_addr') %>
+  echo update delete <%= role_hostname %> A
+  echo update add <%= role_hostname %> 180 A <%= scope.lookupvar('::openshift_origin::node_ip_addr') %>
+<% end %>
   echo send
-) | nsupdate -y <%= @key_argument %>
+)| nsupdate -y <%= @key_argument %>
 <% if scope.lookupvar('::openshift_origin::load_balancer_master') and scope.lookupvar('::openshift_origin::broker_virtual_ip_address')%>
 (
   echo server <%= scope.lookupvar('::openshift_origin::nameserver_ip_addr') %>
