@@ -68,8 +68,7 @@ class openshift_origin::ose_supported_config {
     }
   }
   if $openshift_origin::mongodb_replicasets {
-    if ( (size($openshift_origin::mongodb_replicasets_members) < 3) or
-          !((size($openshift_origin::mongodb_replicasets_members) % 2) == 1) ) {
+    if (size($openshift_origin::mongodb_replicasets_members) < 3) {
       if $openshift_origin::ose_unsupported {
         notice('Openshift Enterprise requires replicasets have 3 or more members. It must also be an odd number of members.')
       } else {
