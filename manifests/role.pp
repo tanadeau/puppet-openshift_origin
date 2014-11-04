@@ -16,9 +16,7 @@
 class openshift_origin::role {
   include openshift_origin::params
   include openshift_origin::install_method
-  if $::openshift_origin::manage_firewall {
-    include openshift_origin::firewall::ssh
-  }
+  require openshift_origin::firewall::ssh
 
   if ( $::openshift_origin::configure_ntp ) {
     package { 'ntpdate':

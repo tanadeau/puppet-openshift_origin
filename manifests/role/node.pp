@@ -15,4 +15,9 @@
 class openshift_origin::role::node inherits openshift_origin::role {
   include openshift_origin::node
   include openshift_origin::register_dns
+
+  anchor { 'openshift_origin::node_role_begin': } ->
+  Class['openshift_origin::node'] ->
+  anchor { 'openshift_origin::node_role_end': } ->
+  Class['openshift_origin::register_dns']
 }

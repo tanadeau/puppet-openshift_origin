@@ -13,7 +13,12 @@
 #  limitations under the License.
 #
 class openshift_origin::firewall::mongodb {
-  lokkit::ports { 'mongodb':
-    tcpPorts => [ '27017' ],
+
+  if $::openshift_origin::manage_firewall {
+    require openshift_origin::firewall
+
+    lokkit::ports { 'mongodb':
+      tcpPorts => [ '27017' ],
+    }
   }
 }

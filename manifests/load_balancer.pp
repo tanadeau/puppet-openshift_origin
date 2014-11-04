@@ -46,7 +46,7 @@ class openshift_origin::load_balancer(
   # Required by sysctl module
   Exec { path => '/usr/bin:/usr/sbin:/bin:/sbin' }
 
-  sysctl::value { 'net.ipv4.ip_nonlocal_bind': 
+  sysctl::value { 'net.ipv4.ip_nonlocal_bind':
     value => '1',
   }
 
@@ -69,29 +69,29 @@ class openshift_origin::load_balancer(
     manage_service   => $manage_service,
     enable           => $enable,
     defaults_options => {
-                         'log'     => 'global',
-                         'option'  => 'redispatch',
-                         'retries' => '3',
-                         'timeout' => [
-                                       'http-request 10s',
-                                       'queue 1m',
-                                       'connect 10s',
-                                       'client 1m',
-                                       'server 1m',
-                                       'check 10s',
-                                      ],
-                         'maxconn' => '8000',
-                        }
+      'log'     => 'global',
+      'option'  => 'redispatch',
+      'retries' => '3',
+      'timeout' => [
+        'http-request 10s',
+        'queue 1m',
+        'connect 10s',
+        'client 1m',
+        'server 1m',
+        'check 10s',
+      ],
+      'maxconn' => '8000',
+    }
   }
 
   haproxy::listen { 'broker_http_cluster':
     ipaddress => $virtual_ipaddress,
     ports     => $http_port,
     options   => {
-                  'option'  => ['tcpka', 'tcplog'],
-                  'mode'    => 'tcp',
-                  'balance' => 'source',
-                 },
+      'option'  => ['tcpka', 'tcplog'],
+      'mode'    => 'tcp',
+      'balance' => 'source',
+    },
   }
 
   haproxy::balancermember { 'http_brokers':
@@ -106,10 +106,10 @@ class openshift_origin::load_balancer(
     ipaddress => $virtual_ipaddress,
     ports     => $ssl_port,
     options   => {
-                  'option'  => ['tcpka', 'tcplog'],
-                  'mode'    => 'tcp',
-                  'balance' => 'source',
-                 },
+      'option'  => ['tcpka', 'tcplog'],
+      'mode'    => 'tcp',
+      'balance' => 'source',
+    },
   }
 
   haproxy::balancermember { 'ssl_brokers':

@@ -15,4 +15,9 @@
 class openshift_origin::role::datastore inherits openshift_origin::role {
   include openshift_origin::datastore
   include openshift_origin::register_dns
+
+  anchor { 'openshift_origin::datastore_role_begin': } ->
+  Class['openshift_origin::datastore'] ->
+  anchor { 'openshift_origin::datastore_role_end': } ->
+  Class['openshift_origin::register_dns']
 }

@@ -14,7 +14,7 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::auth::htpasswd {
-  include openshift_origin::plugins::auth::remote_user
+  require openshift_origin::plugins::auth::remote_user
 
   package { 'httpd-tools':
     ensure => present,

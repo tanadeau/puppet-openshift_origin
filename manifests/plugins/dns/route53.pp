@@ -15,7 +15,10 @@
 #
 class openshift_origin::plugins::dns::route53 {
   package { 'rubygem-openshift-origin-dns-route53':
-      require => Class['openshift_origin::install_method'],
+    require => [
+      Class['openshift_origin::install_method'],
+      Package['openshift-origin-broker'],
+    ],
   }
 
   file { 'plugin openshift-origin-dns-route53.conf':
@@ -24,6 +27,7 @@ class openshift_origin::plugins::dns::route53 {
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
+    notify  => Service['openshift-broker'],
     require => Package['rubygem-openshift-origin-dns-route53'],
   }
 }

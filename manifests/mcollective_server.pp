@@ -34,7 +34,7 @@ class openshift_origin::mcollective_server {
   Class['Openshift_origin::Update_conf_files'] -> Class['Openshift_origin::Mcollective_server']
 
   file { "${::openshift_origin::params::ruby_scl_path_prefix}/var/run":
-    ensure  => "directory",
+    ensure  => 'directory',
     require => Package['mcollective'],
   }
 

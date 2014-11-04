@@ -17,7 +17,7 @@ define openshift_origin::openshift_cartridge  {
   $cart_prefix = 'openshift-origin-cartridge-'
   case $name {
     'jenkins', 'jenkins-client': {
-      include openshift_origin::cartridges::jenkins
+      require openshift_origin::cartridges::jenkins
       $full_cart_name = "${cart_prefix}${name}"
     }
     'mariadb', 'mysql': {
@@ -36,7 +36,10 @@ define openshift_origin::openshift_cartridge  {
   }
   package { $full_cart_name:
     ensure  => present,
-    require => Class['openshift_origin::install_method'],
     notify  => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"],
+    require => [
+      Class['openshift_origin::install_method'],
+      Package['rubygem-openshift-origin-node'],
+    ],
   }
 }

@@ -35,7 +35,10 @@ class openshift_origin::plugins::dns::nsupdate {
   }
 
   package { 'rubygem-openshift-origin-dns-nsupdate':
-    require => Class['openshift_origin::install_method'],
+    require => [
+      Class['openshift_origin::install_method'],
+      Package['openshift-origin-broker'],
+    ],
   }
 
   if $::openshift_origin::broker_dns_gsstsig {
@@ -45,6 +48,7 @@ class openshift_origin::plugins::dns::nsupdate {
       owner   => 'apache',
       group   => 'apache',
       mode    => '0664',
+      notify  => Service['openshift-broker'],
       require => Package['rubygem-openshift-origin-dns-nsupdate','httpd'],
     }
     file { 'plugin openshift-origin-dns-nsupdate.conf':
@@ -53,6 +57,7 @@ class openshift_origin::plugins::dns::nsupdate {
       owner   => 'root',
       group   => 'root',
       mode    => '0644',
+      notify  => Service['openshift-broker'],
       require => [
         Package['rubygem-openshift-origin-dns-nsupdate'],
         File['broker-dns-keytab'],
@@ -65,6 +70,7 @@ class openshift_origin::plugins::dns::nsupdate {
       owner   => 'root',
       group   => 'root',
       mode    => '0644',
+      notify  => Service['openshift-broker'],
       require => Package['rubygem-openshift-origin-dns-nsupdate'],
     }
   }

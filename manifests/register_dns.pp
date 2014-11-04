@@ -14,7 +14,7 @@
 #
 class openshift_origin::register_dns {
   if $::openshift_origin::register_host_with_nameserver {
-    if $fqdn != 'localhost' {
+    if $::fqdn != 'localhost' {
       package { 'bind-utils' :
           ensure  => present,
           require => Class['openshift_origin::install_method'],
@@ -25,7 +25,7 @@ class openshift_origin::register_dns {
         $::openshift_origin::bind_key)
       $key_argument="${key_algorithm}:${::openshift_origin::domain}:${key_secret}"
 
-      exec { "Register ${fqdn}" :
+      exec { "Register ${::fqdn}" :
         command   => template('openshift_origin/register_dns.erb'),
         provider  => 'shell',
         require   => Package['bind-utils'],

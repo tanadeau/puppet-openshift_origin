@@ -15,9 +15,10 @@
 #
 class openshift_origin::nameserver {
   include openshift_origin::params
-  if $::openshift_origin::manage_firewall {
-    include openshift_origin::firewall::dns
-  }
+
+  anchor { 'openshift_origin::nameserver_begin': } ->
+  class { 'openshift_origin::firewall::dns': } ->
+  anchor {'openshift_origin::nameserver_end': }
 
   package { 'bind':
     ensure  => present,
@@ -54,6 +55,7 @@ class openshift_origin::nameserver {
     group   => 'named',
     mode    => '0640',
     content => template('openshift_origin/named/forwarders.conf.erb'),
+    require => File['/var/named'],
   }
 
   file { '/var/named':
@@ -90,6 +92,16 @@ class openshift_origin::nameserver {
     require => Package['bind'],
   }
 
+  $named_base_files = [
+    File['/etc/rndc.key'],
+    File['/var/named/forwarders.conf'],
+    File['/var/named'],
+    File['/var/named/dynamic'],
+    File['dynamic zone'],
+    File['named key'],
+    File['named configs'],
+  ]
+
   # create named/adddress mappings for infrastructure hosts
   if $openshift_origin::dns_infrastructure_zone != '' {
     file { 'infrastructure host configuration':
@@ -121,22 +133,12 @@ class openshift_origin::nameserver {
       require => File['infrastructure host configuration']
     }
 
-    exec { 'named restorecon':
-      command => '/sbin/restorecon -rv /etc/rndc.* /etc/named.* /var/named /var/named/forwarders.conf',
-      require => [
-        File['/etc/rndc.key'],
-        File['/var/named/forwarders.conf'],
-        File['/var/named'],
-        File['/var/named/dynamic'],
-        File['dynamic zone'],
-        File['named key'],
-        File['named configs'],
-        File['infrastructure host configuration'],
-        File['named infrastructure key'],
-        File['infrastructure zone contents'],
-        Exec['create rndc.key'],
-      ]
-    }
+    $named_infra_files = [
+      File['infrastructure host configuration'],
+      File['named infrastructure key'],
+      File['infrastructure zone contents'],
+    ]
+
   } else {
     file { 'empty infrastructure host configuration':
       ensure  => present,
@@ -149,26 +151,25 @@ class openshift_origin::nameserver {
       require => File['/var/named']
     }
 
-    exec { 'named restorecon':
-      command => '/sbin/restorecon -rv /etc/rndc.* /etc/named.* /var/named /var/named/forwarders.conf',
-      require => [
-        File['/etc/rndc.key'],
-        File['/var/named/forwarders.conf'],
-        File['/var/named'],
-        File['/var/named/dynamic'],
-        File['dynamic zone'],
-        File['named key'],
-        File['named configs'],
-        File['empty infrastructure host configuration'],
-        Exec['create rndc.key'],
-      ],
-    }
+    $named_infra_files = [
+      File['empty infrastructure host configuration'],
+    ]
+  }
+
+  $restorecon_paths = '/etc/rndc.* /etc/named.* /var/named /var/named/forwarders.conf'
+  $named_files = unique(flatten([$named_base_files, $named_infra_files]))
+
+  exec { 'named restorecon':
+    command     => '/sbin/restorecon -rv ${restorecon_paths}',
+    require     => Exec['create rndc.key'],
+    notify      => Service['named'],
+    refreshonly => true,
+    subscribe   => $named_files,
   }
 
   service { 'named':
     ensure    => running,
-    subscribe => File['named configs'],
     enable    => true,
-    require   => Exec['named restorecon'],
+    subscribe => $named_files,
   }
 }

@@ -13,7 +13,12 @@
 #  limitations under the License.
 #
 class openshift_origin::firewall::dns {
-  lokkit::services{ 'DNS':
-    services => [ 'dns' ],
+
+  if $::openshift_origin::manage_firewall {
+    require openshift_origin::firewall
+
+    lokkit::services{ 'DNS':
+      services => [ 'dns' ],
+    }
   }
 }
