@@ -19,8 +19,8 @@
 # TODO: write a custom function to avoid all the fail vs. notice logic
 #
 class openshift_origin::ose_supported_config {
-  if ($::operatingsystem != 'RedHat') or ($::operatingsystemmajrelease != '6') or
-      ($::operatingsystemrelease < '6.5') {
+  if ($::operatingsystem != 'RedHat') or ($::operatingsystemrelease >= 7.0 ) or
+      ($::operatingsystemrelease < 6.5) {
     if $openshift_origin::ose_unsupported {
       notice('Openshift Enterprise requires Red Hat Enterprise Linux Server 6 version 6.5 or later')
     } else {
