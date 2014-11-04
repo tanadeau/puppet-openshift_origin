@@ -24,6 +24,7 @@ class openshift_origin::node {
 }
   include openshift_origin::selbooleans
   include openshift_origin::selbooleans::node
+  include openshift_origin::httpd_certificate
 
   package {
     ['rubygem-openshift-origin-node',
@@ -89,7 +90,7 @@ class openshift_origin::node {
   }
   exec { 'restart resource limiting services':
     command     => 'oo-cgroup-enable --with-all-containers; oo-pam-enable --with-all-containers; oo-admin-ctl-tc restart',
-    notify      => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"], 
+    notify      => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"],
     refreshonly => true,
   }
   if $::openshift_origin::conf_node_custom_motd != undef {
@@ -136,7 +137,7 @@ class openshift_origin::node {
   sysctl::value { 'kernel.msgmax':
     value => '65536',
   }
-  
+
   # Reuse closed connections quickly
   # As recommended elsewhere and investigated at length in https://bugzilla.redhat.com/show_bug.cgi?id=1085115
   # this is a safe, effective way to keep lots of short requests from exhausting the connection table.
@@ -234,7 +235,7 @@ class openshift_origin::node {
     ],
     provider => $::openshift_origin::params::os_init_provider,
   }
-  
+
     if $openshift_origin::conf_node_watchman_service {
       service { ['openshift-watchman']:
         ensure   => running,
@@ -246,7 +247,7 @@ class openshift_origin::node {
         ],
         provider => $::openshift_origin::params::os_init_provider,
       }
-      
+
       file { '/etc/sysconfig/watchman':
         content => template('openshift_origin/node/watchman.erb'),
         owner   => 'root',
@@ -262,7 +263,7 @@ class openshift_origin::node {
     group   => 'root',
     mode    => '0751',
   }
-  
+
   file { ['/var/lib/openshift/.settings','/etc/openshift/env/']:
     ensure  => 'directory',
     owner   => 'root',
@@ -297,31 +298,4 @@ class openshift_origin::node {
     group   => 'root',
     mode    => '0644',
   }
-  
-
-  if ($::openshift_origin::conf_node_public_key != undef)  and ($::openshift_origin::conf_node_private_key != undef) {
-    file { 'node public key':
-      ensure  => present,
-      path    => '/etc/pki/tls/certs/localhost.crt',
-      content => $::openshift_origin::conf_node_public_key,
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0600',
-      require => Package['httpd'],
-      notify  => Service['httpd'],
-    }
-
-    file { 'node private key':
-      ensure  => present,
-      path    => '/etc/pki/tls/private/localhost.key',
-      content => $::openshift_origin::conf_node_private_key,
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0600',
-      require => Package['httpd'],
-      notify  => Service['httpd'],
-    }
-  }
-
-  
 }

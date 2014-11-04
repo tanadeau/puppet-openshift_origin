@@ -22,6 +22,7 @@ class openshift_origin::broker {
   include openshift_origin::selbooleans
   include openshift_origin::selbooleans::broker_console
   include openshift_origin::broker_console_dirs
+  include openshift_origin::httpd_certificate
 
   case $::openshift_origin::broker_dns_plugin {
     'nsupdate' : { include openshift_origin::plugins::dns::nsupdate }
