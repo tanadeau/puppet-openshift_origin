@@ -127,7 +127,7 @@ class openshift_origin::broker {
       owner   => 'apache',
       group   => 'apache',
       mode    => '0640',
-      require => Class['openshift_origin::broker_console_dirs'],
+      require => [ Class['openshift_origin::broker_console_dirs'], Package['httpd'], ],
       notify  => Service['openshift-broker'],
     }
 
@@ -168,7 +168,7 @@ class openshift_origin::broker {
     owner   => 'apache',
     group   => 'apache',
     mode    => '0644',
-    require => Package['openshift-origin-broker'],
+    require => Package['openshift-origin-broker','httpd'],
     notify  => Service['openshift-broker'],
   }
 
@@ -179,7 +179,7 @@ class openshift_origin::broker {
       owner   => 'apache',
       group   => 'apache',
       mode    => '0644',
-      require => Package['openshift-origin-broker'],
+      require => Package['openshift-origin-broker','httpd'],
       notify  => Service['openshift-broker'],
     }
   }
@@ -214,7 +214,7 @@ class openshift_origin::broker {
     owner     => 'apache',
     group     => 'apache',
     mode      => '0644',
-    require   => Package['openshift-origin-broker'],
+    require   => Package['openshift-origin-broker','httpd'],
     subscribe => Exec['Broker gem dependencies'],
   }
 

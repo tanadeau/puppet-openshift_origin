@@ -27,7 +27,7 @@ class openshift_origin::plugins::auth::kerberos {
     owner   => 'apache',
     group   => 'apache',
     mode    => '0644',
-    require => Package['rubygem-openshift-origin-auth-remote-user']
+    require => Package['rubygem-openshift-origin-auth-remote-user','httpd']
   }
 
   file {'broker kerbros.conf':
@@ -39,6 +39,7 @@ class openshift_origin::plugins::auth::kerberos {
     require => [
       Package['rubygem-openshift-origin-auth-remote-user'],
       Package['mod_auth_kerb'],
+      Package['httpd'],
       File['broker http keytab']
     ],
     notify  => Service['openshift-broker'],
@@ -54,6 +55,7 @@ class openshift_origin::plugins::auth::kerberos {
     require => [
       Package['rubygem-openshift-origin-auth-remote-user'],
       Package['mod_auth_kerb'],
+      Package['httpd'],
       File['broker http keytab']
     ],
     notify  => Service['openshift-console'],

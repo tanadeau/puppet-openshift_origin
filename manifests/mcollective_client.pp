@@ -38,7 +38,7 @@ class openshift_origin::mcollective_client {
     owner   => 'apache',
     group   => 'apache',
     mode    => '0640',
-    require => Package['mcollective-client'],
+    require => Package['mcollective-client','httpd'],
   }
 
   file { 'mcollective log file':
@@ -47,6 +47,6 @@ class openshift_origin::mcollective_client {
     owner   => 'apache',
     group   => 'root',
     mode    => '0644',
-    require => Package['mcollective-client'],
+    require => Package['mcollective-client','httpd'],
   }
 }

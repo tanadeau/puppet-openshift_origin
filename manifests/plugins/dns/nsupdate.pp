@@ -45,7 +45,7 @@ class openshift_origin::plugins::dns::nsupdate {
       owner   => 'apache',
       group   => 'apache',
       mode    => '0664',
-      require => Package['rubygem-openshift-origin-dns-nsupdate'],
+      require => Package['rubygem-openshift-origin-dns-nsupdate','httpd'],
     }
     file { 'plugin openshift-origin-dns-nsupdate.conf':
       path    => '/etc/openshift/plugins.d/openshift-origin-dns-nsupdate.conf',
