@@ -19,8 +19,8 @@
 # TODO: write a custom function to avoid all the fail vs. notice logic
 #
 class openshift_origin::ose_supported_config {
-  if ($::operatingsystem != 'RedHat') or ($::operatingsystemmajrelease != '6') or
-      ($::operatingsystemrelease < '6.5') {
+  if ($::operatingsystem != 'RedHat') or ($::operatingsystemrelease >= 7.0 ) or
+      ($::operatingsystemrelease < 6.5) {
     if $openshift_origin::ose_unsupported {
       notice('Openshift Enterprise requires Red Hat Enterprise Linux Server 6 version 6.5 or later')
     } else {
@@ -68,8 +68,7 @@ class openshift_origin::ose_supported_config {
     }
   }
   if $openshift_origin::mongodb_replicasets {
-    if ( (size($openshift_origin::mongodb_replicasets_members) < 3) or
-          !((size($openshift_origin::mongodb_replicasets_members) % 2) == 1) ) {
+    if (size($openshift_origin::mongodb_replicasets_members) < 3) {
       if $openshift_origin::ose_unsupported {
         notice('Openshift Enterprise requires replicasets have 3 or more members. It must also be an odd number of members.')
       } else {
