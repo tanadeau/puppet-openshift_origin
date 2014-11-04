@@ -65,7 +65,7 @@
         },
         {
             "name": "duritong/sysctl",
-            "version_requirement": ">=0.0.1"
+            "version_requirement": ">=0.0.1 <0.0.5"
         }
     ]
 }
