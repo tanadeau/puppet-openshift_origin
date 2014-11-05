@@ -15,4 +15,9 @@
 class openshift_origin::role::msgserver inherits openshift_origin::role {
   include openshift_origin::msgserver
   include openshift_origin::register_dns
+
+  anchor { 'openshift_origin::msgserver_role_begin': } ->
+  Class['openshift_origin::msgserver'] ->
+  anchor { 'openshift_origin::msgserver_role_end': } ->
+  Class['openshift_origin::register_dns']
 }

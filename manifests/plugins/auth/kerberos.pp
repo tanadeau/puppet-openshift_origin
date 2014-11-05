@@ -14,7 +14,7 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::auth::kerberos {
-  include openshift_origin::plugins::auth::remote_user
+  require openshift_origin::plugins::auth::remote_user
 
   package { 'mod_auth_kerb':
     ensure  => installed,

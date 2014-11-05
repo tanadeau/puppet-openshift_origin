@@ -13,7 +13,12 @@
 #  limitations under the License.
 #
 class openshift_origin::firewall::ssh {
-  lokkit::services{ 'SSH':
-    services => [ 'ssh' ],
+
+  if $::openshift_origin::manage_firewall {
+    require openshift_origin::firewall
+
+    lokkit::services{ 'SSH':
+      services => [ 'ssh' ],
+    }
   }
 }

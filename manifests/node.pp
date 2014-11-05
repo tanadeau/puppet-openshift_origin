@@ -15,16 +15,27 @@
 #
 class openshift_origin::node {
   include openshift_origin::params
-  include openshift_origin::cartridges
-  include openshift_origin::mcollective_server
-  if $::openshift_origin::manage_firewall {
-    include openshift_origin::firewall::apache
-    include openshift_origin::firewall::apache_node
-    include openshift_origin::firewall::node
-}
+  include openshift_origin::firewall::apache
+  include openshift_origin::firewall::apache_node
+  include openshift_origin::firewall::node
   include openshift_origin::selbooleans
   include openshift_origin::selbooleans::node
   include openshift_origin::httpd_certificate
+
+
+  anchor { 'openshift_origin::node_begin': } ->
+  Class['openshift_origin::selbooleans'] ->
+  Class['openshift_origin::selbooleans::node'] ->
+  Class['openshift_origin::firewall::apache'] ->
+  Class['openshift_origin::firewall::apache_node'] ->
+  Class['openshift_origin::firewall::node'] ->
+  Class['openshift_origin::httpd_certificate'] ->
+  class{ 'openshift_origin::mcollective_server': } ->
+  anchor { 'openshift_origin::node_end': }
+
+  anchor { 'openshift_origin::node_cart_begin': } ->
+  class { 'openshift_origin::cartridges': } ->
+  anchor { 'openshift_origin::node_cart_end': }
 
   package {
     ['rubygem-openshift-origin-node',
@@ -147,22 +158,38 @@ class openshift_origin::node {
   }
 
   case $::openshift_origin::node_container_plugin {
-    'selinux': { include openshift_origin::plugins::container::selinux }
-    'libvirt': { include openshift_origin::plugins::container::libvirt }
+    'selinux': {
+      anchor { 'openshift_origin::node_container_begin': } ->
+      class { 'openshift_origin::plugins::container::selinux': } ->
+      anchor { 'openshift_origin::node_container_end': }
+     }
+    'libvirt': {
+      anchor { 'openshift_origin::node_container_begin': } ->
+      class { 'openshift_origin::plugins::container::libvirt': } ->
+      anchor { 'openshift_origin::node_container_end': }
+     }
     default: {}
   }
 
   if member( $::openshift_origin::node_frontend_plugins, 'apache-mod-rewrite' ) {
-    include openshift_origin::plugins::frontend::apache_mod_rewrite
+    anchor { 'openshift_origin::node_frontend_begin': } ->
+    class { 'openshift_origin::plugins::frontend::apache_mod_rewrite': } ->
+    anchor { 'openshift_origin::node_frontend_end': }
   }
   elsif member( $::openshift_origin::node_frontend_plugins, 'apache-vhost' ) {
-    include openshift_origin::plugins::frontend::apache_vhost
+    anchor { 'openshift_origin::node_frontend_begin': } ->
+    class { 'openshift_origin::plugins::frontend::apache_vhost': } ->
+    anchor { 'openshift_origin::node_frontend_end': }
   }
   if member( $::openshift_origin::node_frontend_plugins, 'nodejs-websocket' ) {
-    include openshift_origin::plugins::frontend::nodejs_websocket
+    anchor { 'openshift_origin::node_ws_frontend_begin': } ->
+    class { 'openshift_origin::plugins::frontend::nodejs_websocket': } ->
+    anchor { 'openshift_origin::node_ws_frontend_end': }
   }
   if member( $::openshift_origin::node_frontend_plugins, 'haproxy-sni-proxy' ) and ($::operatingsystem != 'Fedora') {
-    include openshift_origin::plugins::frontend::haproxy_sni_proxy
+    anchor { 'openshift_origin::node_sni_frontend_begin': } ->
+    class { 'openshift_origin::plugins::frontend::haproxy_sni_proxy': } ->
+    anchor { 'openshift_origin::node_sni_frontend_end': }
   }
 
   augeas { 'Tune sshd config':
@@ -175,6 +202,7 @@ class openshift_origin::node {
       'set AcceptEnv[5]/01 GIT_SSH',
     ],
     onlyif  => 'match AcceptEnv[*]/*[. = \'GIT_SSH\'] size == 0',
+    notify  => Service['sshd'],
   }
 
   service { [
@@ -184,8 +212,8 @@ class openshift_origin::node {
       'oddjobd',
       'messagebus',
     ]:
-    enable  => true,
     ensure  => running,
+    enable  => true,
     require => [
       Package['rubygem-openshift-origin-node'],
       Package['openshift-origin-node-util'],
@@ -222,8 +250,8 @@ class openshift_origin::node {
     }
 
     service { ['cgconfig', 'cgred']:
-      enable  => true,
       ensure  => running,
+      enable  => true,
       require => [Package['libcgroup'], Augeas['openshift cgconfig']],
     }
   }

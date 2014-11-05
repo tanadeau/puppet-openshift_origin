@@ -14,7 +14,7 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::auth::ldap {
-  include openshift_origin::plugins::auth::remote_user
+  require openshift_origin::plugins::auth::remote_user
 
   if $::openshift_origin::broker_ldap_uri == '' {
     fail 'No LDAP URI specified (see ldap_uri).'

@@ -14,12 +14,17 @@
 #  limitations under the License.
 #
 class openshift_origin::console {
-  if $::openshift_origin::manage_firewall {
-    include openshift_origin::firewall::apache
-  }
+  include openshift_origin::broker_console_dirs
+  include openshift_origin::firewall::apache
   include openshift_origin::selbooleans
   include openshift_origin::selbooleans::broker_console
-  include openshift_origin::broker_console_dirs
+
+  anchor { 'openshift_origin::console_begin': } ->
+  Class['openshift_origin::broker_console_dirs'] ->
+  Class['openshift_origin::selbooleans'] ->
+  Class['openshift_origin::selbooleans::broker_console'] ->
+  Class['openshift_origin::firewall::apache'] ->
+  anchor { 'openshift_origin::console_end': }
 
   package { 'openshift-origin-console':
     ensure  => present,

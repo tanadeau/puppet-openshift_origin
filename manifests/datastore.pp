@@ -14,9 +14,9 @@
 #  limitations under the License.
 #
 class openshift_origin::datastore {
-  if $::openshift_origin::manage_firewall {
-    include openshift_origin::firewall::mongodb
-  }
+  anchor { 'openshift_origin::datastore_begin': } ->
+  class { 'openshift_origin::firewall::mongodb': } ->
+  anchor { 'openshift_origin::datastore_end': }
 
   package { ['mongodb', 'mongodb-server', 'rubygem-open4']:
     ensure  => present,

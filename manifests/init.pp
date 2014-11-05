@@ -45,7 +45,7 @@
 #   Default: ['broker','node','msgserver','datastore','nameserver']
 #
 #   Note: Multiple servers are required when using the load_balancer role.
-# 
+#
 # [*install_method*]
 #   Choose from the following ways to provide packages:
 #     none - install sources are already set up when the script executes (default)
@@ -138,7 +138,7 @@
 #   Default: undef
 #   IP addresses of the first 3 MongoDB servers in a replica set.
 #   Add datastoreX_ip_addr parameters for larger clusters.
-# 
+#
 # [*nameserver_ip_addr*]
 #   Default: IP of a nameserver instance or current IP if installing on this
 #   node. This is used by every node to configure its primary name server.
@@ -214,7 +214,7 @@
 #   Default: 'changeme'
 #   The password used to secure communication between the load-balancers
 #   within a Broker cluster.
-# 
+#
 # [*node_ip_addr*]
 #   Default: the current IP (at install)
 #   This is used for the node to give a public IP, if different from the
@@ -227,7 +227,7 @@
 #
 # [*node_quota_files*]
 #   The max number of files allowed in each gear.
-#   
+#
 #   Default: 80000
 #
 # [*node_quota_blocks*]
@@ -238,16 +238,16 @@
 # [*node_max_active_gears*]
 #   max_active_gears is used for limiting/guiding gear placement.
 #   For no over-commit, should be (Total System Memory - 1G) / memory_limit_in_bytes
-#   
+#
 #   Default: 100
-#   
+#
 # [*node_no_overcommit_active*]
 #   no_overcommit_active enforces max_active_gears in a more stringent manner than normal,
 #   however it also adds overhead to gear creation, so should only be set to true
 #   when needed, like in the case of enforcing single tenancy on a node.
-#   
+#
 #   Default: false
-# 
+#
 # [*node_resource_limits*]
 #   Resource limit options per node, these values must be the same across
 #   districts. eg. district-small should all be using the same values.
@@ -256,14 +256,14 @@
 #   node_tc_max_bandwidth=800                   # mbit/sec - Total bandwidth allowed for Libra
 #   node_tc_user_share=2                        # mbit/sec - one user is allotted...
 #   node_cpu_shares=128                         # cpu share percentage for each gear
-#   node_cpu_cfs_quota_us=100000                # cpu 
+#   node_cpu_cfs_quota_us=100000                # cpu
 #   node_memory_limit_in_bytes=536870912        # gear memory limit in bytes (512MB)
 #   node_memsw_limit_in_bytes=641728512  # gear max memory limit including swap (512M + 100M swap)
 #   node_memory_oom_control=1                   # kill processes when hitting out of memory
-#   node_throttle_cpu_shares=128                # cpu share percentage each gear gets at throttle   
+#   node_throttle_cpu_shares=128                # cpu share percentage each gear gets at throttle
 #   node_throttle_cpu_cfs_quota_us=30000        #
-#   node_throttle_apply_period=120              # 
-#   node_throttle_apply_percent=30              # 
+#   node_throttle_apply_period=120              #
+#   node_throttle_apply_percent=30              #
 #   node_throttle_restore_percent=70            #
 #   node_boosted_cpu_shares=256                 # cpu share percentage each gear gets while boosted
 #   node_boosted_cpu_cfs_quota_us=200000        #
@@ -286,7 +286,7 @@
 # only alphanumeric values in this script as others may cause syntax
 # errors depending on context. If non-alphanumeric values are required,
 # update them separately after installation.
-# 
+#
 # [*msgserver_cluster*]
 #   Default: false
 #   Set to true to cluster ActiveMQ for high-availability and scalability
@@ -342,7 +342,7 @@
 #   Default: openshift_broker
 #   This is the name of the database in MongoDB in which the broker will
 #   store data.
-# 
+#
 # [*mongodb_port*]
 #   Default: '27017'
 #   The TCP port used for MongoDB to listen on.
@@ -552,7 +552,7 @@
 #   Public and private keys used for gears on the default domain. Both values
 #   must be defined or default self signed keys will be generated.
 #
-#   Default:  Self signed keys are generated. 
+#   Default:  Self signed keys are generated.
 #
 # [*conf_node_supplementary_posix_groups*]
 #   Name of supplementary UNIX group to add a gear to.
@@ -583,7 +583,7 @@
 #  Default:  0
 #
 # [*conf_node_custom_motd*]
-#  Define a custom MOTD to be displayed to users who connect to their gears directly. 
+#  Define a custom MOTD to be displayed to users who connect to their gears directly.
 #  If undef, uses the default MOTD included with the node package.
 #  Default: undef
 #
@@ -681,7 +681,7 @@
 #
 # [*update_network_conf_files*]
 #   Indicate whether or not this module will configure resolv.conf and
-#   network for you. 
+#   network for you.
 #
 #  Default: true
 #
@@ -742,7 +742,7 @@ class openshift_origin (
   $datastore1_ip_addr                   = undef,
   $datastore2_ip_addr                   = undef,
   $datastore3_ip_addr                   = undef,
-  $nameserver_ip_addr                   = $ipaddress,
+  $nameserver_ip_addr                   = $::ipaddress,
   $bind_key                             = '',
   $bind_key_algorithm                   = 'HMAC-MD5',
   $bind_krb_keytab                      = '',
@@ -750,14 +750,14 @@ class openshift_origin (
   $aws_access_key_id                    = '',
   $aws_secret_key                       = '',
   $aws_zone_id                          = '',
-  $broker_ip_addr                       = $ipaddress,
+  $broker_ip_addr                       = $::ipaddress,
   $broker_cluster_members               = undef,
   $broker_cluster_ip_addresses          = undef,
   $broker_virtual_ip_address            = undef,
   $broker_virtual_hostname              = "broker.${domain}",
   $load_balancer_master                 = false,
   $load_balancer_auth_password          = 'changeme',
-  $node_ip_addr                         = $ipaddress,
+  $node_ip_addr                         = $::ipaddress,
   $node_profile                         = 'small',
   $node_quota_files                     = '80000',
   $node_quota_blocks                    = '1048576',
@@ -874,63 +874,40 @@ class openshift_origin (
     fail('msgserver_cluster_members and mcollective_cluster_members parameters are required when msgserver_cluster is set')
   }
 
-  if member( $roles, 'nameserver' ) {
-    class{ 'openshift_origin::role::nameserver':
-      before => Class['openshift_origin::update_conf_files'],
-    }
-    if member( $roles, 'broker' ) {
-      Class['openshift_origin::role::nameserver'] -> Class['openshift_origin::role::broker']
-    }
-    if member( $roles, 'node' ) {
-      Class['openshift_origin::role::nameserver'] -> Class['openshift_origin::role::node']
-    }
-    if member( $roles, 'msgserver' ) {
-      Class['openshift_origin::role::nameserver'] -> Class['openshift_origin::role::msgserver']
-    }
-    if member( $roles, 'datastore' ) {
-      Class['openshift_origin::role::nameserver'] -> Class['openshift_origin::role::datastore']
-    }
-    if member( $roles, 'load_balancer' ) {
-      Class['openshift_origin::role::nameserver'] -> Class['openshift_origin::role::load_balancer']
-    }
-  }
-
-  # Anchors for containing the implementation class
-  anchor { 'openshift_origin::begin': }
-
   Exec { path => '/usr/bin:/usr/sbin:/bin:/sbin' }
 
-  if $::openshift_origin::manage_firewall {
-    include openshift_origin::firewall
-  }
+  include openshift_origin::update_conf_files
 
+  if member( $roles, 'nameserver' ) {
+    class { 'openshift_origin::role::nameserver': } ->
+    Class['openshift_origin::update_conf_files']
+  }
   if member( $roles, 'broker' ) {
-    class { 'openshift_origin::role::broker':
-      require => Class['openshift_origin::update_conf_files']
+    Class['openshift_origin::update_conf_files'] ->
+    class { 'openshift_origin::role::broker': }
+    if member( $roles, 'msgserver' ) {
+      Class['openshift_origin::role::msgserver'] ->
+      Class['openshift_origin::role::broker']
+    }
+    if member( $roles, 'datastore' ) {
+      Class['openshift_origin::role::datastore'] ->
+      Class['openshift_origin::role::broker']
     }
   }
   if member( $roles, 'node' ) {
-    class { 'openshift_origin::role::node':
-      require => Class['openshift_origin::update_conf_files']
-    }
+    Class['openshift_origin::update_conf_files'] ->
+    class { 'openshift_origin::role::node': }
   }
   if member( $roles, 'msgserver' ) {
-    class{ 'openshift_origin::role::msgserver':
-      require => Class['openshift_origin::update_conf_files']
-    }
+    Class['openshift_origin::update_conf_files'] ->
+    class { 'openshift_origin::role::msgserver': }
   }
   if member( $roles, 'datastore' ) {
-    class{ 'openshift_origin::role::datastore':
-      require => Class['openshift_origin::update_conf_files']
-    }
+    Class['openshift_origin::update_conf_files'] ->
+    class { 'openshift_origin::role::datastore': }
   }
   if member( $roles, 'load_balancer' ) {
-    class{ 'openshift_origin::role::load_balancer':
-      require => Class['openshift_origin::update_conf_files']
-    }
+    Class['openshift_origin::update_conf_files'] ->
+    class { 'openshift_origin::role::load_balancer': }
   }
-
-  class{ 'openshift_origin::update_conf_files': }
-
-  anchor { 'openshift_origin::end': }
 }

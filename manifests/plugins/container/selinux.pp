@@ -138,7 +138,7 @@ class openshift_origin::plugins::container::selinux {
       'set 03/control optional',
       'set 03/module pam_cgroup.so',
       'set 03/#comment \'Managed by puppet:openshift_origin\'',
-   ],
+    ],
     onlyif  => 'match *[#comment=\'Managed by puppet:openshift_origin\'] size == 0',
   }
 
@@ -189,7 +189,7 @@ class openshift_origin::plugins::container::selinux {
       'set 03/control optional',
       'set 03/module pam_cgroup.so',
       'set 03/#comment \'Managed by puppet:openshift_origin\'',
-   ],
+    ],
     onlyif  => 'match *[#comment=\'Managed by puppet:openshift_origin\'] size == 0',
   }
 

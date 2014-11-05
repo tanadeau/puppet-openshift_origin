@@ -14,9 +14,7 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::dns::avahi {
-  if $::openshift_origin::manage_firewall {
-    include openshift_origin::firewall::mdns
-  }
+  require openshift_origin::firewall::mdns
 
   file { 'plugin openshift-origin-dns-avahi.conf':
     path    => '/etc/openshift/plugins.d/openshift-origin-dns-avahi.conf',
@@ -24,6 +22,7 @@ class openshift_origin::plugins::dns::avahi {
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
+    notify  => Service['openshift-broker'],
     require => Package['rubygem-openshift-origin-dns-avahi'],
   }
 
@@ -41,7 +40,10 @@ class openshift_origin::plugins::dns::avahi {
 
   package { 'rubygem-openshift-origin-dns-avahi':
     ensure  => present,
-    require => Class['openshift_origin::install_method'],
+    require => [
+      Class['openshift_origin::install_method'],
+      Package['openshift-origin-broker'],
+    ],
   }
 
   package { 'avahi-cname-manager':

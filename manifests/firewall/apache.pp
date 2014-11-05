@@ -13,7 +13,12 @@
 #  limitations under the License.
 #
 class openshift_origin::firewall::apache {
-  lokkit::services { 'Apache':
-    services => ['http','https'],
+
+  if $::openshift_origin::manage_firewall {
+    require openshift_origin::firewall
+
+    lokkit::services { 'Apache':
+      services => ['http','https'],
+    }
   }
 }

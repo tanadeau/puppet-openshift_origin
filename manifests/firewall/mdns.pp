@@ -13,9 +13,14 @@
 #  limitations under the License.
 #
 class openshift_origin::firewall::mdns {
-  lokkit::custom { 'openshift_mdns_rules':
-    type   => 'ipv4',
-    table  => 'filter',
-    source => 'puppet:///modules/openshift_origin/firewall/mdns_iptables.txt',
+
+  if $::openshift_origin::manage_firewall {
+    require openshift_origin::firewall
+
+    lokkit::custom { 'openshift_mdns_rules':
+      type   => 'ipv4',
+      table  => 'filter',
+      source => 'puppet:///modules/openshift_origin/firewall/mdns_iptables.txt',
+    }
   }
 }

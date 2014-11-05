@@ -13,7 +13,12 @@
 #  limitations under the License.
 #
 class openshift_origin::firewall::apache_node {
-  lokkit::ports { 'Node Apache':
-    tcpPorts => [ '8000','8443' ],
+
+  if $::openshift_origin::manage_firewall {
+    require openshift_origin::firewall
+
+    lokkit::ports { 'Node Apache':
+      tcpPorts => [ '8000','8443' ],
+    }
   }
 }

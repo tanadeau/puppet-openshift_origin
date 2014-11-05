@@ -14,29 +14,73 @@
 #  limitations under the License.
 #
 class openshift_origin::broker {
-  if $::openshift_origin::manage_firewall {
-    include openshift_origin::firewall::apache
-  }
-  include openshift_origin::mcollective_client
-  include openshift_origin::plugins::frontend::apache
+  include openshift_origin::broker_console_dirs
+  include openshift_origin::firewall::apache
   include openshift_origin::selbooleans
   include openshift_origin::selbooleans::broker_console
-  include openshift_origin::broker_console_dirs
   include openshift_origin::httpd_certificate
 
+  anchor { 'openshift_origin::broker_begin': } ->
+  Class['openshift_origin::broker_console_dirs'] ->
+  Class['openshift_origin::selbooleans'] ->
+  Class['openshift_origin::selbooleans::broker_console'] ->
+  Class['openshift_origin::firewall::apache'] ->
+  Class['openshift_origin::httpd_certificate'] ->
+  anchor { 'openshift_origin::broker_end': }
+
+  anchor { 'openshift_origin::broker_frontend_begin': } ->
+  class { 'openshift_origin::plugins::frontend::apache': } ->
+  anchor { 'openshift_origin::broker_frontend_end': }
+
+  anchor { 'openshift_origin::broker_mco_begin': } ->
+  class { 'openshift_origin::mcollective_client': } ->
+  anchor { 'opensfhit_origin::broker_mco_end': }
+
   case $::openshift_origin::broker_dns_plugin {
-    'nsupdate' : { include openshift_origin::plugins::dns::nsupdate }
-    'avahi'    : { include openshift_origin::plugins::dns::avahi }
-    'route53'  : { include openshift_origin::plugins::dns::route53 }
+    'nsupdate' : {
+      anchor { 'openshift_origin::broker_dns_begin': } ->
+      class { 'openshift_origin::plugins::dns::nsupdate': } ->
+      anchor { 'openshift_origin::broker_dns_end': }
+     }
+    'avahi'    : {
+      anchor { 'openshift_origin::broker_dns_begin': } ->
+      class { 'openshift_origin::plugins::dns::avahi': } ->
+      anchor { 'openshift_origin::broker_dns_end': }
+     }
+    'route53'  : {
+      anchor { 'openshift_origin::broker_dns_begin': } ->
+      class { 'openshift_origin::plugins::dns::route53': } ->
+      anchor { 'openshift_origin::broker_dns_end': }
+     }
     default    : { fail('A broker_dns_plugin value must be specified. Supported values are: nsupdate, avahi, route53.') }
   }
 
   case $::openshift_origin::broker_auth_plugin {
-    'mongo'    : { include openshift_origin::plugins::auth::mongo }
-    'htpasswd' : { include openshift_origin::plugins::auth::htpasswd }
-    'kerberos' : { include openshift_origin::plugins::auth::kerberos }
-    'ldap'     : { include openshift_origin::plugins::auth::ldap }
-    default    : { include openshift_origin::plugins::auth::htpasswd }
+    'mongo'    : {
+      anchor { 'openshift_origin::broker_auth_begin': } ->
+      class { 'openshift_origin::plugins::auth::mongo': } ->
+      anchor { 'openshift_origin::broker_auth_end': }
+     }
+    'htpasswd' : {
+      anchor { 'openshift_origin::broker_auth_begin': } ->
+      class { 'openshift_origin::plugins::auth::htpasswd': } ->
+      anchor { 'openshift_origin::broker_auth_end': }
+     }
+    'kerberos' : {
+      anchor { 'openshift_origin::broker_auth_begin': } ->
+      class { 'openshift_origin::plugins::auth::kerberos': } ->
+      anchor { 'openshift_origin::broker_auth_end': }
+     }
+    'ldap'     : {
+      anchor { 'openshift_origin::broker_auth_begin': } ->
+      class { 'openshift_origin::plugins::auth::ldap': } ->
+      anchor { 'openshift_origin::broker_auth_end': }
+     }
+    default    : {
+      anchor { 'openshift_origin::broker_auth_begin': } ->
+      class { 'openshift_origin::plugins::auth::htpasswd': } ->
+      anchor { 'openshift_origin::broker_auth_end': }
+     }
   }
 
   package {
@@ -232,6 +276,8 @@ class openshift_origin::broker {
     require => Package['openshift-origin-broker'],
   }
   if $::openshift_origin::install_login_shell {
-    include openshift_origin::login_shell
+    anchor { 'openshift_origin::broker_login_shell': } ->
+    class { 'openshift_origin::login_shell': } ->
+    anchor { 'openshift_origin::broker_login_shell': }
   }
 }

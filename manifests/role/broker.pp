@@ -17,4 +17,14 @@ class openshift_origin::role::broker inherits openshift_origin::role {
   include openshift_origin::broker
   include openshift_origin::console
   include openshift_origin::register_dns
+
+  anchor { 'openshift_origin::broker_role_begin': } ->
+  Class['openshift_origin::broker'] ->
+  anchor { 'openshift_origin::broker_role_end': } ->
+  Class['openshift_origin::register_dns']
+
+  anchor { 'openshift_origin::console_role_begin': } ->
+  Class['openshift_origin::console'] ->
+  anchor { 'openshift_origin::console_role_end': } ->
+  Class['openshift_origin::register_dns']
 }

@@ -26,7 +26,7 @@ class openshift_origin::plugins::auth::mongo {
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    require => Package['rubygem-openshift-origin-msg-broker-mcollective'],
+    require => Package['openshift-origin-broker'],
     before  => Exec['Broker gem dependencies'],
   }
 }
