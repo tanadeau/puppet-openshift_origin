@@ -222,6 +222,7 @@ class openshift_origin::node {
       Package['dbus'],
     ],
   }
+  Service['messagebus'] -> Service['oddjobd']
 
   # Fedora already has cgroups as systemd uses  them.
   if $::operatingsystem != 'Fedora' {
