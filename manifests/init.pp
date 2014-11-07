@@ -652,7 +652,7 @@
 # [*install_cartridges*]
 #   List of cartridges to be installed on the node. Options:
 #
-#   * 10gen-mms-agent - Not included in OpenShift Enterprise
+#   * 10gen-mms-agent   not available in OpenShift Enterprise
 #   * cron
 #   * diy
 #   * haproxy
@@ -660,17 +660,17 @@
 #   * nodejs
 #   * perl
 #   * php
-#   * phpmyadmin      - Not included in OpenShift Enterprise
+#   * phpmyadmin        not available in OpenShift Enterprise
 #   * postgresql
 #   * python
 #   * ruby
 #   * jenkins
 #   * jenkins-client
-#   * mariadb         (for Fedora deployments)
-#   * mysql           (for CentOS / RHEL deployments)
-#   * jbossews        - Not supported by Red Hat in either Origin or Centos
-#   * jbossas         - Not included in OpenShift Enterprise
-#   * jbosseap        - Not included by Red Hat in either Origin or Centos
+#   * mariadb           for Fedora deployments
+#   * mysql             for CentOS / RHEL deployments
+#   * jbossas           not available in OpenShift Enterprise
+#   * jbosseap          requires OpenShift Enterprise JBoss EAP add-on
+#   * jbossews
 #
 #   Default: ['10gen-mms-agent','cron','diy','haproxy','mongodb',
 #             'nodejs','perl','php','phpmyadmin','postgresql',
@@ -684,6 +684,39 @@
 #   network for you.
 #
 #  Default: true
+#
+# [*install_cartridges_recommended_deps*]
+#   List of cartridge recommended dependencies to be installed on the node. Options:
+#
+#   * all               not available in OpenShift Enterprise
+#   * diy               not available in OpenShift Enterprise
+#   * jbossas           not available in OpenShift Enterprise
+#   * jbosseap          requires OpenShift Enterprise JBoss EAP add-ons
+#   * jbossews
+#   * nodejs
+#   * perl
+#   * php
+#   * python
+#   * ruby
+#
+#   Default: ['diy','nodejs','perl','php','python','ruby'],
+#   OSE Default: ['jbossews','nodejs','perl','php','python','ruby'],
+#
+# [*install_cartridges_optional_deps*]
+#   List of cartridge optional dependencies to be installed on the node. Options:
+#
+#   * all               not available in OpenShift Enterprise
+#   * diy               not available in OpenShift Enterprise
+#   * jbossas           not available in OpenShift Enterprise
+#   * jbosseap          requires OpenShift Enterprise JBoss EAP add-ons
+#   * jbossews
+#   * nodejs
+#   * perl
+#   * php
+#   * python
+#   * ruby
+#
+#   Default: undef
 #
 # == Manual Tasks
 #
@@ -861,6 +894,11 @@ class openshift_origin (
                                                         'postgresql','python','ruby','jenkins','jenkins-client',
                                                         'jbossews','mysql'],
                                           },
+  $install_cartridges_recommended_deps  = $ose_version ? {
+                                            undef   => ['diy','nodejs','perl','php','python','ruby'],
+                                            default => ['jbossews','nodejs','perl','php','python','ruby'],
+                                          },
+  $install_cartridges_optional_deps     = undef,
   $manage_firewall                      = true,
 ){
   include openshift_origin::role
