@@ -18,14 +18,12 @@ class openshift_origin::broker {
   include openshift_origin::firewall::apache
   include openshift_origin::selbooleans
   include openshift_origin::selbooleans::broker_console
-  include openshift_origin::httpd_certificate
 
   anchor { 'openshift_origin::broker_begin': } ->
   Class['openshift_origin::broker_console_dirs'] ->
   Class['openshift_origin::selbooleans'] ->
   Class['openshift_origin::selbooleans::broker_console'] ->
   Class['openshift_origin::firewall::apache'] ->
-  Class['openshift_origin::httpd_certificate'] ->
   anchor { 'openshift_origin::broker_end': }
 
   anchor { 'openshift_origin::broker_frontend_begin': } ->

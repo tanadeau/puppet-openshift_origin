@@ -14,6 +14,12 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::frontend::apache {
+  include openshift_origin::httpd_certificate
+
+  anchor { 'openshift_origin::plugins::fronted::apache_begin': } ->
+  Package['httpd'] ->
+  Class['openshift_origin::httpd_certificate'] ->
+  anchor { 'openshift_origin::plugins::fronted::apache_end': }
 
   package { 'httpd':
     require => Class['openshift_origin::install_method'],
