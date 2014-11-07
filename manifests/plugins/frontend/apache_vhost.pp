@@ -16,6 +16,10 @@
 class openshift_origin::plugins::frontend::apache_vhost {
   include openshift_origin::plugins::frontend::apache
 
+  anchor { 'openshift_origin::plugins::fronted::apache_vhost_begin': } ->
+  Class['openshift_origin::plugins::frontend::apache'] ->
+  anchor { 'openshift_origin::plugins::fronted::apache_vhost_end': }
+
   package { 'rubygem-openshift-origin-frontend-apache-vhost':
     require => Class['openshift_origin::install_method'],
   }

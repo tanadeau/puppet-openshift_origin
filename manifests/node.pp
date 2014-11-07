@@ -20,7 +20,6 @@ class openshift_origin::node {
   include openshift_origin::firewall::node
   include openshift_origin::selbooleans
   include openshift_origin::selbooleans::node
-  include openshift_origin::httpd_certificate
 
 
   anchor { 'openshift_origin::node_begin': } ->
@@ -29,7 +28,6 @@ class openshift_origin::node {
   Class['openshift_origin::firewall::apache'] ->
   Class['openshift_origin::firewall::apache_node'] ->
   Class['openshift_origin::firewall::node'] ->
-  Class['openshift_origin::httpd_certificate'] ->
   class{ 'openshift_origin::mcollective_server': } ->
   anchor { 'openshift_origin::node_end': }
 
