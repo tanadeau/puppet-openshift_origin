@@ -52,6 +52,18 @@ class openshift_origin::msgserver (
     require => Package['activemq'],
   }
 
+  if ($::openshift_origin::msgserver_tls_enabled == 'enabled') or ($::openshift_origin::msgserver_tls_enabled == 'strict') { 
+    if ($::openshift_origin::msgserver_tls_ca != '') and ($::openshift_origin::msgserver_tls_key != '') and ($::openshift_origin::msgserver_tls_cert != '') {
+      anchor { 'openshift_origin::msgserver_keystores_begin': } -> 
+      class { 'openshift_origin::activemq_keystores' : } ->
+      anchor { 'openshift_origin::msgserver_keystores_end': }
+    
+      $activemq_openwire_port = '61617'
+    } else { fail 'Valid certificate file locations are required when msgserver_tls_enabled is in strict or enabled mode.' }
+  } else { 
+    $activemq_openwire_port = '61616'
+  }
+
   if $::openshift_origin::msgserver_cluster {
     $activemq_config_template_real = 'openshift_origin/activemq/activemq-network.xml.erb'
   } else {

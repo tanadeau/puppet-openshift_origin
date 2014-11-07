@@ -463,6 +463,33 @@ not needed by OpenShift but might be useful in troubleshooting.
 
 Default: scrambled
 
+=== msgserver_tls_enabled
+This configures mcollective and activemq to use end-to-end encryption over TLS.
+Use enabled to support both TLS and non-TLS, or strict to only support TLS.
+
+Default: 'disabled'
+ 
+=== msgserver_tls_keystore_password
+The password used to protect the keystore. It must be greater than 6 characters. This is required.
+
+Default: password
+
+=== msgserver_tls_ca
+Location for certificate ca
+
+Default: /var/lib/puppet/ssl/certs/ca.pem
+
+=== msgserver_tls_cert
+Location for certificate cert
+
+Default: /var/lib/puppet/ssl/certs/${lower_fqdn}.pem
+
+=== msgserver_tls_key
+Location for certificate key
+
+Default: /var/lib/puppet/ssl/private_keys/${lower_fqdn}.pem
+
+
 === mcollective_user
 === mcollective_password
 This is the user and password shared between broker and node for

@@ -17,13 +17,24 @@ class openshift_origin::firewall::activemq {
   if $::openshift_origin::manage_firewall {
     require openshift_origin::firewall
 
+    if $::openshift_origin::msgserver_tls_enabled == 'strict' {
+      $activemq_port = '61614'
+      $activemq_openwire_port = '61617'
+    } elsif $::openshift_origin::msgserver_tls_enabled == 'enabled' {
+      $activemq_port = '61613-61614'
+      $activemq_openwire_port = '61616-61617'
+    } else {
+      $activemq_port = '61613'
+      $activemq_openwire_port = '61616'
+    }
+    
     lokkit::ports { 'ActiveMQ':
-      tcpPorts => [ '61613' ],
+      tcpPorts => [ $activemq_port ],
     }
 
     if $::openshift_origin::msgserver_cluster {
       lokkit::ports { 'ActiveMQ-Openwire':
-        tcpPorts => [ '61616' ],
+        tcpPorts => [ $activemq_openwire_port ],
       }
     }
   }

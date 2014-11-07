@@ -37,7 +37,17 @@ class openshift_origin::mcollective_server {
     ensure  => 'directory',
     require => Package['mcollective'],
   }
+  
+  if ($::openshift_origin::msgserver_tls_enabled == 'enabled' or $::openshift_origin::msgserver_tls_enabled == 'strict') {
+    if ($::openshift_origin::msgserver_tls_ca != '') and ($::openshift_origin::msgserver_tls_key != '') and ($::openshift_origin::msgserver_tls_cert != '') {
+      $tls_certs_provided = true
+    } else { $tls_certs_provided = false }
+  }
 
+  if ($::openshift_origin::msgserver_tls_enabled == 'strict' and $tls_certs_provided == false) {
+    fail 'Valid certificate file locations are required when msgserver_tls_enabled is in strict mode.'
+  }
+  
   file { 'mcollective server config':
     ensure  => present,
     path    => "${::openshift_origin::params::ruby_scl_path_prefix}/etc/mcollective/server.cfg",
