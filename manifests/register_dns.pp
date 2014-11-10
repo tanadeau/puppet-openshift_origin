@@ -23,7 +23,9 @@ class openshift_origin::register_dns {
         $::openshift_origin::bind_key_algorithm)
       $key_secret=pick($::openshift_origin::dns_infrastructure_key,
         $::openshift_origin::bind_key)
-      $key_argument="${key_algorithm}:${::openshift_origin::domain}:${key_secret}"
+      $key_domain=pick($::openshift_origin::dns_infrastructure_zone,
+        $::openshift_origin::domain)
+      $key_argument="${key_algorithm}:${key_domain}:${key_secret}"
 
       exec { "Register ${::fqdn}" :
         command   => template('openshift_origin/register_dns.erb'),
