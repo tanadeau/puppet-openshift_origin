@@ -110,7 +110,6 @@ class openshift_origin::nameserver {
       group   => 'named',
       mode    => '0644',
       content => template('openshift_origin/named/oo_infrastructure.conf.erb'),
-      replace => false,
       require => File['/var/named']
     }
 
@@ -142,7 +141,6 @@ class openshift_origin::nameserver {
   } else {
     file { 'empty infrastructure host configuration':
       ensure  => present,
-      replace => false,
       path    => '/var/named/oo_infrastructure.conf',
       owner   => 'root',
       group   => 'named',

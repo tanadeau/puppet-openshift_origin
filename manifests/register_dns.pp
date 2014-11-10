@@ -27,7 +27,7 @@ class openshift_origin::register_dns {
         $::openshift_origin::domain)
       $key_argument="${key_algorithm}:${key_domain}:${key_secret}"
 
-      exec { "Register ${::fqdn}" :
+      exec { "Attempting to register host dns" :
         command   => template('openshift_origin/register_dns.erb'),
         provider  => 'shell',
         require   => Package['bind-utils'],

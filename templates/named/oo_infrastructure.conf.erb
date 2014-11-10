@@ -1,4 +1,7 @@
 // define a zone for infrastructure hosts
+<% unless scope.lookupvar('::openshift_origin::dns_infrastructure_key').empty? -%>
+include "<%= scope.lookupvar('::openshift_origin::dns_infrastructure_zone') %>.key";
+<% end -%>
 
 zone "<%= scope.lookupvar('::openshift_origin::dns_infrastructure_zone') %>" IN {
     type master;
