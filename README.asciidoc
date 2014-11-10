@@ -671,7 +671,7 @@ Node. Use this to reduce Watchman's GearStatePlugin's impact on the system.
 Default:  0
 
 === conf_node_custom_motd
-Define a custom MOTD to be displayed to users who connect to their gears directly. 
+Define a custom MOTD to be displayed to users who connect to their gears directly.
 If undef, uses the default MOTD included with the node package.
 
 Default: undef
@@ -693,7 +693,7 @@ Default: false
 ==== install_cartridges
 List of cartridges to be installed on the node. Options:
 
-* 10gen-mms-agent
+* 10gen-mms-agent   not available in OpenShift Enterprise
 * cron
 * diy
 * haproxy
@@ -701,24 +701,64 @@ List of cartridges to be installed on the node. Options:
 * nodejs
 * perl
 * php
-* phpmyadmin
+* phpmyadmin        not available in OpenShift Enterprise
 * postgresql
 * python
 * ruby
 * jenkins
 * jenkins-client
-* mariadb         (will install mysql on RHEL)
+* mariadb           for Fedora Deployments
+* mysql             for CentOS / RHEL deployments
+* jbosseap          requires OpenShift Enterprise JBoss EAP add-on
+* jbossas           not available in OpenShift Enterprise
 * jbossews
-* jbossas
-* jbosseap
 
 Default: ['10gen-mms-agent','cron','diy','haproxy','mongodb',
           'nodejs','perl','php','phpmyadmin','postgresql',
           'python','ruby','jenkins','jenkins-client','mariadb']
 
+Default in OpenShift Enterprise:
+          ['cron','diy','haproxy','mongodb','nodejs','perl','php',
+           'postgresql','python','ruby','jenkins','jenkins-client',
+           'jbossews','mysql'],
+
+
+==== install_cartridges_recommended_deps
+List of cartridge recommended dependencies to be installed on the node. Options:
+
+* all               not available in OpenShift Enterprise
+* diy               not available in OpenShift Enterprise
+* jbossas           not available in OpenShift Enterprise
+* jbosseap          requires OpenShift Enterprise JBoss EAP add-ons
+* jbossews
+* nodejs
+* perl
+* php
+* python
+* ruby
+
+Default: ['all']
+Default in OpenShift Enterprise : ['jbossews','nodejs','perl','php','python','ruby']
+
+==== install_cartridges_optional_deps
+List of cartridge optional dependencies to be installed on the node. Options:
+
+* all               not available in OpenShift Enterprise
+* diy               not available in OpenShift Enterprise
+* jbossas           not available in OpenShift Enterprise
+* jbosseap          requires OpenShift Enterprise JBoss EAP add-ons
+* jbossews
+* nodejs
+* perl
+* php
+* python
+* ruby
+
+Default: undef
+
 === update_network_conf_files
 Indicate whether or not this module will configure resolv.conf and
-network for you. 
+network for you.
 
 Default: true
 
