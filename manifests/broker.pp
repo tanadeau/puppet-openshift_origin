@@ -226,6 +226,13 @@ class openshift_origin::broker {
       notify  => Service['openshift-broker'],
     }
   }
+  file { '/etc/openshift/development':
+    source  => 'puppet:///openshift_origin/development',
+    ensure  => $::openshift_origin::development_mode ? {
+        true    => present,
+        default => absent,
+      }
+  }
 
   # SCL and Puppet don't play well together; the 'default' here
   # circumvents the use of the `scl enable ruby193` mechanism
@@ -267,6 +274,7 @@ class openshift_origin::broker {
     hasstatus  => true,
     hasrestart => true,
     require    => Package['openshift-origin-broker'],
+    subscribe  => File['/etc/openshift/development'],
   }
   exec { 'Remove mod_ssl default vhost':
     command => '/bin/sed -i \'/VirtualHost/,/VirtualHost/ d\' /etc/httpd/conf.d/ssl.conf',

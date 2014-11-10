@@ -162,5 +162,6 @@ class openshift_origin::console {
     enable     => true,
     hasstatus  => true,
     hasrestart => true,
+    subscribe  => File['/etc/openshift/development'],
   }
 }
