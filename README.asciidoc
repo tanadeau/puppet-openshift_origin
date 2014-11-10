@@ -234,6 +234,8 @@ can be used instead of the dnssec key for updates.
 When the nameserver is remote, this Kerberos principal together with
 Kerberos keytab can be used instead of the dnssec key for updates.
 
+Example: 'DNS/broker.example.com@EXAMPLE.COM'
+
 ==== conf_nameserver_upstream_dns
 List of upstream DNS servers to use when installing a nameserver on this node.
 

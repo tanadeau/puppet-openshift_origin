@@ -161,6 +161,8 @@
 #   When the nameserver is remote, this Kerberos principal together with
 #   Kerberos keytab can be used instead of the dnssec key for updates.
 #
+#   Example: 'DNS/broker.example.com@EXAMPLE.COM'
+#
 # [*aws_access_key_id*]
 #    This and the next value are Amazon AWS security credentials.
 #    The aws_access_key_id is a string which identifies an access credential.
