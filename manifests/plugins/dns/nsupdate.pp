@@ -51,27 +51,19 @@ class openshift_origin::plugins::dns::nsupdate {
       notify  => Service['openshift-broker'],
       require => Package['rubygem-openshift-origin-dns-nsupdate','httpd'],
     }
-    file { 'plugin openshift-origin-dns-nsupdate.conf':
-      path    => '/etc/openshift/plugins.d/openshift-origin-dns-nsupdate.conf',
-      content => template('openshift_origin/broker/plugins/dns/nsupdate/nsupdate-kerb.conf.erb'),
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0644',
-      notify  => Service['openshift-broker'],
-      require => [
-        Package['rubygem-openshift-origin-dns-nsupdate'],
-        File['broker-dns-keytab'],
-      ]
-    }
+    $nsupdate_config = template('openshift_origin/broker/plugins/dns/nsupdate/nsupdate-kerb.conf.erb')
+    $nsupdate_requirements = [ Package['rubygem-openshift-origin-dns-nsupdate'], File['broker-dns-keytab'] ]
   } else {
-    file { 'plugin openshift-origin-dns-nsupdate.conf':
+    $nsupdate_config = template('openshift_origin/broker/plugins/dns/nsupdate/nsupdate.conf.erb')
+    $nsupdate_requirements = Package['rubygem-openshift-origin-dns-nsupdate']
+  }
+  file { 'plugin openshift-origin-dns-nsupdate.conf':
       path    => '/etc/openshift/plugins.d/openshift-origin-dns-nsupdate.conf',
-      content => template('openshift_origin/broker/plugins/dns/nsupdate/nsupdate.conf.erb'),
+      content => $nsupdate_config,
       owner   => 'root',
       group   => 'root',
       mode    => '0644',
       notify  => Service['openshift-broker'],
-      require => Package['rubygem-openshift-origin-dns-nsupdate'],
+      require => $nsupdate_requirements
     }
-  }
 }
