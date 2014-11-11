@@ -1,17 +1,20 @@
   (
   echo server <%= scope.lookupvar('::openshift_origin::nameserver_ip_addr') %>
-<% role_hostnames = Array.new %>
+<% role_hostnames = Array.new -%>
 <% scope.lookupvar('::openshift_origin::roles').each do |role|
-  role_hostnames << scope.lookupvar("::openshift_origin::#{role}_hostname") -%>
+  role_hostname = scope.lookupvar("::openshift_origin::#{role}_hostname")
+  if role_hostname.gsub(/^[^.]*./, '') == @key_domain
+    role_hostnames << role_hostname
+  end -%>
 <% end -%>
-<% role_hostnames.uniq.each do |role_hostname| %>
+<% role_hostnames.uniq.each do |role_hostname| -%>
   echo update delete <%= role_hostname %> A
   echo update add <%= role_hostname %> 180 A <%= scope.lookupvar('::openshift_origin::node_ip_addr') %>
-<% end %>
-<% if scope.lookupvar('::openshift_origin::load_balancer_master') and scope.lookupvar('::openshift_origin::broker_virtual_ip_address') %>
+<% end -%>
+<% if scope.lookupvar('::openshift_origin::load_balancer_master') and scope.lookupvar('::openshift_origin::broker_virtual_ip_address') and scope.lookupvar('::openshift_origin::broker_virtual_hostname').gsub(/^[^.]*./, '') == @key_domain -%>
 (
   echo update delete <%= scope.lookupvar('::openshift_origin::broker_virtual_hostname') %> A
   echo update add <%= scope.lookupvar('::openshift_origin::broker_virtual_hostname') %> 180 A <%= scope.lookupvar('::openshift_origin::broker_virtual_ip_address') %>
-<% end-%>
+<% end -%>
   echo send
 ) | nsupdate -y <%= @key_argument %>
