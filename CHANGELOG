@@ -1,0 +1,37 @@
+CHANGELOG
+=========
+
+4.1.0
+------
+
+2014-11-11
+
+ * Refactor openshift-origin-dns-nsupdate.conf creation
+ * Fix GSS-TSIG dns authentication
+ * fixes for register_dns
+ * Fix resource ordering for httpd_certificate to ensure httpd package is available
+ * Oddjobd fails if messagebus isn't running
+ * duritong-sysctl 0.0.5 has compatibility issues with puppet 2.7
+ * Quickfix for cartridge-dependencies packages
+
+
+4.0.12
+------
+
+2014-11-06
+
+ * Major refactoring of intra-module dependencies
+ * Refactor register_dns to be a simple class that registers all roles assigned to a node.
+ * Fix compatibility with Puppet 2.7 and Facter 1.6
+ * Generate self-signed certs if needed
+ * Ensure cgconfig, cgred, and oddjobd are running on node
+ * Allow vhost plugin to be colocated with broker
+
+4.0.11
+------
+
+2014-10-27
+
+ * Address bugs found while testing in a fully distributed environment
+ * Introduce openshift_origin::ose_supported_config to assist in deploying OpenShift Enterprise supported
+ configurations
