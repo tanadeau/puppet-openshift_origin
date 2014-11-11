@@ -19,7 +19,7 @@ class openshift_origin::cartridges {
   }
 
   openshift_origin::openshift_cartridge { $::openshift_origin::install_cartridges: }
-  
+
   $recommended_deps = prefix($::openshift_origin::install_cartridges_recommended_deps, 'openshift-origin-cartridge-dependencies-recommended-')
   package { $recommended_deps:
     ensure  => present,
@@ -31,7 +31,7 @@ class openshift_origin::cartridges {
       ensure  => present,
     }
   }
-    
+
   if $::openshift_origin::development_mode == true {
     openshift_origin::openshift_cartridge { [ 'mock', 'mock-plugin' ]: }
   }
