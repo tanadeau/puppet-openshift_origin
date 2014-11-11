@@ -31,7 +31,7 @@
         }
     ],
     "name": "openshift-openshift_origin",
-    "version": "4.1.0",
+    "version": "4.1.1",
     "source": "git://github.com/openshift/puppet-openshift_origin.git",
     "author": "Mojo Lingo, Red Hat",
     "license": "ASL",
