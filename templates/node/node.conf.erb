@@ -1,3 +1,5 @@
+# Managed by puppet - module openshift-openshift_origin
+
 # These should not be left at default values, even for a demo.
 # "PUBLIC" networking values are ones that end-users should be able to reach.
 PUBLIC_HOSTNAME="<%= scope.lookupvar('::openshift_origin::node_hostname') %>"                         # The node host's public hostname

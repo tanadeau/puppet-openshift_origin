@@ -1,1 +1,3 @@
+// Managed by puppet - module openshift-openshift_origin
+
 forwarders { <%= scope.lookupvar('::openshift_origin::conf_nameserver_upstream_dns').join("; ") %>; };

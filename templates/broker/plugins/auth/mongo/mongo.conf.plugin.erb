@@ -1,3 +1,5 @@
+# Managed by puppet - module openshift-openshift_origin
+
 MONGO_REPLICA_SETS=<%= scope.lookupvar('::openshift_origin::mongodb_replicasets') %>
 # Replica set example: "<host-1>:<port-1> <host-2>:<port-2> ..."
 <% if scope.lookupvar('::openshift_origin::mongodb_replicasets') == true %>
