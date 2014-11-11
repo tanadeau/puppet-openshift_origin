@@ -127,8 +127,8 @@ class openshift_origin::datastore {
         path      => ['/bin/', '/usr/bin/', '/usr/sbin/'],
         command   => "mongo admin --host ${openshift_origin::mongodb_replica_primary_ip_addr} -u ${openshift_origin::mongodb_admin_user} -p ${openshift_origin::mongodb_admin_password} --quiet --eval \"printjson(rs.add(\'${::ipaddress}:${port}\'))\"",
         unless    => "mongo admin --host ${openshift_origin::mongodb_replica_primary_ip_addr} -u ${openshift_origin::mongodb_admin_user} -p ${openshift_origin::mongodb_admin_password} --quiet --eval \"printjson(rs.status())\" | grep '\"name\" : \"${::ipaddress}:${port}\"'",
-        tries     => 3,
-        try_sleep => 5,
+        tries     => 6,
+        try_sleep => 30,
         require   => [
           Service['mongod'],
           Exec['keyfile-mongo-conf', 'replset-mongo-conf']
