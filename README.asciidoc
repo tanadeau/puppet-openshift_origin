@@ -102,10 +102,16 @@ $ d.register_application "appname", "namespace", "node_fqdn"
 ----
 ** For any errors, on the Broker, check `/var/log/openshift/broker/httpd/error_log`.
 
-=== Parameters
+== Puppet Parameters
 
-==== roles
+An exhaustive list of the parameters you can specify with puppet configuration follows.
 
+NOTE: Passwords used to secure various services. You are advised to specify
+only alphanumeric values in this script as others may cause syntax
+errors depending on context. If non-alphanumeric values are required,
+update them separately after installation.
+
+=== roles
 Choose from the following roles to be configured on this node.
 
 * broker        - Installs the broker and console.
@@ -117,81 +123,85 @@ Choose from the following roles to be configured on this node.
 
 Default: ['broker','node','msgserver','datastore','nameserver']
 
-==== install_method
+NOTE: Multiple servers are required when using the load_balancer role.
+
+=== install_method
 Choose from the following ways to provide packages:
 
-1. none - install sources are already set up when the script executes (default)
-1. yum - set up yum repos manually
-  * repos_base
-  * os_repo
-  * os_updates_repo
-  * jboss_repo_base
-  * jenkins_repo_base
-  * optional_repo
+* none - install sources are already set up when the script executes (default)
+* yum - set up yum repos manually
+** repos_base
+** os_repo
+** os_updates_repo
+** jboss_repo_base
+** jenkins_repo_base
+** optional_repo
 
 Default: yum
 
-==== repos_base
+=== parallel_deployment
+This flag is used to control some module behaviors when an outside utility
+(like oo-install) is managing the deployment of OpenShift across multiple
+hosts simultaneously. Some configuration tasks can"t be performed during
+a multi-host parallel installation and this boolean enables the user to
+indicate whether or not thos tasks should be attempted.
+
+Default: false
+
+=== repos_base
 Base path to repository for OpenShift Origin
 
-* Nightlies:
-** Fedora: https://mirror.openshift.com/pub/origin-server/nightly/fedora-19
-** RHEL:   https://mirror.openshift.com/pub/origin-server/nightly/rhel-6
-* Release-2:
-** Fedora: https://mirror.openshift.com/pub/origin-server/release/2/fedora-19
-** RHEL:   https://mirror.openshift.com/pub/origin-server/release/2/rhel-6
+Nightlies: https://mirror.openshift.com/pub/origin-server/nightly/rhel-6 + 
+Release (currently v4): https://mirror.openshift.com/pub/origin-server/release/4/rhel-6
 
-Default: Fedora-19 Nightlies
+Default: Nightlies
 
 === architecture
 CPU Architecture to use for the definition OpenShift Origin yum repositories
-Defaults: $::architecture (from facter)
 
-* RHEL:
-** x86_64
-* CentOS:
-** x86_64
+Default: $::architecture fact
 
-==== override_install_repo
-Repository path override. Uses dependencies from repos_base but uses 
+NOTE: Currently only the `x86_64` architecture is supported.
+
+=== override_install_repo
+Repository path override. Uses dependencies from repos_base but uses
 override_install_repo path for OpenShift RPMs. Used when doing local builds.
 
 Default: none
 
-==== os_repo
+=== os_repo
 The URL for a Fedora 19/RHEL 6 yum repository used with the "yum" install method.
 Should end in x86_64/os/.
 
 Default: no change
 
-==== os_updates
+=== os_updates_repo
 The URL for a Fedora 19/RHEL 6 yum updates repository used with the "yum" install method.
 Should end in x86_64/.
 
 Default: no change
 
-==== jboss_repo_base
+=== jboss_repo_base
 The URL for a JBoss repositories used with the "yum" install method.
 Does not install repository if not specified.
 
-==== jenkins_repo_base
+=== jenkins_repo_base
 The URL for a Jenkins repositories used with the "yum" install method.
 Does not install repository if not specified.
 
-==== optional_repo
+=== optional_repo
 The URL for a EPEL or optional repositories used with the "yum" install method.
 Does not install repository if not specified.
 
-==== domain
+=== domain
+Default: example.com
 The network domain under which apps and hosts will be placed.
 
-Default: example.com
-
-==== broker_hostname
-==== node_hostname
-==== nameserver_hostname
-==== msgserver_hostname
-==== datastore_hostname
+=== broker_hostname
+=== node_hostname
+=== nameserver_hostname
+=== msgserver_hostname
+=== datastore_hostname
 Default: the root plus the domain, e.g. broker.example.com - except
 nameserver=ns1.example.com
 
@@ -204,162 +214,207 @@ DNS entries for the hostnames of the other components being
 installed on this host as well. If you are using a nameserver set
 up separately, you are responsible for all necessary DNS entries.
 
-==== datastore1_ip_addr|datastore2_ip_addr|datastore3_ip_addr
+=== datastore1_ip_addr|datastore2_ip_addr|datastore3_ip_addr
 Default: undef
 
 IP addresses of the first 3 MongoDB servers in a replica set.
 Add datastoreX_ip_addr parameters for larger clusters.
 
-==== nameserver_ip_addr
-Default: IP of a name server instance or current IP if installing on this
+=== nameserver_ip_addr
+IP of a nameserver instance or current IP if installing on this
 node. This is used by every node to configure its primary name server.
 
 Default: the current IP (at install)
 
-==== bind_key
+=== bind_key
 When the nameserver is remote, use this to specify the key for updates.  This
 is the "Key:" field from the .private key file generated by dnssec-keygen. This
 field is required on all nodes.
 
-==== bind_key_algorithm
-When using a BIND key, use this algorithm form the BIND key.
+=== bind_key_algorithm
+When using a BIND key, use this algorithm for the BIND key.
 
 Default: HMAC-MD5
 
-==== bind_krb_keytab
+=== bind_krb_keytab
 When the nameserver is remote, Kerberos keytab together with principal
 can be used instead of the dnssec key for updates.
 
-==== bind_krb_principal
+=== bind_krb_principal
 When the nameserver is remote, this Kerberos principal together with
 Kerberos keytab can be used instead of the dnssec key for updates.
 
 Example: 'DNS/broker.example.com@EXAMPLE.COM'
 
-==== conf_nameserver_upstream_dns
+=== aws_access_key_id
+This and the next value are Amazon AWS security credentials.
+The aws_access_key_id is a string which identifies an access credential.
+
+For more info see http://docs.aws.amazon.com/AWSSecurityCredentials/1.0/AboutAWSCredentials.html#AccessCredentials.
+
+=== aws_secret_key
+This is the secret portion of AWS Access Credentials indicated by the
+aws_access_key_id
+
+=== aws_zone_id
+This is the ID string for an AWS Hosted zone which will contain the
+OpenShift application records.
+
+For more info see http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html
+
+=== conf_nameserver_upstream_dns
 List of upstream DNS servers to use when installing a nameserver on this node.
 
 Default: ['8.8.8.8']
 
-==== broker_ip_addr
+=== broker_ip_addr
 This is used for the node to record its broker. Also is the default
 for the nameserver IP if none is given.
 
 Default: the current IP (at install)
 
-==== broker_cluster_members
+=== broker_cluster_members
 An array of broker hostnames that will be load-balanced for high-availability.
 
 Default: undef
 
-==== broker_cluster_ip_addresses
+=== broker_cluster_ip_addresses
 An array of Broker IP addresses within the load-balanced cluster.
 
 Default: undef
 
-==== broker_virtual_ip_address
+=== broker_virtual_ip_address
 The virtual IP address that will front-end the Broker cluster.
 
 Default: undef
 
-==== broker_virtual_hostname
+=== broker_virtual_hostname
 The hostame that represents the Broker API cluster.  This name is associated
 to broker_virtual_ip_address and added to Named for DNS resolution.
 
 Default: "broker.${domain}"
 
-==== load_balancer_master
+=== load_balancer_master
 Sets the state of the load-balancer.  Valid options are true or false.
 true sets the load-balancer as the active listener for the Broker cluster
 Virtual IP address. Only 1 load_balancer_master is allowed within a Broker cluster.
 
 Default: false
 
-==== load_balancer_auth_password
+=== load_balancer_auth_password
 The password used to secure communication between the load-balancers
 within a Broker cluster.
 
 Default: 'changeme'
 
-==== node_ip_addr
+=== node_ip_addr
 This is used for the node to give a public IP, if different from the
 one on its NIC.
 
 Default: the current IP (at install)
 
-=== node_profile
+=== Node Resource Limits
+NOTE: The following resource limits must be the same with a given district.
+
+==== node_profile
 This is the specific node's gear profile
 
 Default: small
 
-=== node_quota_files
+==== node_quota_files
 The max number of files allowed in each gear.
 
 Default: 80000
 
-=== node_quota_blocks
+==== node_quota_blocks
 The max storage capacity allowed in each gear (1 block = 1024 bytes)
 
 Default: 1048576
 
-=== node_max_active_gears
+==== node_max_active_gears
 max_active_gears is used for limiting/guiding gear placement.
 For no over-commit, should be (Total System Memory - 1G) / memory_limit_in_bytes
 
 Default: 100
 
-=== node_no_overcommit_active
+==== node_no_overcommit_active
 no_overcommit_active enforces max_active_gears in a more stringent manner than normal,
 however it also adds overhead to gear creation, so should only be set to true
 when needed, like in the case of enforcing single tenancy on a node.
 
 Default: false
 
-==== node_resource_limits
-Resource limit options per node, these values must be the same across
-districts. eg. district-small should all be using the same values.
+==== node_limits_nproc
+max number of processes
 
-node_limits_nproc=250::
-     max number of processes
+Default: 250
 
-node_tc_max_bandwidth=800::
-     mbit/sec - Total bandwidth allowed for Libra
+==== node_tc_max_bandwidth
+mbit/sec - Total bandwidth allowed for Libra
 
-node_tc_user_share=2::
-     mbit/sec - one user is allotted...
+Default: 800
 
-node_cpu_shares=128::
-     cpu share percentage for each gear
+==== node_tc_user_share
+mbit/sec - one user is allotted...
 
-node_cpu_cfs_quota_us=100000::
+Default: 2
 
-node_memory_limit_in_bytes=536870912::
-     gear memory limit in bytes (512MB)
+==== node_cpu_shares
+cpu share percentage for each gear
 
-node_memsw_limit_in_bytes=641728512::
-     gear max memory limit including swap (512M + 100M swap)
+Default: 128
 
-node_memory_oom_control=1::
-     kill processes when hitting out of memory
+==== node_cpu_cfs_quota_us
 
-node_throttle_cpu_shares=128::
-     cpu share percentage each gear gets at throttle
+Default: 100000
 
-node_throttle_cpu_cfs_quota_us=30000::
+==== node_memory_limit_in_bytes
+gear memory limit in bytes
 
-node_throttle_apply_period=120::
+Default: 536870912    (512MB)
 
-node_throttle_apply_percent=30::
+==== node_memsw_limit_in_bytes
+gear max memory limit including swap (512M + 100M swap)
 
-node_throttle_restore_percent=70::
+Default: 641728512
 
-node_boosted_cpu_cfs_quota_us=200000::
+==== node_memory_oom_control
+kill processes when hitting out of memory
 
-node_boosted_cpu_shares=256::
-     cpu share percentage each gear gets while boosted
+Default: 1
+
+==== node_throttle_cpu_shares
+cpu share percentage each gear gets at throttle
+
+Default: 128
+
+==== node_throttle_cpu_cfs_quota_us
+
+Default: 30000
+
+==== node_throttle_apply_period
+
+Default: 120
+
+==== node_throttle_apply_percent
+
+Default: 30
+
+==== node_throttle_restore_percent
+
+Default: 70
+
+==== node_boosted_cpu_cfs_quota_us
+
+Default: 200000
+
+==== node_boosted_cpu_shares
+cpu share percentage each gear gets while boosted
+
+Default: 30000
 
 
-==== configure_ntp
+=== configure_ntp
 Enabling this configures NTP.  It is important that the time be
 synchronized across hosts because MCollective messages have a TTL
 of 60 seconds and may be dropped if the clocks are too far out
@@ -368,12 +423,7 @@ in synch by some other means.
 
 Default: true
 
-NOTE: Passwords used to secure various services. You are advised to specify
-only alphanumeric values in this script as others may cause syntax
-errors depending on context. If non-alphanumeric values are required,
-update them separately after installation.
-
-==== ntp_servers
+=== ntp_servers
 If configure_ntp is set to true (default), ntp_servers allows users to
 specify an array of NTP servers used for clock synchronization.
 
@@ -382,58 +432,60 @@ Default: ['time.apple.com iburst', 'pool.ntp.org iburst', 'clock.redhat.com ibur
 NOTE: Use iburst after every ntp server definition to speed up the
 initial synchronization.
 
-==== msgserver_cluster
-Default: false
-
+=== msgserver_cluster
 Set to true to cluster ActiveMQ for high-availability and scalability
 of OpenShift message queues.
 
-==== msgserver_cluster_members
+Default: false
+
+=== msgserver_cluster_members
+An array of ActiveMQ server hostnames.  Required when parameter
+msgserver_cluster is set to true.
+
 Default: undef
 
-An array of ActiveMQ server hostnames to be included in the ActiveMQ
-cluster. Required when parameter msgserver_cluster is set to true.
+=== mcollective_cluster_members
+An array of ActiveMQ server hostnames.  Required when parameter
+msgserver_cluster is set to true.
 
-==== mcollective_cluster_members
 Default: $msgserver_cluster_members
 
-An array of ActiveMQ server hostnames to be included in the ActiveMQ
-cluster. Required when parameter msgserver_cluster is set to true.
-
-==== msgserver_password
-Default 'changeme'
-
+=== msgserver_password
 Password used by ActiveMQ's amquser.  The amquser is used to authenticate
 ActiveMQ inter-cluster communication.  Only used when msgserver_cluster
 is true.
 
-==== msgserver_admin_password
+Default "changeme"
+
+=== msgserver_admin_password
 This is the admin password for the ActiveMQ admin console, which is
 not needed by OpenShift but might be useful in troubleshooting.
 
 Default: scrambled
 
-==== mcollective_user
-==== mcollective_password
+=== mcollective_user
+=== mcollective_password
 This is the user and password shared between broker and node for
 communicating over the mcollective topic channels in ActiveMQ. Must
 be the same on all broker and node hosts.
 
 Default: mcollective/marionette
 
-==== mongodb_admin_user
-==== mongodb_admin_password
+=== mongodb_admin_user
+=== mongodb_admin_password
 These are the username and password of the administrative user that
 will be created in the MongoDB datastore. These credentials are not
 used by in this script or by OpenShift, but an administrative user
 must be added to MongoDB in order for it to enforce authentication.
-Note: The administrative user will not be created if
-CONF_NO_DATASTORE_AUTH_FOR_LOCALHOST is enabled.
 
 Default: admin/mongopass
 
-==== mongodb_broker_user
-==== mongodb_broker_password
+NOTE: The administrative user will not be created if
+CONF_NO_DATASTORE_AUTH_FOR_LOCALHOST is enabled.
+
+
+=== mongodb_broker_user
+=== mongodb_broker_password
 These are the username and password of the normal user that will be
 created for the broker to connect to the MongoDB datastore. The
 broker application's MongoDB plugin is also configured with these
@@ -441,99 +493,116 @@ values.
 
 Default: openshift/mongopass
 
-==== mongodb_name
+=== mongodb_name
 This is the name of the database in MongoDB in which the broker will
 store data.
 
 Default: openshift_broker
 
-==== mongodb_port
-Default: '27017'
-
+=== mongodb_port
 The TCP port used for MongoDB to listen on.
 
-==== mongodb_replicasets
-Default: false
+Default: '27017'
 
+=== mongodb_replicasets
 Enable/disable MongoDB replica sets for database high-availability.
 
-==== mongodb_replica_name
-Default: 'openshift'
+Default: false
 
+=== mongodb_replica_name
 The MongoDB replica set name when $mongodb_replicasets is true.
 
-==== mongodb_replica_primary
+Default: 'openshift'
+
+
+
+=== mongodb_replica_primary
+Set the host as the primary with true or secondary with false. Must be set on
+one and only one host within the mongodb_replicasets_members array.
+
 Default: undef
 
-Set the host as the primary with true or secondary with false.
-
-==== mongodb_replica_primary_ip_addr
-Default: undef
-
+=== mongodb_replica_primary_ip_addr
 The IP address of the Primary host within the MongoDB replica set.
 
-==== mongodb_replicasets_members
 Default: undef
 
+=== mongodb_replicasets_members
 An array of [host:port] of replica set hosts.
 Example: ['10.10.10.10:27017', '10.10.10.11:27017', '10.10.10.12:27017']
 
-==== mongodb_keyfile
-Default: '/etc/mongodb.keyfile'
+Default: undef
 
+=== mongodb_keyfile
 The file containing the $mongodb_key used to authenticate MongoDB
 replica set members.
 
-==== mongodb_key
-Default: 'changeme'
+Default: '/etc/mongodb.keyfile'
 
+=== mongodb_key
 The key used by members of a MongoDB replica set to authenticate
 one another.
 
-==== openshift_user1
-==== openshift_password1
+Default: 'changeme'
+
+=== openshift_user1
+=== openshift_password1
 This user and password are entered in the /etc/openshift/htpasswd
 file as a demo/test user. You will likely want to remove it after
 installation (or just use a different auth method).
 
 Default: demo/changeme
 
-==== conf_broker_auth_salt
-==== conf_broker_auth_private_key
+=== conf_broker_auth_salt
+=== conf_broker_auth_private_key
 Salt and private keys used when generating secure authentication
 tokens for Application to Broker communication. Requests like scale up/down
 and jenkins builds use these authentication tokens. This value must be the
 same on all broker nodes.
 
-Default:  Self signed keys are generated. Will not work with multi-broker
-          setup.
+Default: Self signed keys are generated. Will not work with multi-broker
+setup.
 
-==== conf_console_product_logo
+=== conf_console_product_logo
 Relative path to product logo URL
 
-Default: '/assets/logo-origin.svg'
+Default: if ose_version == undef '/assets/logo-origin.svg'
+         if ose_version != undef '/assets/logo-enterprise-horizontal.svg'
 
-==== conf_console_product_title
+=== conf_console_product_title
 OpenShift Instance Name
 
-Default: 'OpenShift Origin'
+Default: if ose_version == undef 'OpenShift Origin'
+         if ose_version != undef 'Openshift Enterprise'
 
-==== conf_broker_session_secret
-==== conf_console_session_secret
+=== conf_broker_multi_haproxy_per_node
+This setting is applied on a per-scalable-application basis. When set to true,
+OpenShift will allow multiple instances of the HAProxy gear for a given
+scalable app to be established on the same node. Otherwise, on a
+per-scalable-application basis, a maximum of one HAProxy gear can be created
+for every node in the deployment (this is the default behavior, which protects
+scalable apps from single points of failure at the Node level).
+
+Default: false
+
+=== conf_broker_session_secret
+=== conf_console_session_secret
 Session secrets used to encode cookies used by console and broker. This
 value must be the same on all broker nodes.
 
-==== conf_valid_gear_sizes
+Default: undef
+
+=== conf_valid_gear_sizes
 List of all gear sizes this will be used in this OpenShift installation.
 
 Default: ['small']
 
-==== conf_default_gear_size
+=== conf_default_gear_size
 Default gear size if one is not specified.
 
-Default: small
+Default: 'small'
 
-==== conf_default_gear_capabilities
+=== conf_default_gear_capabilities
 List of all gear sizes that newly created users will be able to create.
 
 Default: ['small']
@@ -548,7 +617,7 @@ Default max number of gears a user is allowed to use
 
 Default: 100
 
-==== broker_dns_plugin
+=== broker_dns_plugin
 
 DNS plugin used by the broker to register application DNS entries.
 Options:
@@ -558,8 +627,12 @@ Options:
              bind_krb_principal for GSS_TSIG auth.
 * avahi    - sets up a MDNS based DNS resolution. Works only for
              all-in-one installations.
+* route53  - use AWS Route53 for dynamic DNS service. Requires AWS key ID
+             and secret and a delegated zone ID
 
-==== broker_auth_plugin
+Default: 'nsupdate'
+
+=== broker_auth_plugin
 Authentication setup for users of the OpenShift service.
 Options:
 
@@ -572,43 +645,69 @@ Options:
 
 Default: htpasswd
 
-==== broker_krb_service_name
+=== broker_krb_service_name
 The KrbServiceName value for mod_auth_kerb configuration
 
-==== broker_krb_auth_realms
+=== broker_krb_auth_realms
 The KrbAuthRealms value for mod_auth_kerb configuration
 
-==== broker_krb_keytab
+=== broker_krb_keytab
 The Krb5KeyTab value of mod_auth_kerb is not configurable -- the keytab
 is expected in /var/www/openshift/broker/httpd/conf.d/http.keytab
 
-==== broker_ldap_uri
+=== broker_ldap_uri
 URI to the LDAP server (e.g. ldap://ldap.example.com:389/ou=People,dc=my-domain,dc=com?uid?sub?(objectClass=*)).
 Set <code>broker_auth_plugin</code> to <code>ldap</code> to enable
 this feature.
 
-==== broker_ldap_bind_dn
+=== broker_ldap_bind_dn
 LDAP DN (Distinguished name) of user to bind to the directory with. (e.g. cn=administrator,cn=Users,dc=domain,dc=com)
 Default is anonymous bind.
 
-==== broker_ldap_bind_password
+=== broker_ldap_bind_password
 Password of bind user set in broker_ldap_bind_dn.
 Default is anonymous bind with a blank password.
 
-==== node_container_plugin
+=== node_shmmax
+kernel.shmmax sysctl setting for /etc/sysctl.conf
+
+This setting should work for most deployments but if this is desired to be
+tuned higher, the general recommendations are as follows:
+
+----
+shmmax = shmall * PAGE_SIZE
+- PAGE_SIZE = getconf PAGE_SIZE
+- shmall = cat /proc/sys/kernel/shmall
+----
+
+shmmax is not recommended to be a value higher than 80% of total available RAM on the system (expressed in BYTES).
+
+Default: kernel.shmmax = 68719476736
+
+=== node_shmall
+kernel.shmall sysctl setting for /etc/sysctl.conf, this defaults to 2097152 BYTES
+
+This parameter sets the total amount of shared memory pages that can be
+used system wide. Hence, SHMALL should always be at least
+ceil(shmmax/PAGE_SIZE).
+
+Default: kernel.shmall = 4294967296
+
+=== node_container_plugin
 Specify the container type to use on the node.
-Options:
-
   * selinux - This is the default OpenShift Origin container type.
+              At this time there are no other supported plugins.
 
-==== node_frontend_plugins
+Default: 'selinux'
+
+=== node_frontend_plugins
 Specify one or more plugins to use register HTTP and web-socket connections
 for applications.
 Options:
 
 * apache-mod-rewrite  - Mod-Rewrite based plugin for HTTP and HTTPS
     requests. Well suited for installations with a lot of
-    creates/deletes/scale actions.
+    creates/deletes/scale actions. Deprecated in OSE 2.2.
 * apache-vhost        - VHost based plugin for HTTP and HTTPS. Suited for
     installations with less app create/delete activity. Easier to
     customize.  If apache-mod-rewrite is also selected, apache-vhost will be
@@ -617,15 +716,15 @@ Options:
 * haproxy-sni-proxy   - TLS proxy using SNI routing on ports 2303 through 2308
     requires /usr/sbin/haproxy15 (haproxy-1.5-dev19 or later).
 
-Default: ['apache-mod-rewrite','nodejs-websocket']
+Default: ['apache-vhost','nodejs-websocket']
 
-==== node_unmanaged_users
+=== node_unmanaged_users
 List of user names who have UIDs in the range of OpenShift gears but must be
 excluded from OpenShift gear setups.
 
 Default: []
 
-==== conf_node_external_eth_dev
+=== conf_node_external_eth_dev
 External facing network device. Used for routing and traffic control setup.
 
 Default: eth0
@@ -637,36 +736,35 @@ must be defined or default self signed keys will be generated.
 
 Default:  Self signed keys are generated. 
 
-
-==== conf_node_supplementary_posix_groups
+=== conf_node_supplementary_posix_groups
 Name of supplementary UNIX group to add a gear to.
 
-==== conf_node_watchman_service
+=== conf_node_watchman_service
 Enable/Disable the OpenShift Node watchman service
 
 Default: true
 
-==== conf_node_watchman_gearretries
+=== conf_node_watchman_gearretries
 Number of restarts to attempt before waiting RETRY_PERIOD
 
 Default: 3
 
-==== conf_node_watchman_retrydelay
+=== conf_node_watchman_retrydelay
 Number of seconds to wait before accepting another gear restart
 
 Default: 300
 
-==== conf_node_watchman_retryperiod
+=== conf_node_watchman_retryperiod
 Number of seconds to wait before resetting retries
 
 Default: 28800
 
-==== conf_node_watchman_statechangedelay
+=== conf_node_watchman_statechangedelay
 Number of seconds a gear must remain inconsistent with it's state before Watchman attempts to reset state
 
 Default: 900
 
-==== conf_node_watchman_statecheckperiod
+=== conf_node_watchman_statecheckperiod
 Wait at least this number of seconds since last check before checking gear state on the
 Node. Use this to reduce Watchman's GearStatePlugin's impact on the system.
 
@@ -678,21 +776,70 @@ If undef, uses the default MOTD included with the node package.
 
 Default: undef
 
-==== development_mode
+=== development_mode
 Set development mode and extra logging.
 
 Default: false
 
-==== install_login_shell
+=== install_login_shell
 Install a Getty shell which displays DNS, IP and login information. Used for
 all-in-one VM installation.
 
-==== register_host_with_nameserver
+=== register_host_with_nameserver
 Setup DNS entries for this host in a locally installed bind DNS instance.
 
 Default: false
 
-==== install_cartridges
+=== dns_infrastructure_zone
+The name of a zone to create which will contain OpenShift infrastructure. If this is unset then no infrastructure zone or other artifacts will be created.
+
+Default: ""
+
+=== dns_infrastructure_key
+A dnssec symmetric key which will grant update access to the
+infrastucture zone resource records.
+
+This is ignored unless _dns_infrastructure_zone_ is set.
+
+Default: ""
+
+=== dns_infrastructure_key_algorithm
+When using a BIND key, use this algorithm for the infrastructure BIND key.
+
+This is ignored unless _dns_infrastructure_zone_ is set.
+
+Default: 'HMAC-MD5'
+
+=== dns_infrastructure_names
+An array of hashes containing hostname and IP Address pairs to populate
+the infrastructure zone.
+
+This value is ignored unless _dns_infrastructure_zone_ is set.
+
+Hostnames can be simple names or fully qualified domain name (FQDN).
+
+Simple names will be placed in the _dns_infrastructure_zone_.
+Matching FQDNs will be placed in the _dns_infrastructure_zone.
+Hostnames anchored with a dot (.) will be added verbatim.
+
+Default: []
+
+.Example
+----
+$dns_infrastructure_names = [
+  {hostname => "10.0.0.1", ipaddr => "broker1"},
+  {hostname => "10.0.0.2", ipaddr => "data1"},
+  {hostname => "10.0.0.3", ipaddr => "message1"},
+  {hostname => "10.0.0.11", ipaddr => "node1"},
+  {hostname => "10.0.0.12", ipaddr => "node2"},
+  {hostname => "10.0.0.13", ipaddr => "node3"},
+]
+----
+
+=== manage_firewall
+Indicate whether or not this module will configure the firewall for you
+
+=== install_cartridges
 List of cartridges to be installed on the node. Options:
 
 * 10gen-mms-agent   not available in OpenShift Enterprise
@@ -717,7 +864,10 @@ List of cartridges to be installed on the node. Options:
 
 Default: ['10gen-mms-agent','cron','diy','haproxy','mongodb',
           'nodejs','perl','php','phpmyadmin','postgresql',
-          'python','ruby','jenkins','jenkins-client','mariadb']
+          'python','ruby','jenkins','jenkins-client','mysql']
+OSE Default : ['cron','diy','haproxy','mongodb','nodejs','perl',
+               'php','postgresql','python','ruby','jenkins',
+               'jenkins-client','mysql'],
 
 Default in OpenShift Enterprise:
           ['cron','diy','haproxy','mongodb','nodejs','perl','php',
@@ -763,6 +913,23 @@ Indicate whether or not this module will configure resolv.conf and
 network for you.
 
 Default: true
+
+=== ose_version
+Set this to the X.Y (ie: 2.2) version of Openshift Enterprise to
+ensure an Openshift Enterprise supported configuration is used.
+
+See README_OSE.asciidoc distributed with the openshift_origin puppet
+module for more details.
+
+Default: undef
+
+=== ose_unsupported
+Set this to true in order to allow Openshift Enterprise unsupported
+configurations. Only appropriate for proof of concept environments.
+
+This parameter is only used when _ose_version_ is set.
+
+Default: false
 
 == Manual Tasks
 
