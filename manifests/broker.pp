@@ -39,17 +39,17 @@ class openshift_origin::broker {
       anchor { 'openshift_origin::broker_dns_begin': } ->
       class { 'openshift_origin::plugins::dns::nsupdate': } ->
       anchor { 'openshift_origin::broker_dns_end': }
-     }
+    }
     'avahi'    : {
       anchor { 'openshift_origin::broker_dns_begin': } ->
       class { 'openshift_origin::plugins::dns::avahi': } ->
       anchor { 'openshift_origin::broker_dns_end': }
-     }
+    }
     'route53'  : {
       anchor { 'openshift_origin::broker_dns_begin': } ->
       class { 'openshift_origin::plugins::dns::route53': } ->
       anchor { 'openshift_origin::broker_dns_end': }
-     }
+    }
     default    : { fail('A broker_dns_plugin value must be specified. Supported values are: nsupdate, avahi, route53.') }
   }
 
@@ -58,27 +58,27 @@ class openshift_origin::broker {
       anchor { 'openshift_origin::broker_auth_begin': } ->
       class { 'openshift_origin::plugins::auth::mongo': } ->
       anchor { 'openshift_origin::broker_auth_end': }
-     }
+    }
     'htpasswd' : {
       anchor { 'openshift_origin::broker_auth_begin': } ->
       class { 'openshift_origin::plugins::auth::htpasswd': } ->
       anchor { 'openshift_origin::broker_auth_end': }
-     }
+    }
     'kerberos' : {
       anchor { 'openshift_origin::broker_auth_begin': } ->
       class { 'openshift_origin::plugins::auth::kerberos': } ->
       anchor { 'openshift_origin::broker_auth_end': }
-     }
+    }
     'ldap'     : {
       anchor { 'openshift_origin::broker_auth_begin': } ->
       class { 'openshift_origin::plugins::auth::ldap': } ->
       anchor { 'openshift_origin::broker_auth_end': }
-     }
+    }
     default    : {
       anchor { 'openshift_origin::broker_auth_begin': } ->
       class { 'openshift_origin::plugins::auth::htpasswd': } ->
       anchor { 'openshift_origin::broker_auth_end': }
-     }
+    }
   }
 
   package {

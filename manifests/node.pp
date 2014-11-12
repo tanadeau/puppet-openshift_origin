@@ -160,12 +160,12 @@ class openshift_origin::node {
       anchor { 'openshift_origin::node_container_begin': } ->
       class { 'openshift_origin::plugins::container::selinux': } ->
       anchor { 'openshift_origin::node_container_end': }
-     }
+    }
     'libvirt': {
       anchor { 'openshift_origin::node_container_begin': } ->
       class { 'openshift_origin::plugins::container::libvirt': } ->
       anchor { 'openshift_origin::node_container_end': }
-     }
+    }
     default: {}
   }
 

@@ -160,7 +160,7 @@ class openshift_origin::nameserver {
   $named_files = unique(flatten([$named_base_files, $named_infra_files]))
 
   exec { 'named restorecon':
-    command     => '/sbin/restorecon -rv ${restorecon_paths}',
+    command     => "/sbin/restorecon -rv ${restorecon_paths}",
     require     => Exec['create rndc.key'],
     notify      => Service['named'],
     refreshonly => true,
