@@ -20,21 +20,13 @@ class openshift_origin::plugins::auth::ldap {
     fail 'No LDAP URI specified (see ldap_uri).'
   }
 
-  $mod_ldap = $::operatingsystem ? {
-    'Fedora' => 'mod_ldap',
-    default  => 'httpd', # included by default in rel6
-  }
-
   file { 'Broker httpd config':
     path    => '/var/www/openshift/broker/httpd/conf.d/openshift-origin-auth-remote-user-ldap.conf',
     content => template('openshift_origin/broker/plugins/auth/ldap/openshift-origin-auth-remote-user-ldap.conf.erb'),
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    require => [
-      Package['rubygem-openshift-origin-auth-remote-user'],
-      Package[$mod_ldap],
-    ],
+    require => Package['rubygem-openshift-origin-auth-remote-user'],
     notify  => Service['openshift-broker'],
     before  => Exec['Broker gem dependencies'],
   }
@@ -45,10 +37,7 @@ class openshift_origin::plugins::auth::ldap {
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    require => [
-      Package['rubygem-openshift-origin-auth-remote-user'],
-      Package[$mod_ldap],
-    ],
+    require => Package['rubygem-openshift-origin-auth-remote-user'],
     notify  => Service['openshift-broker'],
     before  => Exec['Broker gem dependencies'],
   }
@@ -59,10 +48,7 @@ class openshift_origin::plugins::auth::ldap {
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    require => [
-      Package['rubygem-openshift-origin-auth-remote-user'],
-      Package[$mod_ldap],
-    ],
+    require => Package['rubygem-openshift-origin-auth-remote-user'],
     notify  => Service['openshift-console'],
     before  => Exec['Console gem dependencies'],
   }

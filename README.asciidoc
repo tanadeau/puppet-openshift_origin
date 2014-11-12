@@ -170,13 +170,13 @@ override_install_repo path for OpenShift RPMs. Used when doing local builds.
 Default: none
 
 === os_repo
-The URL for a Fedora 19/RHEL 6 yum repository used with the "yum" install method.
+The URL for a RHEL/Centos 6 yum repository used with the "yum" install method.
 Should end in x86_64/os/.
 
 Default: no change
 
 === os_updates_repo
-The URL for a Fedora 19/RHEL 6 yum updates repository used with the "yum" install method.
+The URL for a RHEL/Centos 6 yum updates repository used with the "yum" install method.
 Should end in x86_64/.
 
 Default: no change
@@ -781,10 +781,6 @@ Set development mode and extra logging.
 
 Default: false
 
-=== install_login_shell
-Install a Getty shell which displays DNS, IP and login information. Used for
-all-in-one VM installation.
-
 === register_host_with_nameserver
 Setup DNS entries for this host in a locally installed bind DNS instance.
 
@@ -856,7 +852,6 @@ List of cartridges to be installed on the node. Options:
 * ruby
 * jenkins
 * jenkins-client
-* mariadb           for Fedora Deployments
 * mysql             for CentOS / RHEL deployments
 * jbosseap          requires OpenShift Enterprise JBoss EAP add-on
 * jbossas           not available in OpenShift Enterprise

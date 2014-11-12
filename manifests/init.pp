@@ -69,22 +69,14 @@
 #
 # [*repos_base*]
 #   Base path to repository for OpenShift Origin
-#   Nightlies:
-#     Fedora: https://mirror.openshift.com/pub/origin-server/nightly/fedora-19
-#     RHEL:   https://mirror.openshift.com/pub/origin-server/nightly/rhel-6
-#   Release-2:
-#     Fedora: https://mirror.openshift.com/pub/origin-server/release/2/fedora-19
-#     RHEL:   https://mirror.openshift.com/pub/origin-server/release/2/rhel-6
-#   Default: Fedora-19 Nightlies
+#
+#   Default: https://mirror.openshift.com/pub/origin-server/nightly/rhel-6
 #
 # [*architecture*]
 #   CPU Architecture to use for the definition OpenShift Origin yum repositories
-#     Defaults to $::architecture
-#     Fedora:
-#       x86_64
-#       armv7hl
-#     RHEL:
-#       x86_64
+#
+#   Default: $::architecture (from facter)
+#   NOTE: Currently only the `x86_64` architecutre is supported and this parameter has no effect.
 #
 # [*override_install_repo*]
 #   Repository path override. Uses dependencies from repos_base but uses
@@ -92,12 +84,12 @@
 #   Default: none
 #
 # [*os_repo*]
-#   The URL for a Fedora 19/RHEL 6 yum repository used with the "yum" install method.
+#   The URL for a RHEL/Centos 6 yum repository used with the "yum" install method.
 #   Should end in x86_64/os/.
 #   Default: no change
 #
 # [*os_updates*]
-#   The URL for a Fedora 19/RHEL 6 yum updates repository used with the "yum" install method.
+#   The URL for a RHEL/Centos 6 yum updates repository used with the "yum" install method.
 #   Should end in x86_64/.
 #   Default: no change
 #
@@ -593,10 +585,6 @@
 #   Set development mode and extra logging.
 #   Default: false
 #
-# [*install_login_shell*]
-#   Install a Getty shell which displays DNS, IP and login information. Used for
-#   all-in-one VM installation.
-#
 # [*register_host_with_nameserver*]
 #   Setup DNS entries for this host in a locally installed bind DNS instance.
 #   Default: false
@@ -668,7 +656,6 @@
 #   * ruby
 #   * jenkins
 #   * jenkins-client
-#   * mariadb           for Fedora deployments
 #   * mysql             for CentOS / RHEL deployments
 #   * jbossas           not available in OpenShift Enterprise
 #   * jbosseap          requires OpenShift Enterprise JBoss EAP add-on

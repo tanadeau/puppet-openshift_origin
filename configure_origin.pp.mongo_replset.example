@@ -5,13 +5,6 @@
     unless  => "/bin/hostname | /bin/grep ${my_hostname}",
   }
 
-  if $::operatingsystem == 'Fedora' {
-    exec { "set_etc_hostname":
-      command => "/bin/echo ${my_hostname} > /etc/hostname",
-      unless  => "/bin/grep ${my_hostname} /etc/hostname",
-    }
-  }
-
   if $::operatingsystem == 'CentOS' {
     exec { "set_etc_hostname":
       command => "/bin/sed -ri \'s/HOSTNAME=.*/HOSTNAME=${my_hostname}/\' /etc/sysconfig/network",
@@ -30,7 +23,7 @@ class { 'openshift_origin' :
   datastore1_ip_addr              => '<MEMBER1_IP>',
   datastore2_ip_addr              => '<MEMBER2_IP>',
   datastore3_ip_addr              => '<MEMBER3_IP>',
-  
+
   # Components to install on this host:
   roles                           => ['broker','nameserver','msgserver','datastore'],
   # BIND / nameserver config

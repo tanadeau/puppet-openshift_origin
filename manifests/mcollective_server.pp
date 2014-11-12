@@ -49,33 +49,12 @@ class openshift_origin::mcollective_server {
     notify  => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"],
   }
 
-  if( $::operatingsystem == 'Fedora' ) {
-    exec { 'systemd-daemon-reload':
-      command     => '/usr/bin/systemctl daemon-reload',
-      refreshonly => true,
-    }
-
-    $require_real = [
-      File['mcollective server config', '/usr/lib/systemd/system/mcollective.service'],
-      Exec['systemd-daemon-reload']
-    ]
-
-    file { '/usr/lib/systemd/system/mcollective.service':
-      content => template('openshift_origin/mcollective/mcollective.service'),
-      require => Package['mcollective'],
-      notify  => Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"]
-    }
-  } else {
-    $require_real = File['mcollective server config']
-  }
-
   service { "${::openshift_origin::params::ruby_scl_prefix}mcollective":
     ensure     => true,
     enable     => true,
     hasstatus  => true,
     hasrestart => true,
-    require    => $require_real,
-    provider   => $::openshift_origin::params::os_init_provider,
+    require    => File['mcollective server config'],
   }
 
   exec { 'openshift-facts':

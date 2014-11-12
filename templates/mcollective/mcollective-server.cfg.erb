@@ -5,7 +5,7 @@ collectives = mcollective
 libdir = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/usr/libexec/mcollective
 logfile = /var/log/openshift/node/<%= scope.lookupvar('::openshift_origin::params::ruby_scl_prefix') %>mcollective.log
 loglevel = debug
-daemonize = <%= scope.lookupvar('::operatingsystem') == "Fedora" ? '0' : '1'%>
+daemonize = 1
 direct_addressing = 0
 registerinterval = 30
 

@@ -23,9 +23,6 @@ class openshift_origin::plugins::frontend::haproxy_sni_proxy {
     enable     => true,
     hasrestart => true,
     hasstatus  => true,
-    require    => [
-      Package['openshift-origin-node-util'],
-    ],
-    provider   => $openshift_origin::params::os_init_provider,
+    require    => Package['openshift-origin-node-util'],
   }
 }
