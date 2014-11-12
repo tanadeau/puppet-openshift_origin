@@ -65,5 +65,5 @@ class openshift_origin::plugins::dns::nsupdate {
       mode    => '0644',
       notify  => Service['openshift-broker'],
       require => $nsupdate_requirements
-    }
+  }
 }
