@@ -227,7 +227,7 @@ class openshift_origin::broker {
     }
   }
   file { '/etc/openshift/development':
-    source  => 'puppet:///openshift_origin/development',
+    source  => 'puppet:///modules/openshift_origin/development',
     ensure  => $::openshift_origin::development_mode ? {
         true    => present,
         default => absent,
