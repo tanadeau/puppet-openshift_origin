@@ -2,9 +2,9 @@
 
 # These should not be left at default values, even for a demo.
 # "PUBLIC" networking values are ones that end-users should be able to reach.
-PUBLIC_HOSTNAME="<%= scope.lookupvar('::openshift_origin::node_hostname') %>"                         # The node host's public hostname
+PUBLIC_HOSTNAME="<%= scope.lookupvar('::openshift_origin::node_fqdn') %>"                         # The node host's public hostname
 PUBLIC_IP="<%= scope.lookupvar('::openshift_origin::node_ip_addr') %>"                                # The node host's public IP address
-BROKER_HOST="<%= scope.lookupvar('::openshift_origin::broker_hostname') %>"                     # IP or DNS name of broker server for REST API
+BROKER_HOST="<%= scope.lookupvar('::openshift_origin::broker_fqdn') %>"                     # IP or DNS name of broker server for REST API
 
 # Usually (unless in a demo) this should be changed to the domain for your installation:
 CLOUD_DOMAIN="<%= scope.lookupvar('::openshift_origin::domain') %>"                        # Domain suffix to use for applications (Must match broker config)
@@ -12,7 +12,7 @@ CLOUD_DOMAIN="<%= scope.lookupvar('::openshift_origin::domain') %>"             
 # You may want these, depending on the complexity of your networking:
 EXTERNAL_ETH_DEV='<%= scope.lookupvar('::openshift_origin::conf_node_external_eth_dev') %>'                                 # Specify the internet facing public ethernet device
 # INTERNAL_ETH_DEV='eth1'                                 # Specify the internal cluster facing ethernet device
-INSTANCE_ID="<%= scope.lookupvar('::openshift_origin::node_hostname') %>"                                      # Set by RH EC2 automation
+INSTANCE_ID="<%= scope.lookupvar('::openshift_origin::node_fqdn') %>"                                      # Set by RH EC2 automation
 
 # Generally the following should not be changed:
 ENABLE_CGROUPS='1'                                        # Enable cgroups for gears (0=off, 1=on)

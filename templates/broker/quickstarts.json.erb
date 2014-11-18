@@ -1,6 +1,6 @@
 <%
-  carts = scope.lookupvar('::openshift_origin::install_cartridges')
-  
+  carts = scope.lookupvar('::openshift_origin::cartridges_to_install')
+
   php   = 'php-5' if carts.include? 'php'
   mysql = 'mysql-5' if carts.include? 'mysql'
   mysql = 'mariadb' if carts.include? 'mariadb'

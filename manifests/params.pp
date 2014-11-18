@@ -90,23 +90,18 @@ class openshift_origin::params {
     default  => '/sbin/sysctl',
   }
 
-  $node_shmmax_default = $::architecture ? {
+  $node_shmmax = $::architecture ? {
     'x86_64' => 68719476736,
     default  => 33554432,
   }
 
-  $_node_shmmax = $::openshift_origin::node_shmmax ? {
-    undef   => $node_shmmax_default,
-    default => $::openshift_origin::node_shmmax,
-  }
-
-  $node_shmall_default = $::architecture ? {
+  $node_shmall = $::architecture ? {
     'x86_64' => 4294967296,
     default  => 2097152,
   }
 
-  $_node_shmall = $::openshift_origin::node_shmall ? {
-    undef   => $node_shmall_default,
-    default => $::openshift_origin::node_shmall,
+  $repos_base = $::operatingsystem ? {
+    'Fedora' => 'https://mirror.openshift.com/pub/origin-server/nightly/fedora-19',
+    default  => 'https://mirror.openshift.com/pub/origin-server/nightly/rhel-6',
   }
 }

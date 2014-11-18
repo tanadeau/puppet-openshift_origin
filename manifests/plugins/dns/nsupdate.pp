@@ -30,7 +30,7 @@ class openshift_origin::plugins::dns::nsupdate {
     fail 'bind_key is required.'
   }
   if !$::openshift_origin::bind_krb_principal == '' and $::openshift_origin::bind_krb_keytab == '' {
-    warning "Kerberos keytab for the DNS service was not found. Please generate a keytab for DNS/${::openshift_origin::nameserver_hostname}"
+    warning "Kerberos keytab for the DNS service was not found. Please generate a keytab for DNS/${::openshift_origin::nameserver_fqdn}"
     fail 'bind_krb_keytab is required.'
   }
 

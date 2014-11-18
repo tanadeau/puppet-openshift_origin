@@ -3,10 +3,10 @@
 <% hosts_to_skip = Array.new -%>
 <% node_ip = scope.lookupvar('::openshift_origin::node_ip_addr') -%>
 <% scope.lookupvar('::openshift_origin::roles').each do |role|
-  hosts_to_check << scope.lookupvar("::openshift_origin::#{role}_hostname")
+  hosts_to_check << scope.lookupvar("::openshift_origin::#{role}_fqdn")
 end -%>
 <% if scope.lookupvar('::openshift_origin::load_balancer_master') and scope.lookupvar('::openshift_origin::broker_virtual_ip_address')
-  hosts_to_check << scope.lookupvar('::openshift_origin::broker_virtual_hostname')
+  hosts_to_check << scope.lookupvar('::openshift_origin::broker_virtual_fqdn')
 end -%>
 <% hosts_to_check.uniq.each do |h|
   h.gsub(/^[^.]*./, '') == @key_domain ? hosts_to_register << h :

@@ -136,10 +136,10 @@ class openshift_origin::node {
     value => '1',
   }
   sysctl::value { 'kernel.shmall':
-    value => $::openshift_origin::params::_node_shmall,
+    value => $::openshift_origin::node_shmall,
   }
   sysctl::value { 'kernel.shmmax':
-    value => $::openshift_origin::params::_node_shmmax,
+    value => $::openshift_origin::node_shmmax,
   }
   sysctl::value { 'kernel.msgmnb':
     value => 65536,
@@ -320,7 +320,7 @@ class openshift_origin::node {
 
   file { '/etc/openshift/env/OPENSHIFT_BROKER_HOST':
     ensure  => present,
-    content => $::openshift_origin::broker_hostname,
+    content => $::openshift_origin::broker_fqdn,
     require => File['/etc/openshift/env/'],
     owner   => 'root',
     group   => 'root',

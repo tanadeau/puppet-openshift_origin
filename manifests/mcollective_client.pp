@@ -23,7 +23,7 @@ class openshift_origin::mcollective_client {
 
   # TODO: Replace with MCollective puppet module call
 
-  $cluster_members = $::openshift_origin::mcollective_cluster_members
+  $cluster_members = $::openshift_origin::real_mcollective_cluster_members
 
   if $cluster_members {
     $pool_size = size($cluster_members)
