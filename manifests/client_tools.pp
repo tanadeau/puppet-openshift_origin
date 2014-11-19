@@ -21,7 +21,7 @@ class openshift_origin::client_tools {
   }
 
   file { '/etc/openshift/express.conf':
-    content => inline_template("libra_server = '${openshift_origin::broker_hostname}'"),
+    content => inline_template("libra_server = '${openshift_origin::broker_fqdn}'"),
     owner   => 'root',
     group   => 'root',
     mode    => '0644',

@@ -1,20 +1,30 @@
-  (
-  echo server <%= scope.lookupvar('::openshift_origin::nameserver_ip_addr') %>
-<% role_hostnames = Array.new -%>
+<% hosts_to_check = Array.new -%>
+<% hosts_to_register = Array.new -%>
+<% hosts_to_skip = Array.new -%>
+<% node_ip = scope.lookupvar('::openshift_origin::node_ip_addr') -%>
 <% scope.lookupvar('::openshift_origin::roles').each do |role|
-  role_hostname = scope.lookupvar("::openshift_origin::#{role}_hostname")
-  if role_hostname.gsub(/^[^.]*./, '') == @key_domain
-    role_hostnames << role_hostname
-  end -%>
+  hosts_to_check << scope.lookupvar("::openshift_origin::#{role}_fqdn")
+end -%>
+<% if scope.lookupvar('::openshift_origin::load_balancer_master') and scope.lookupvar('::openshift_origin::broker_virtual_ip_address')
+  hosts_to_check << scope.lookupvar('::openshift_origin::broker_virtual_fqdn')
+end -%>
+<% hosts_to_check.uniq.each do |h|
+  h.gsub(/^[^.]*./, '') == @key_domain ? hosts_to_register << h :
+	                                 hosts_to_skip << h
+end -%>
+<% unless hosts_to_skip.empty? -%>
+  echo "The following hosts will not be registered with DNS (not a member of <%= @key_domain %>):"
+  <% hosts_to_skip.sort.each do |h| -%>
+    echo "<%= h %>"
+  <% end -%>
 <% end -%>
-<% role_hostnames.uniq.each do |role_hostname| -%>
-  echo update delete <%= role_hostname %> A
-  echo update add <%= role_hostname %> 180 A <%= scope.lookupvar('::openshift_origin::node_ip_addr') %>
-<% end -%>
-<% if scope.lookupvar('::openshift_origin::load_balancer_master') and scope.lookupvar('::openshift_origin::broker_virtual_ip_address') and scope.lookupvar('::openshift_origin::broker_virtual_hostname').gsub(/^[^.]*./, '') == @key_domain -%>
+<% unless hosts_to_register.empty? -%>
 (
-  echo update delete <%= scope.lookupvar('::openshift_origin::broker_virtual_hostname') %> A
-  echo update add <%= scope.lookupvar('::openshift_origin::broker_virtual_hostname') %> 180 A <%= scope.lookupvar('::openshift_origin::broker_virtual_ip_address') %>
-<% end -%>
+  echo server <%= scope.lookupvar('::openshift_origin::nameserver_ip_addr') %>
+  <% hosts_to_register.each do |h| -%>
+    echo update delete <%= h %> A
+    echo update add <%= h %> 180 A <%= node_ip %>
+  <% end -%>
   echo send
 ) | nsupdate -y <%= @key_argument %>
+<% end -%>

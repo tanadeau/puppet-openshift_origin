@@ -22,7 +22,7 @@ class openshift_origin::httpd_certificate {
     $cert_requires = Package['httpd']
   }
   else {
-    $cert_domain   = $::openshift_origin::broker_hostname
+    $cert_domain   = $::openshift_origin::broker_fqdn
     $cert_requires = Package['openshift-origin-broker']
   }
 

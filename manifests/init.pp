@@ -757,10 +757,7 @@ class openshift_origin (
   $roles                                = ['broker','node','msgserver','datastore','nameserver'],
   $install_method                       = 'yum',
   $parallel_deployment                  = false,
-  $repos_base                           = $::operatingsystem ? {
-                                            'Fedora' => 'https://mirror.openshift.com/pub/origin-server/nightly/fedora-19',
-                                            default  => 'https://mirror.openshift.com/pub/origin-server/nightly/rhel-6',
-                                          },
+  $repos_base                           = $openshift_origin::params::repos_base,
   $architecture                         = undef,
   $override_install_repo                = undef,
   $os_repo                              = undef,
@@ -769,19 +766,23 @@ class openshift_origin (
   $jenkins_repo_base                    = undef,
   $optional_repo                        = undef,
   $domain                               = 'example.com',
-  $broker_hostname                      = "broker.${domain}",
-  $node_hostname                        = "node.${domain}",
-  $nameserver_hostname                  = "ns1.${domain}",
-  $msgserver_hostname                   = "msgserver.${domain}",
-  $datastore_hostname                   = "mongodb.${domain}",
-  $datastore1_ip_addr                   = undef,
-  $datastore2_ip_addr                   = undef,
-  $datastore3_ip_addr                   = undef,
-  $nameserver_ip_addr                   = $::ipaddress,
   $bind_key                             = '',
   $bind_key_algorithm                   = 'HMAC-MD5',
   $bind_krb_keytab                      = '',
   $bind_krb_principal                   = '',
+  $dns_infrastructure_zone              = '',
+  $dns_infrastructure_key               = '',
+  $dns_infrastructure_key_algorithm     = 'HMAC-MD5',
+  $dns_infrastructure_names             = [],
+  $broker_hostname                      = '',
+  $node_hostname                        = '',
+  $nameserver_hostname                  = '',
+  $msgserver_hostname                   = '',
+  $datastore_hostname                   = '',
+  $datastore1_ip_addr                   = undef,
+  $datastore2_ip_addr                   = undef,
+  $datastore3_ip_addr                   = undef,
+  $nameserver_ip_addr                   = $::ipaddress,
   $aws_access_key_id                    = '',
   $aws_secret_key                       = '',
   $aws_zone_id                          = '',
@@ -789,7 +790,7 @@ class openshift_origin (
   $broker_cluster_members               = undef,
   $broker_cluster_ip_addresses          = undef,
   $broker_virtual_ip_address            = undef,
-  $broker_virtual_hostname              = "broker.${domain}",
+  $broker_virtual_hostname              = '',
   $load_balancer_master                 = false,
   $load_balancer_auth_password          = 'changeme',
   $node_ip_addr                         = $::ipaddress,
@@ -817,7 +818,7 @@ class openshift_origin (
   $ntp_servers                          = ['time.apple.com iburst', 'pool.ntp.org iburst', 'clock.redhat.com iburst'],
   $msgserver_cluster                    = false,
   $msgserver_cluster_members            = undef,
-  $mcollective_cluster_members          = $msgserver_cluster_members,
+  $mcollective_cluster_members          = undef,
   $msgserver_password                   = 'changeme',
   $msgserver_admin_password             = inline_template('<%= require "securerandom"; SecureRandom.base64 %>'),
   $mcollective_user                     = 'mcollective',
@@ -841,14 +842,8 @@ class openshift_origin (
   $conf_broker_auth_private_key         = undef,
   $conf_broker_session_secret           = undef,
   $conf_broker_multi_haproxy_per_node   = false,
-  $conf_console_product_logo            = $ose_version ? {
-                                            undef => '/assets/logo-origin.svg',
-                                            default => '/assets/logo-enterprise-horizontal.svg',
-                                          },
-  $conf_console_product_title           = $ose_version ? {
-                                            undef => 'OpenShift Origin',
-                                            default => 'OpenShift Enterprise',
-                                        },
+  $conf_console_product_logo            = undef,
+  $conf_console_product_title           = undef,
   $conf_console_session_secret          = undef,
   $conf_valid_gear_sizes                = ['small'],
   $conf_default_gear_capabilities       = ['small'],
@@ -863,8 +858,8 @@ class openshift_origin (
   $broker_ldap_uri                      = '',
   $broker_ldap_bind_dn                  = '',
   $broker_ldap_bind_password            = '',
-  $node_shmmax                          = undef,
-  $node_shmall                          = undef,
+  $node_shmmax                          = $openshift_origin::params::node_shmmax,
+  $node_shmall                          = $openshift_origin::params::node_shmall,
   $node_container_plugin                = 'selinux',
   $node_frontend_plugins                = ['apache-vhost','nodejs-websocket'],
   $node_unmanaged_users                 = [],
@@ -881,36 +876,102 @@ class openshift_origin (
   $conf_node_custom_motd                = undef,
   $development_mode                     = false,
   $conf_nameserver_upstream_dns         = ['8.8.8.8'],
+  $conf_nameserver_allow_recursion      = false,
   $install_login_shell                  = false,
   $register_host_with_nameserver        = false,
-  $dns_infrastructure_zone              = '',
-  $dns_infrastructure_key               = '',
-  $dns_infrastructure_key_algorithm     = 'HMAC-MD5',
-  $dns_infrastructure_names             = [],
   $update_network_conf_files            = true,
-  $install_cartridges                   = $ose_version ? {
-                                            undef => ['10gen-mms-agent','cron','diy','haproxy','mongodb','nodejs',
-                                                        'perl','php','phpmyadmin','postgresql','python','ruby',
-                                                        'jenkins','jenkins-client','mysql',],
-                                            default => ['cron','diy','haproxy','mongodb','nodejs','perl','php',
-                                                        'postgresql','python','ruby','jenkins','jenkins-client',
-                                                        'jbossews','mysql'],
-                                          },
-  $install_cartridges_recommended_deps  = $ose_version ? {
-                                            undef   => ['diy','nodejs','perl','php','python','ruby'],
-                                            default => ['jbossews','nodejs','perl','php','python','ruby'],
-                                          },
+  $install_cartridges                   = undef,
+  $install_cartridges_recommended_deps  = undef,
   $install_cartridges_optional_deps     = undef,
   $manage_firewall                      = true,
-){
+) inherits openshift_origin::params {
   include openshift_origin::role
+
+  $default_host_domain = $dns_infrastructure_zone ? {
+    ''        => $domain,
+    default   => $dns_infrastructure_zone,
+  }
+
+  $broker_fqdn = $broker_hostname ? {
+    ''         => "broker.${default_host_domain}",
+    default   => $broker_hostname,
+  }
+
+  $broker_virtual_fqdn = $broker_virtual_hostname ? {
+    ''        => "broker.${default_host_domain}",
+    default   => $broker_virtual_hostname,
+  }
+
+  $node_fqdn = $node_hostname ? {
+    ''        => "node.${default_host_domain}",
+    default   => $node_hostname,
+  }
+
+  $nameserver_fqdn = $nameserver_hostname ? {
+    ''        => "ns1.${default_host_domain}",
+    default   => $nameserver_hostname,
+  }
+
+  $msgserver_fqdn = $msgserver_hostname ? {
+    ''        => "msgserver.${default_host_domain}",
+    default   => $msgserver_hostname,
+  }
+
+  $datastore_fqdn = $datastore_hostname ? {
+    ''        => "mongodb.${default_host_domain}",
+    default   => $datastore_hostname,
+  }
+
+  # set defaults that are origin/enterprise specific
+  case $ose_version {
+    undef: {
+      $console_product_logo_default = '/assets/logo-origin.svg'
+      $console_product_title_default = 'OpenShift Origin'
+      $cartridges_to_install_default = ['10gen-mms-agent','cron','diy','haproxy','mongodb','nodejs',
+                                'perl','php','phpmyadmin','postgresql','python','ruby',
+                                'jenkins','jenkins-client','mysql',]
+      $cartridge_deps_to_install_default = ['diy','nodejs','perl','php','python','ruby']
+    }
+    default: {
+      $console_product_logo_default = '/assets/logo-enterprise-horizontal.svg'
+      $console_product_title_default = 'OpenShift Enterprise'
+      $cartridges_to_install_default = ['cron','diy','haproxy','mongodb','nodejs','perl','php',
+                                'postgresql','python','ruby','jenkins','jenkins-client',
+                                'jbossews','mysql']
+      $cartridge_deps_to_install_default = ['jbossews','nodejs','perl','php','python','ruby']
+    }
+  }
+
+  $console_product_logo = $conf_console_product_logo ? {
+    undef   => $console_product_logo_default,
+    default => $conf_console_product_logo,
+  }
+
+  $console_product_title = $conf_console_product_title ? {
+    undef   => $console_product_title_default,
+    default => $conf_console_product_title,
+  }
+
+  $cartridges_to_install = $install_cartridges ? {
+    undef   => $cartridges_to_install_default,
+    default => $install_cartridges,
+  }
+
+  $cartridge_deps_to_install = $install_cartridges_recommended_deps ? {
+    undef   => $cartridge_deps_to_install_default,
+    default => $install_cartridges_recommended_deps,
+  }
 
   # Check for various unsupported OSE configs
   if $ose_version != undef {
     class { 'openshift_origin::ose_supported_config': }
   }
 
-  if $msgserver_cluster and ! $msgserver_cluster_members and ! $mcollective_cluster_members {
+  if $msgserver_cluster_members and $mcollective_cluster_members == undef {
+    $real_mcollective_cluster_members = $msgserver_cluster_members
+  }
+
+  if $msgserver_cluster and ! $msgserver_cluster_members and ! $real_mcollective_cluster_members {
     fail('msgserver_cluster_members and mcollective_cluster_members parameters are required when msgserver_cluster is set')
   }
 

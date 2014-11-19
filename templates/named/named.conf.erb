@@ -1,10 +1,11 @@
+// Managed by puppet - module openshift-openshift_origin
+
 // named.conf
 //
 // Provided by Red Hat bind package to configure the ISC BIND named(8) DNS
 // server as a caching only nameserver (as a localhost DNS resolver only).
 //
 // See /usr/share/doc/bind*/sample/ for example named configuration files.
-//
 
 options {
     listen-on port 53 { any; };
@@ -13,7 +14,11 @@ options {
     statistics-file "/var/named/data/named_stats.txt";
     memstatistics-file "/var/named/data/named_mem_stats.txt";
     allow-query { any; };
+<% if scope.lookupvar('::openshift_origin::conf_nameserver_allow_recursion')-%>
+    recursion yes;
+<% else -%>
     recursion no;
+<% end -%>
 
     /* Path to ISC DLV key */
     bindkeys-file "/etc/named.iscdlv.key";
@@ -32,7 +37,7 @@ logging {
 
 // use the default rndc key
 include "/etc/rndc.key";
- 
+
 controls {
     inet 127.0.0.1 port 953
     allow { 127.0.0.1; } keys { "rndc-key"; };

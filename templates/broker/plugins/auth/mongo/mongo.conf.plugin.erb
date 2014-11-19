@@ -1,9 +1,11 @@
+# Managed by puppet - module openshift-openshift_origin
+
 MONGO_REPLICA_SETS=<%= scope.lookupvar('::openshift_origin::mongodb_replicasets') %>
 # Replica set example: "<host-1>:<port-1> <host-2>:<port-2> ..."
 <% if scope.lookupvar('::openshift_origin::mongodb_replicasets') == true %>
 MONGO_HOST_PORT="<%= scope.lookupvar('::openshift_origin::mongodb_replicasets_members').join(',') %>"
 <% else %>
-MONGO_HOST_PORT="<%= scope.lookupvar('::openshift_origin::datastore_hostname') %>:<%= scope.lookupvar('::openshift_origin::mongodb_port') %>"
+MONGO_HOST_PORT="<%= scope.lookupvar('::openshift_origin::datastore_fqdn') %>:<%= scope.lookupvar('::openshift_origin::mongodb_port') %>"
 <% end %>
 MONGO_USER="<%= scope.lookupvar('::openshift_origin::mongodb_broker_user') %>"
 MONGO_PASSWORD="<%= scope.lookupvar('::openshift_origin::mongodb_broker_password') %>"

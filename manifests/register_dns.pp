@@ -19,15 +19,29 @@ class openshift_origin::register_dns {
           ensure  => present,
           require => Class['openshift_origin::install_method'],
       }
-      $key_algorithm=pick($::openshift_origin::dns_infrastructure_key_algorithm,
-        $::openshift_origin::bind_key_algorithm)
-      $key_secret=pick($::openshift_origin::dns_infrastructure_key,
-        $::openshift_origin::bind_key)
-      $key_domain=pick($::openshift_origin::dns_infrastructure_zone,
-        $::openshift_origin::domain)
-      $key_argument="${key_algorithm}:${key_domain}:${key_secret}"
 
-      exec { "Register ${::fqdn}" :
+      if $::openshift_origin::dns_infrastructure_zone == '' {
+        $key_domain = $::openshift_origin::domain
+        $key_algorithm = $::openshift_origin::bind_key_algorithm
+
+        if $::openshift_origin::bind_key == '' {
+          fail 'bind_key is required when setting register_host_with_nameserver to true.'
+        }
+        $key_secret = $::openshift_origin::bind_key
+      }
+      else {
+        $key_domain = $::openshift_origin::dns_infrastructure_zone
+        $key_algorithm = $::openshift_origin::dns_infrastructure_key_algorithm
+
+        if $::openshift_origin::dns_infrastructure_key == '' {
+          fail 'dns_infrastructure_key is required when setting register_host_with_nameserver to true when using the dns_infrastructure_zone parameter.'
+        }
+        $key_secret = $::openshift_origin::dns_infrastructure_key
+      }
+
+      $key_argument = "${key_algorithm}:${key_domain}:${key_secret}"
+
+      exec { "Attempting to register host dns" :
         command   => template('openshift_origin/register_dns.erb'),
         provider  => 'shell',
         require   => Package['bind-utils'],

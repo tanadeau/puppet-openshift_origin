@@ -1,3 +1,4 @@
+# Managed by puppet - module openshift-openshift_origin
 #
 # The base URL for the OpenShift REST API on the broker. If your
 # environment is configured with a virtual host security module that
@@ -139,10 +140,10 @@ REMOTE_USER_COPY_HEADERS=X-Remote-User
 
 
 #product logo, change it if you want a custom logo.
-PRODUCT_LOGO=<%= scope.lookupvar('::openshift_origin::conf_console_product_logo') %>
+PRODUCT_LOGO=<%= scope.lookupvar('::openshift_origin::console_product_logo') %>
 
 #Openshift instance name, change it if you want a custom name.
-PRODUCT_TITLE=<%= scope.lookupvar('::openshift_origin::conf_console_product_title') %>
+PRODUCT_TITLE=<%= scope.lookupvar('::openshift_origin::console_product_title') %>
 
 # Direct logs to syslog rather than log files:
 #SYSLOG_ENABLED="true"

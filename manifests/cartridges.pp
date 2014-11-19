@@ -18,9 +18,9 @@ class openshift_origin::cartridges {
     ensure  => present,
   }
 
-  openshift_origin::openshift_cartridge { $::openshift_origin::install_cartridges: }
+  openshift_origin::openshift_cartridge { $::openshift_origin::cartridges_to_install: }
 
-  $recommended_deps = prefix($::openshift_origin::install_cartridges_recommended_deps, 'openshift-origin-cartridge-dependencies-recommended-')
+  $recommended_deps = prefix($::openshift_origin::cartridge_deps_to_install, 'openshift-origin-cartridge-dependencies-recommended-')
   package { $recommended_deps:
     ensure  => present,
   }

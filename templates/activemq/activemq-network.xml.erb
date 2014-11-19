@@ -1,4 +1,7 @@
 <!--
+    Managed by puppet - module openshift-openshift_origin
+
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -32,7 +35,7 @@
         The <broker> element is used to configure the ActiveMQ broker.
     -->
     <broker xmlns="http://activemq.apache.org/schema/core"
-	    brokerName="<%= scope.lookupvar('::openshift_origin::msgserver_hostname') %>"
+	    brokerName="<%= scope.lookupvar('::openshift_origin::msgserver_fqdn') %>"
 	    useJmx="true"
 	    dataDirectory="${activemq.data}"
             schedulePeriodForDestinationPurge="60000">
@@ -66,10 +69,10 @@
 
 	<networkConnectors>
 <% @cluster_remote_members.each do |cluster_remote_member| -%>
-		<networkConnector name="<%= scope.lookupvar('::openshift_origin::msgserver_hostname') %>-<%= cluster_remote_member %>-topic" uri="static:(tcp://<%= cluster_remote_member %>:61616)" userName="amquser" password="<%= scope.lookupvar('::openshift_origin::msgserver_password') %>">
+		<networkConnector name="<%= scope.lookupvar('::openshift_origin::msgserver_fqdn') %>-<%= cluster_remote_member %>-topic" uri="static:(tcp://<%= cluster_remote_member %>:61616)" userName="amquser" password="<%= scope.lookupvar('::openshift_origin::msgserver_password') %>">
 			<excludedDestinations><queue physicalName=">" /></excludedDestinations>
 		</networkConnector>
-		<networkConnector name="<%= scope.lookupvar('::openshift_origin::msgserver_hostname') %>-<%= cluster_remote_member %>-queue" uri="static:(tcp://<%= cluster_remote_member %>:61616)" userName="amquser" password="<%= scope.lookupvar('::openshift_origin::msgserver_password') %>"
+		<networkConnector name="<%= scope.lookupvar('::openshift_origin::msgserver_fqdn') %>-<%= cluster_remote_member %>-queue" uri="static:(tcp://<%= cluster_remote_member %>:61616)" userName="amquser" password="<%= scope.lookupvar('::openshift_origin::msgserver_password') %>"
 			conduitSubscriptions="false">
 			<excludedDestinations><topic physicalName=">" /></excludedDestinations>
 		</networkConnector>
