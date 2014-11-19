@@ -14,7 +14,11 @@ options {
     statistics-file "/var/named/data/named_stats.txt";
     memstatistics-file "/var/named/data/named_mem_stats.txt";
     allow-query { any; };
+<% if scope.lookupvar('::openshift_origin::conf_nameserver_allow_recursion')-%>
+    recursion yes;
+<% else -%>
     recursion no;
+<% end -%>
 
     /* Path to ISC DLV key */
     bindkeys-file "/etc/named.iscdlv.key";

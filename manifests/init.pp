@@ -876,6 +876,7 @@ class openshift_origin (
   $conf_node_custom_motd                = undef,
   $development_mode                     = false,
   $conf_nameserver_upstream_dns         = ['8.8.8.8'],
+  $conf_nameserver_allow_recursion      = false,
   $install_login_shell                  = false,
   $register_host_with_nameserver        = false,
   $update_network_conf_files            = true,
