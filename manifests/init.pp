@@ -720,6 +720,14 @@
 #
 #   Default: undef
 #
+# [*quickstarts_json*]
+#   JSON content to be deployed into /etc/openshift/quickstarts.json
+#
+#   Default: undef, which on Origin will deploy the contents
+#   of templates/broker/quickstarts.json.erb
+#
+#   OSE Default: undef and will not deploy any quickstarts
+#
 # == Manual Tasks
 #
 # This script attempts to automate as many tasks as it reasonably can.
