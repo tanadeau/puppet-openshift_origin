@@ -41,45 +41,14 @@ class openshift_origin::datastore {
     ],
   }
 
-  if $openshift_origin::configure_mongodb == 'delayed' {
-    $openshift_init_provider = $::operatingsystem ? {
-      'Fedora' => 'systemd',
-      'CentOS' => 'redhat',
-      default  => 'redhat',
-    }
-
-    if $openshift_init_provider == 'systemd' {
-      file { 'mongo setup service':
-        ensure  => present,
-        path    => '/usr/lib/systemd/system/openshift-mongo-setup.service',
-        content => template('openshift_origin/mongodb/openshift-mongo-setup.service'),
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0644',
-        require => File['mongo setup script'],
-      }
-    } else {
-      fail 'Delayed mongo setup for RHEL not available'
-    }
-
-    service { ['openshift-mongo-setup']:
-      require  => [
-        File['mongo setup script'],
-        File['mongo setup service'],
-      ],
-      provider => $openshift_init_provider,
-      enable   => true,
-    }
-  } else {
-    exec { '/usr/sbin/oo-mongo-setup':
-      command => '/usr/sbin/oo-mongo-setup',
-      timeout => 1800,
-      require => [
-        File['mongo setup script'],
-        Class['openshift_origin::update_conf_files'],
-      ],
-      creates => '/etc/openshift/.mongo-setup-complete',
-    }
+  exec { '/usr/sbin/oo-mongo-setup':
+    command => '/usr/sbin/oo-mongo-setup',
+    timeout => 1800,
+    require => [
+      File['mongo setup script'],
+      Class['openshift_origin::update_conf_files'],
+    ],
+    creates => '/etc/openshift/.mongo-setup-complete',
   }
 
   if $openshift_origin::mongodb_replicasets {

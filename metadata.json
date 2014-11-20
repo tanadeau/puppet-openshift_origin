@@ -12,13 +12,6 @@
                 "6"
             ]
         },
-        {
-            "operatingsystem": "Fedora",
-            "operatingsystemrelease": [
-                "19",
-                "20"
-            ]
-        }
     ],
     "requirements": [
         {

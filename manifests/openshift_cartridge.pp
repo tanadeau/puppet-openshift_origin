@@ -20,16 +20,6 @@ define openshift_origin::openshift_cartridge  {
       require openshift_origin::cartridges::jenkins
       $full_cart_name = "${cart_prefix}${name}"
     }
-    'mariadb', 'mysql': {
-      case $::operatingsystem {
-        'Fedora' : {
-          $full_cart_name = "${cart_prefix}mariadb"
-        }
-        default  : {
-          $full_cart_name = "${cart_prefix}mysql"
-        }
-      }
-    }
     default: {
       $full_cart_name = "${cart_prefix}${name}"
     }

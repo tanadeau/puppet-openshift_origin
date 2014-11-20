@@ -184,7 +184,7 @@ class openshift_origin::node {
     class { 'openshift_origin::plugins::frontend::nodejs_websocket': } ->
     anchor { 'openshift_origin::node_ws_frontend_end': }
   }
-  if member( $::openshift_origin::node_frontend_plugins, 'haproxy-sni-proxy' ) and ($::operatingsystem != 'Fedora') {
+  if member( $::openshift_origin::node_frontend_plugins, 'haproxy-sni-proxy' ) {
     anchor { 'openshift_origin::node_sni_frontend_begin': } ->
     class { 'openshift_origin::plugins::frontend::haproxy_sni_proxy': } ->
     anchor { 'openshift_origin::node_sni_frontend_end': }
@@ -222,37 +222,34 @@ class openshift_origin::node {
   }
   Service['messagebus'] -> Service['oddjobd']
 
-  # Fedora already has cgroups as systemd uses  them.
-  if $::operatingsystem != 'Fedora' {
-    augeas { 'openshift cgconfig':
-      context => '/files/etc/cgconfig.conf/mount',
-      incl    => '/etc/cgconfig.conf',
-      lens    => 'Cgconfig.lns',
-      changes => [
-        'set blkio /cgroup/blkio',
-        'set cpu /cgroup/cpu',
-        'set cpuacct /cgroup/cpuacct',
-        'set cpuset /cgroup/cpuset',
-        'set devices /cgroup/devices',
-        'set freezer /cgroup/freezer',
-        'set memory /cgroup/memory',
-        'set net_cls /cgroup/net_cls',
-        'rm #comment \'Managed by puppet:openshift_origin\'',
-      ],
-      notify  => Exec['prepare cgroups'],
-    }
+  augeas { 'openshift cgconfig':
+    context => '/files/etc/cgconfig.conf/mount',
+    incl    => '/etc/cgconfig.conf',
+    lens    => 'Cgconfig.lns',
+    changes => [
+      'set blkio /cgroup/blkio',
+      'set cpu /cgroup/cpu',
+      'set cpuacct /cgroup/cpuacct',
+      'set cpuset /cgroup/cpuset',
+      'set devices /cgroup/devices',
+      'set freezer /cgroup/freezer',
+      'set memory /cgroup/memory',
+      'set net_cls /cgroup/net_cls',
+      'rm #comment \'Managed by puppet:openshift_origin\'',
+    ],
+    notify  => Exec['prepare cgroups'],
+  }
 
-    # TODO: Investigate if restorecons are necessary
-    exec { 'prepare cgroups':
-      command     => '/sbin/restorecon -rv /etc/cgconfig.conf; mkdir -p /cgroup; restorecon -rv /cgroup',
-      refreshonly => true
-    }
+  # TODO: Investigate if restorecons are necessary
+  exec { 'prepare cgroups':
+    command     => '/sbin/restorecon -rv /etc/cgconfig.conf; mkdir -p /cgroup; restorecon -rv /cgroup',
+    refreshonly => true
+  }
 
-    service { ['cgconfig', 'cgred']:
-      ensure  => running,
-      enable  => true,
-      require => [Package['libcgroup'], Augeas['openshift cgconfig']],
-    }
+  service { ['cgconfig', 'cgred']:
+    ensure  => running,
+    enable  => true,
+    require => [Package['libcgroup'], Augeas['openshift cgconfig']],
   }
 
   service { ['openshift-gears']:
@@ -261,29 +258,27 @@ class openshift_origin::node {
       Package['rubygem-openshift-origin-node'],
       Package['openshift-origin-node-util'],
     ],
-    provider => $::openshift_origin::params::os_init_provider,
   }
 
-    if $openshift_origin::conf_node_watchman_service {
-      service { ['openshift-watchman']:
-        ensure   => running,
-        enable   => true,
-        require  => [
-          Package['rubygem-openshift-origin-node'],
-          Package['openshift-origin-node-util'],
-          Service['openshift-gears'],
-        ],
-        provider => $::openshift_origin::params::os_init_provider,
-      }
-
-      file { '/etc/sysconfig/watchman':
-        content => template('openshift_origin/node/watchman.erb'),
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0640',
-        notify  => Service['openshift-watchman']
-        }
+  if $openshift_origin::conf_node_watchman_service {
+    service { ['openshift-watchman']:
+      ensure   => running,
+      enable   => true,
+      require  => [
+        Package['rubygem-openshift-origin-node'],
+        Package['openshift-origin-node-util'],
+        Service['openshift-gears'],
+      ],
     }
+
+    file { '/etc/sysconfig/watchman':
+      content => template('openshift_origin/node/watchman.erb'),
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0640',
+      notify  => Service['openshift-watchman']
+      }
+  }
 
   file { ['/var/lib/openshift/']:
     ensure  => 'directory',

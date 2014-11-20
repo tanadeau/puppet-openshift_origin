@@ -24,6 +24,5 @@ class openshift_origin::plugins::frontend::nodejs_websocket {
     hasstatus  => true,
     hasrestart => true,
     require    => Package['openshift-origin-node-util'],
-    provider   => $openshift_origin::params::os_init_provider,
   }
 }

@@ -13,8 +13,6 @@
 #  limitations under the License.
 #
 class openshift_origin::install_method {
-  include openshift_origin::params
-
   stage { 'first':
     before => Stage['main'],
   }

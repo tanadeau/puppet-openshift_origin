@@ -122,24 +122,17 @@ class openshift_origin::console {
   # SCL and Puppet don't play well together; the 'default' here
   # circumvents the use of the `scl enable ruby193` mechanism
   # while still invoking ruby commands in the correct context
-  $console_asset_rake_cmd = $::operatingsystem ? {
-    'Fedora' => '/usr/bin/rake assets:precompile',
-    default  => 'LD_LIBRARY_PATH=/opt/rh/ruby193/root/usr/lib64:/opt/rh/v8314/root/usr/lib64 GEM_PATH=/opt/rh/ruby193/root/usr/local/share/gems:/opt/rh/ruby193/root/usr/share/gems /opt/rh/ruby193/root/usr/bin/rake assets:precompile',
-  }
-
-  $console_bundle_show    = $::operatingsystem ? {
-    'Fedora' => '/usr/bin/bundle show',
-    default  => 'LD_LIBRARY_PATH=/opt/rh/ruby193/root/usr/lib64 GEM_PATH=/opt/rh/ruby193/root/usr/local/share/gems:/opt/rh/ruby193/root/usr/share/gems /opt/rh/ruby193/root/usr/bin/bundle show',
-  }
+  $console_asset_rake_cmd = 'LD_LIBRARY_PATH=/opt/rh/ruby193/root/usr/lib64:/opt/rh/v8314/root/usr/lib64 GEM_PATH=/opt/rh/ruby193/root/usr/local/share/gems:/opt/rh/ruby193/root/usr/share/gems /opt/rh/ruby193/root/usr/bin/rake assets:precompile'
+  $console_bundle_show = 'LD_LIBRARY_PATH=/opt/rh/ruby193/root/usr/lib64 GEM_PATH=/opt/rh/ruby193/root/usr/local/share/gems:/opt/rh/ruby193/root/usr/share/gems /opt/rh/ruby193/root/usr/bin/bundle show'
 
   exec { 'Console gem dependencies':
     cwd         => '/var/www/openshift/console/',
-    command     => "${::openshift_origin::params::rm} -f Gemfile.lock && \
+    command     => "rm -f Gemfile.lock && \
     ${console_bundle_show} && \
-    ${::openshift_origin::params::chown} apache:apache Gemfile.lock && \
-    ${::openshift_origin::params::rm} -rf tmp/cache/* && \
+    chown apache:apache Gemfile.lock && \
+    rm -rf tmp/cache/* && \
     ${console_asset_rake_cmd} && \
-    ${::openshift_origin::params::chown} -R apache:apache /var/www/openshift/console",
+    chown -R apache:apache /var/www/openshift/console",
     require     => Package['openshift-origin-console','httpd'],
     subscribe   => [
       Package['openshift-origin-console'],

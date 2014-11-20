@@ -14,80 +14,12 @@
 #  limitations under the License.
 #
 class openshift_origin::params {
-  $os_init_provider     =  $::operatingsystem ? {
-    'Fedora' => 'systemd',
-    'CentOS' => 'redhat',
-    default  => 'redhat',
-  }
-
-  $service   = $::operatingsystem ? {
-    'Fedora' => '/usr/sbin/service',
-    default  => '/sbin/service',
-  }
-
-  $rpm       = $::operatingsystem ? {
-    'Fedora' => '/usr/bin/rpm',
-    default  => '/bin/rpm',
-  }
-
-  $rm        = $::operatingsystem ? {
-    'Fedora' => '/usr/bin/rm',
-    default  => '/bin/rm',
-  }
-
-  $touch     = $::operatingsystem ? {
-    'Fedora' => '/usr/bin/touch',
-    default  => '/bin/touch',
-  }
-
-  $chown     = $::operatingsystem ? {
-    'Fedora' => '/usr/bin/chown',
-    default  => '/bin/chown',
-  }
-
-  $httxt2dbm = $::operatingsystem ? {
-    'Fedora' => '/usr/bin/httxt2dbm',
-    default  => '/usr/sbin/httxt2dbm',
-  }
-
-  $chmod     = $::operatingsystem ? {
-    'Fedora' => '/usr/bin/chmod',
-    default  => '/bin/chmod',
-  }
-
-  $grep      = $::operatingsystem ? {
-    'Fedora' => '/usr/bin/grep',
-    default  => '/bin/grep',
-  }
-
-  $cat       = $::operatingsystem ? {
-    'Fedora' => '/usr/bin/cat',
-    default  => '/bin/cat',
-  }
-
-  $mv        = $::operatingsystem ? {
-    'Fedora' => '/usr/bin/mv',
-    default  => '/bin/mv',
-  }
-
-  $echo      = $::operatingsystem ? {
-    'Fedora' => '/usr/bin/echo',
-    default  => '/bin/echo',
-  }
-
   $ruby_scl_prefix = $::operatingsystem ? {
-    'Fedora' => '',
     default  => 'ruby193-',
   }
 
   $ruby_scl_path_prefix = $::operatingsystem ? {
-    'Fedora' => '',
     default  => '/opt/rh/ruby193/root',
-  }
-
-  $sysctl      = $::operatingsystem ? {
-    'Fedora' => '/usr/sbin/sysctl',
-    default  => '/sbin/sysctl',
   }
 
   $node_shmmax = $::architecture ? {
@@ -101,7 +33,6 @@ class openshift_origin::params {
   }
 
   $repos_base = $::operatingsystem ? {
-    'Fedora' => 'https://mirror.openshift.com/pub/origin-server/nightly/fedora-19',
     default  => 'https://mirror.openshift.com/pub/origin-server/nightly/rhel-6',
   }
 }

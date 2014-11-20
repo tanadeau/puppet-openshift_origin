@@ -14,8 +14,6 @@
 #  limitations under the License.
 #
 class openshift_origin::avahi {
-  include openshift_origin::params
-
   # TODO: Farm work out to Avahi module
 
   package { ['avahi-cname-manager']:

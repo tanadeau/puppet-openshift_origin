@@ -56,7 +56,6 @@ class openshift_origin::plugins::frontend::apache {
     hasstatus  => true,
     hasrestart => true,
     require    =>  Package['httpd'],
-    provider   => $openshift_origin::params::os_init_provider,
   }
 
   file { 'servername config':
@@ -68,18 +67,5 @@ class openshift_origin::plugins::frontend::apache {
     mode    => '0644',
     require => Package['httpd'],
     notify  => Service['httpd'],
-  }
-
-  if $::operatingsystem == 'Fedora' and 'node' in $::openshift_origin::roles {
-    file { 'allow cartridge files through apache':
-      ensure  => present,
-      path    => '/etc/httpd/conf.d/cartridge_files.conf',
-      content => template('openshift_origin/plugins/frontend/apache/cartridge_files.conf.erb'),
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0660',
-      require =>  Package['httpd'],
-      notify  => Service['httpd'],
-    }
   }
 }

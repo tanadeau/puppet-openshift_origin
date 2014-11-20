@@ -14,8 +14,6 @@
 #  limitations under the License.
 #
 class openshift_origin::nameserver {
-  include openshift_origin::params
-
   anchor { 'openshift_origin::nameserver_begin': } ->
   class { 'openshift_origin::firewall::dns': } ->
   anchor {'openshift_origin::nameserver_end': }

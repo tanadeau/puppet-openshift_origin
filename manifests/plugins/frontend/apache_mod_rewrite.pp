@@ -14,7 +14,6 @@
 #  limitations under the License.
 #
 class openshift_origin::plugins::frontend::apache_mod_rewrite {
-  include ::openshift_origin::params
   include openshift_origin::plugins::frontend::apache
 
   anchor { 'openshift_origin::plugins::fronted::apache_mod_rewrite_begin': } ->
@@ -39,13 +38,13 @@ class openshift_origin::plugins::frontend::apache_mod_rewrite {
     }
 
     exec { 'regen node routes':
-      command => "${::openshift_origin::params::cat} /etc/httpd/conf.d/openshift/nodes.txt /tmp/nodes.broker_routes.txt > /etc/httpd/conf.d/openshift/nodes.txt.new && \
-                  ${::openshift_origin::params::mv} /etc/httpd/conf.d/openshift/nodes.txt.new /etc/httpd/conf.d/openshift/nodes.txt && \
-                  ${::openshift_origin::params::httxt2dbm} -f DB -i /etc/httpd/conf.d/openshift/nodes.txt -o /etc/httpd/conf.d/openshift/nodes.db.new && \
-                  ${::openshift_origin::params::chown} root:apache /etc/httpd/conf.d/openshift/nodes.txt /etc/httpd/conf.d/openshift/nodes.db.new && \
-                  ${::openshift_origin::params::chmod} 750 /etc/httpd/conf.d/openshift/nodes.txt /etc/httpd/conf.d/openshift/nodes.db.new && \
-                  ${::openshift_origin::params::mv} -f /etc/httpd/conf.d/openshift/nodes.db.new /etc/httpd/conf.d/openshift/nodes.db",
-      unless  => "${::openshift_origin::params::grep} '__default__/broker' /etc/httpd/conf.d/openshift/nodes.txt 2>/dev/null",
+      command => "cat /etc/httpd/conf.d/openshift/nodes.txt /tmp/nodes.broker_routes.txt > /etc/httpd/conf.d/openshift/nodes.txt.new && \
+                  mv /etc/httpd/conf.d/openshift/nodes.txt.new /etc/httpd/conf.d/openshift/nodes.txt && \
+                  httxt2dbm -f DB -i /etc/httpd/conf.d/openshift/nodes.txt -o /etc/httpd/conf.d/openshift/nodes.db.new && \
+                  chown root:apache /etc/httpd/conf.d/openshift/nodes.txt /etc/httpd/conf.d/openshift/nodes.db.new && \
+                  chmod 750 /etc/httpd/conf.d/openshift/nodes.txt /etc/httpd/conf.d/openshift/nodes.db.new && \
+                  mv -f /etc/httpd/conf.d/openshift/nodes.db.new /etc/httpd/conf.d/openshift/nodes.db",
+      unless  => "grep '__default__/broker' /etc/httpd/conf.d/openshift/nodes.txt 2>/dev/null",
       require => File['broker and console route for node'],
     }
   }

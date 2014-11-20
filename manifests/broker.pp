@@ -234,17 +234,13 @@ class openshift_origin::broker {
       }
   }
 
-  # SCL and Puppet don't play well together; the 'default' here
-  # circumvents the use of the `scl enable ruby193` mechanism
-  # while still invoking ruby commands in the correct context
-  $broker_bundle_show = $::operatingsystem ? {
-    'Fedora' => '/usr/bin/bundle show',
-    default  => 'LD_LIBRARY_PATH=/opt/rh/ruby193/root/usr/lib64 GEM_PATH=/opt/rh/ruby193/root/usr/local/share/gems:/opt/rh/ruby193/root/usr/share/gems /opt/rh/ruby193/root/usr/bin/bundle show',
-  }
+  # SCL and Puppet don't play well together; circumvents the use of the `scl enable ruby193` mechanism while
+  # still invoking ruby commands in the correct context
+  $broker_bundle_show = 'LD_LIBRARY_PATH=/opt/rh/ruby193/root/usr/lib64 GEM_PATH=/opt/rh/ruby193/root/usr/local/share/gems:/opt/rh/ruby193/root/usr/share/gems /opt/rh/ruby193/root/usr/bin/bundle show'
 
   exec { 'Broker gem dependencies':
     cwd     => '/var/www/openshift/broker/',
-    command => "${::openshift_origin::params::rm} -f Gemfile.lock && ${broker_bundle_show}",
+    command => "rm -f Gemfile.lock && ${broker_bundle_show}",
     before  => File['/var/www/openshift/broker/tmp'],
     require => [
       Package['openshift-origin-broker'],
@@ -280,10 +276,5 @@ class openshift_origin::broker {
     command => '/bin/sed -i \'/VirtualHost/,/VirtualHost/ d\' /etc/httpd/conf.d/ssl.conf',
     onlyif  => '/bin/grep \'VirtualHost _default\' /etc/httpd/conf.d/ssl.conf',
     require => Package['openshift-origin-broker'],
-  }
-  if $::openshift_origin::install_login_shell {
-    anchor { 'openshift_origin::broker_login_shell': } ->
-    class { 'openshift_origin::login_shell': } ->
-    anchor { 'openshift_origin::broker_login_shell': }
   }
 }
