@@ -127,12 +127,12 @@ class openshift_origin::console {
 
   exec { 'Console gem dependencies':
     cwd         => '/var/www/openshift/console/',
-    command     => "${::openshift_origin::params::rm} -f Gemfile.lock && \
+    command     => "rm -f Gemfile.lock && \
     ${console_bundle_show} && \
-    ${::openshift_origin::params::chown} apache:apache Gemfile.lock && \
-    ${::openshift_origin::params::rm} -rf tmp/cache/* && \
+    chown apache:apache Gemfile.lock && \
+    rm -rf tmp/cache/* && \
     ${console_asset_rake_cmd} && \
-    ${::openshift_origin::params::chown} -R apache:apache /var/www/openshift/console",
+    chown -R apache:apache /var/www/openshift/console",
     require     => Package['openshift-origin-console','httpd'],
     subscribe   => [
       Package['openshift-origin-console'],

@@ -14,7 +14,6 @@
 #  limitations under the License.
 #
 class openshift_origin::role {
-  include openshift_origin::params
   include openshift_origin::install_method
   require openshift_origin::firewall::ssh
 

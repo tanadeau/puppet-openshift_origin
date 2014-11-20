@@ -14,44 +14,12 @@
 #  limitations under the License.
 #
 class openshift_origin::params {
-  $rm        = $::operatingsystem ? {
-    default  => '/bin/rm',
-  }
-
-  $chown     = $::operatingsystem ? {
-    default  => '/bin/chown',
-  }
-
-  $httxt2dbm = $::operatingsystem ? {
-    default  => '/usr/sbin/httxt2dbm',
-  }
-
-  $chmod     = $::operatingsystem ? {
-    default  => '/bin/chmod',
-  }
-
-  $grep      = $::operatingsystem ? {
-    default  => '/bin/grep',
-  }
-
-  $cat       = $::operatingsystem ? {
-    default  => '/bin/cat',
-  }
-
-  $mv        = $::operatingsystem ? {
-    default  => '/bin/mv',
-  }
-
   $ruby_scl_prefix = $::operatingsystem ? {
     default  => 'ruby193-',
   }
 
   $ruby_scl_path_prefix = $::operatingsystem ? {
     default  => '/opt/rh/ruby193/root',
-  }
-
-  $sysctl      = $::operatingsystem ? {
-    default  => '/sbin/sysctl',
   }
 
   $node_shmmax = $::architecture ? {

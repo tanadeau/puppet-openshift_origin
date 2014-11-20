@@ -240,7 +240,7 @@ class openshift_origin::broker {
 
   exec { 'Broker gem dependencies':
     cwd     => '/var/www/openshift/broker/',
-    command => "${::openshift_origin::params::rm} -f Gemfile.lock && ${broker_bundle_show}",
+    command => "rm -f Gemfile.lock && ${broker_bundle_show}",
     before  => File['/var/www/openshift/broker/tmp'],
     require => [
       Package['openshift-origin-broker'],

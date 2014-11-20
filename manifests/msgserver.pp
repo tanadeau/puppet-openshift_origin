@@ -16,8 +16,6 @@
 class openshift_origin::msgserver (
   $using_systemd = false
 ) {
-  include openshift_origin::params
-
   anchor { 'openshift_origin::msgserver_begin': } ->
   class { 'openshift_origin::firewall::activemq': } ->
   anchor { 'openshift_origin::msgserver_end': }
