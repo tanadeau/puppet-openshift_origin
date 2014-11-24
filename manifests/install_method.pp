@@ -23,7 +23,13 @@ class openshift_origin::install_method {
       class { 'openshift_origin::yum_install_method':
         stage => 'first',
       }
+      Class['Openshift_origin::Yum_install_method'] ->
+      Class['Openshift_origin::Oo_admin_yum_validator']
     }
     default: {}
   }
+  class { 'openshift_origin::oo_admin_yum_validator':
+    stage => 'first',
+  }
 }
+

@@ -908,8 +908,6 @@ class openshift_origin (
   $install_cartridges_optional_deps     = undef,
   $manage_firewall                      = true,
 ) inherits openshift_origin::params {
-  include openshift_origin::role
-
   $default_host_domain = $dns_infrastructure_zone ? {
     ''        => $domain,
     default   => $dns_infrastructure_zone,
