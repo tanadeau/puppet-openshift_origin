@@ -24,10 +24,10 @@
         }
     ],
     "name": "openshift-openshift_origin",
-    "version": "4.1.1",
+    "version": "4.1.2",
     "source": "git://github.com/openshift/puppet-openshift_origin.git",
     "author": "Mojo Lingo, Red Hat",
-    "license": "ASL",
+    "license": "Apache-2.0",
     "summary": "Module for installing Red Hat Openshift",
     "description": "Configures OpenShift broker, nodes and support servers",
     "project_page": "https://github.com/openshift/puppet-openshift_origin",
@@ -42,7 +42,7 @@
         },
         {
             "name": "puppetlabs/stdlib",
-            "version_requirement": ">=2.6.0"
+            "version_requirement": ">=4.3.2"
         },
         {
             "name": "blentz/selinux_types",

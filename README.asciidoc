@@ -6,6 +6,10 @@ class, you can configure the OpenShift Origin Broker, Node and support services
 including ActiveMQ, MongoDB, named and OS settings including firewall,
 services, and ntp.
 
+=== Build Status
+image:https://travis-ci.org/openshift/puppet-openshift_origin.svg?branch=master[Build
+Status]
+
 === Authors
 
 * Jamey Owens
