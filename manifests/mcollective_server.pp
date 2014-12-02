@@ -21,7 +21,7 @@ class openshift_origin::mcollective_server {
     require => Class['openshift_origin::install_method'],
   }
 
-  $cluster_members = $::openshift_origin::real_mcollective_cluster_members
+  $cluster_members = $::openshift_origin::real_msgserver_cluster_members
 
   if $cluster_members {
     $pool_size = size($cluster_members)

@@ -59,7 +59,7 @@ class openshift_origin::ose_supported_config {
     }
   }
   if $openshift_origin::msgserver_cluster {
-    if !(size($openshift_origin::msgserver_cluster_members) >= 2) {
+    if !(size($openshift_origin::real_msgserver_cluster_members) >= 2) {
         if $openshift_origin::ose_unsupported {
           notice('Openshift Enterprise requires at least 2 ActiveMQ nodes for clustered messaging')
         } else {

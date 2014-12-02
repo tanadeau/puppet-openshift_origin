@@ -445,8 +445,8 @@ msgserver_cluster is set to true.
 Default: undef
 
 === mcollective_cluster_members
-An array of ActiveMQ server hostnames.  Required when parameter
-msgserver_cluster is set to true.
+DEPRECATED: use msgserver_cluster_members instead, if both are set they must
+match
 
 Default: $msgserver_cluster_members
 

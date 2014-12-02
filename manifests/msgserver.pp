@@ -20,7 +20,7 @@ class openshift_origin::msgserver (
   class { 'openshift_origin::firewall::activemq': } ->
   anchor { 'openshift_origin::msgserver_end': }
 
-  $cluster_members        = $::openshift_origin::msgserver_cluster_members
+  $cluster_members        = $::openshift_origin::real_msgserver_cluster_members
   $cluster_remote_members = delete($cluster_members, $::openshift_origin::msgserver_fqdn)
 
   package { ['activemq','activemq-client']:
