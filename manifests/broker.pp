@@ -184,10 +184,18 @@ class openshift_origin::broker {
     }
   }
 
+  if $::openshift_origin::quickstarts_json {
+    $quickstart_content = $::openshift_origin::quickstarts_json
+  } elsif $::openshift_origin::ose_version == undef {
+    $quickstart_content = template('openshift_origin/broker/quickstarts.json.erb')
+  } else {
+    $quickstart_content = ''
+  }
+
   file { 'quickstarts':
     ensure  => present,
     path    => '/etc/openshift/quickstarts.json',
-    content => template('openshift_origin/broker/quickstarts.json.erb'),
+    content => $quickstart_content,
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
