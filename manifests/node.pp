@@ -253,8 +253,8 @@ class openshift_origin::node {
   }
 
   service { ['openshift-gears']:
-    enable   => true,
-    require  => [
+    enable  => true,
+    require => [
       Package['rubygem-openshift-origin-node'],
       Package['openshift-origin-node-util'],
     ],
@@ -262,9 +262,9 @@ class openshift_origin::node {
 
   if $openshift_origin::conf_node_watchman_service {
     service { ['openshift-watchman']:
-      ensure   => running,
-      enable   => true,
-      require  => [
+      ensure  => running,
+      enable  => true,
+      require => [
         Package['rubygem-openshift-origin-node'],
         Package['openshift-origin-node-util'],
         Service['openshift-gears'],
@@ -281,10 +281,10 @@ class openshift_origin::node {
   }
 
   file { ['/var/lib/openshift/']:
-    ensure  => 'directory',
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0751',
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0751',
   }
 
   file { ['/var/lib/openshift/.settings','/etc/openshift/env/']:

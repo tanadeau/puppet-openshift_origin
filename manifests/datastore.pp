@@ -107,7 +107,7 @@ class openshift_origin::datastore {
   }
 
   service { 'mongod':
-    require   => [Package['mongodb'], Package['mongodb-server']],
-    enable    => true,
+    require => [Package['mongodb'], Package['mongodb-server']],
+    enable  => true,
   }
 }
