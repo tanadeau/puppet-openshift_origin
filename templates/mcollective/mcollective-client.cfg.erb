@@ -16,13 +16,34 @@ plugin.activemq.pool.size = <%= @pool_size %>
 <% if scope.lookupvar('::openshift_origin::msgserver_cluster') then
 @cluster_members.each_with_index do |cluster_member, index| -%>
 plugin.activemq.pool.<%= index + 1%>.host = <%= cluster_member %>
-plugin.activemq.pool.<%= index + 1%>.port = 61613
 plugin.activemq.pool.<%= index + 1%>.user = <%= scope.lookupvar('::openshift_origin::mcollective_user') %>
 plugin.activemq.pool.<%= index + 1%>.password = <%= scope.lookupvar('::openshift_origin::mcollective_password') %>
+
+  <% if (scope.lookupvar('::openshift_origin::msgserver_tls_enabled') == 'enabled' and @tls_certs_provided == true) or scope.lookupvar('::openshift_origin::msgserver_tls_enabled') == 'strict' -%>
+  plugin.activemq.pool.<%= index + 1%>.port = 61614
+  plugin.activemq.pool.<%= index + 1%>.ssl = true
+  plugin.activemq.pool.<%= index + 1%>.ssl.ca = <%= scope.lookupvar('::openshift_origin::msgserver_tls_ca') %>
+  plugin.activemq.pool.<%= index + 1%>.ssl.key = <%= scope.lookupvar('::openshift_origin::msgserver_tls_key') %>
+  plugin.activemq.pool.<%= index + 1%>.ssl.cert = <%= scope.lookupvar('::openshift_origin::msgserver_tls_cert') %>
+  <% else %>
+  plugin.activemq.pool.<%= index + 1%>.port = 61613
+  <% end %>
+
 <% end -%>
+
 <% else -%>
-plugin.activemq.pool.1.host = <%= scope.lookupvar('::openshift_origin::msgserver_fqdn') %>
-plugin.activemq.pool.1.port = 61613
+plugin.activemq.pool.1.host = <%= scope.lookupvar('::openshift_origin::msgserver_hostname') %>
 plugin.activemq.pool.1.user = <%= scope.lookupvar('::openshift_origin::mcollective_user') %>
 plugin.activemq.pool.1.password = <%= scope.lookupvar('::openshift_origin::mcollective_password') %>
+
+  <% if (scope.lookupvar('::openshift_origin::msgserver_tls_enabled') == 'enabled' and @tls_certs_provided == true) or scope.lookupvar('::openshift_origin::msgserver_tls_enabled') == 'strict' -%>
+  plugin.activemq.pool.1.port = 61614
+  plugin.activemq.pool.1.ssl = true
+  plugin.activemq.pool.1.ssl.ca = <%= scope.lookupvar('::openshift_origin::msgserver_tls_ca') %>
+  plugin.activemq.pool.1.ssl.key = <%= scope.lookupvar('::openshift_origin::msgserver_tls_key') %>
+  plugin.activemq.pool.1.ssl.cert = <%= scope.lookupvar('::openshift_origin::msgserver_tls_cert') %>
+  <% else -%>  
+  plugin.activemq.pool.1.port = 61613
+  <% end -%>
+
 <% end -%>

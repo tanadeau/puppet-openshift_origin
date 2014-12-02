@@ -307,6 +307,27 @@
 #   This is the admin password for the ActiveMQ admin console, which is
 #   not needed by OpenShift but might be useful in troubleshooting.
 #
+# [*msgserver_tls_enabled*]
+#   Default: 'disabled'
+#   This configures mcollective and activemq to use end-to-end encryption over TLS.
+#   Use enabled to support both TLS and non-TLS, or strict to only support TLS.
+#
+# [*msgserver_tls_keystore_password*]
+#   Default: password
+#   The password used to protect the keystore. It must be greater than 6 characters. This is required.
+#
+# [*msgserver_tls_ca*]
+#   Default: /var/lib/puppet/ssl/certs/ca.pem
+#   Location for certificate ca
+#
+# [*msgserver_tls_cert*]
+#   Default: /var/lib/puppet/ssl/certs/${lower_fqdn}.pem
+#   Location for certificate cert
+#
+# [*msgserver_tls_key*]
+#   Default: /var/lib/puppet/ssl/private_keys/${lower_fqdn}.pem
+#   Location for certificate key
+#
 # [*mcollective_user*]
 # [*mcollective_password*]
 #   Default: mcollective/marionette
@@ -741,6 +762,7 @@
 class openshift_origin (
   $ose_version                          = undef,
   $ose_unsupported                      = false,
+  $lower_fqdn                           = $openshift_origin::params::lower_fqdn,
   $roles                                = ['broker','node','msgserver','datastore','nameserver'],
   $install_method                       = 'yum',
   $parallel_deployment                  = false,
@@ -808,6 +830,11 @@ class openshift_origin (
   $mcollective_cluster_members          = undef,
   $msgserver_password                   = 'changeme',
   $msgserver_admin_password             = inline_template('<%= require "securerandom"; SecureRandom.base64 %>'),
+  $msgserver_tls_enabled                = 'disabled',
+  $msgserver_tls_keystore_password      = 'password',
+  $msgserver_tls_ca                     = "/var/lib/puppet/ssl/certs/ca.pem",
+  $msgserver_tls_cert                   = inline_template('<%= "/var/lib/puppet/ssl/certs/#{fqdn.downcase}.pem" %>'),
+  $msgserver_tls_key                    = inline_template('<%= "/var/lib/puppet/ssl/private_keys/#{fqdn.downcase}.pem" %>'),
   $mcollective_user                     = 'mcollective',
   $mcollective_password                 = 'marionette',
   $mongodb_admin_user                   = 'admin',

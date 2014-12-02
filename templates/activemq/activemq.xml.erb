@@ -153,6 +153,15 @@
             </systemUsage>
         </systemUsage>
 
+        <% if scope.lookupvar('::openshift_origin::msgserver_tls_enabled') == 'enabled' or scope.lookupvar('::openshift_origin::msgserver_tls_enabled') == 'strict' %>
+        <sslContext>
+          <sslContext
+             keyStore="keystore.jks" keyStorePassword="<%= scope.lookupvar('::openshift_origin::msgserver_tls_keystore_password') %>"
+             trustStore="truststore.jks" trustStorePassword="<%= scope.lookupvar('::openshift_origin::msgserver_tls_keystore_password') %>"
+          />
+        </sslContext>
+        <% end %>
+
         <!--
             The transport connectors expose ActiveMQ over a given protocol to
             clients and other brokers. For more information, see:
@@ -160,8 +169,14 @@
             http://activemq.apache.org/configuring-transports.html
         -->
         <transportConnectors>
-            <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>
-            <transportConnector name="stomp" uri="stomp://0.0.0.0:61613"/>
+          <% if scope.lookupvar('::openshift_origin::msgserver_tls_enabled') != 'disabled' %>
+          <transportConnector name="openwire+ssl" uri="tcp://0.0.0.0:61617?needClientAuth=true&amp;transport.enabledProtocols=TLSv1,TLSv1.1,TLSv1.2"/>
+          <transportConnector name="stomp+ssl" uri="stomp+ssl://0.0.0.0:61614?needClientAuth=true&amp;transport.enabledProtocols=TLSv1,TLSv1.1,TLSv1.2"/>
+          <% end %>
+          <% if scope.lookupvar('::openshift_origin::msgserver_tls_enabled') != 'strict' %>
+          <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>
+          <transportConnector name="stomp" uri="stomp://0.0.0.0:61613"/>
+          <% end %>
         </transportConnectors>
 
     </broker>

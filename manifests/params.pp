@@ -35,4 +35,5 @@ class openshift_origin::params {
   $repos_base = $::operatingsystem ? {
     default  => 'https://mirror.openshift.com/pub/origin-server/nightly/rhel-6',
   }
+
 }
