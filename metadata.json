@@ -11,7 +11,7 @@
             "operatingsystemrelease": [
                 "6"
             ]
-        },
+        }
     ],
     "requirements": [
         {

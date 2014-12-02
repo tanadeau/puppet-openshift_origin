@@ -41,10 +41,10 @@ class openshift_origin::register_dns {
 
       $key_argument = "${key_algorithm}:${key_domain}:${key_secret}"
 
-      exec { "Attempting to register host dns" :
-        command   => template('openshift_origin/register_dns.erb'),
-        provider  => 'shell',
-        require   => Package['bind-utils'],
+      exec { 'Attempting to register host dns' :
+        command  => template('openshift_origin/register_dns.erb'),
+        provider => 'shell',
+        require  => Package['bind-utils'],
       }
     }
   }

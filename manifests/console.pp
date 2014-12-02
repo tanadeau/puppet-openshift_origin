@@ -51,13 +51,13 @@ class openshift_origin::console {
       '/var/log/openshift/console(/.*)?',
       '/var/log/openshift/console/httpd(/.*)?',
     ]:
-    ensure   => 'present',
-    seltype  => 'httpd_log_t',
+    ensure  => 'present',
+    seltype => 'httpd_log_t',
   }
 
   selinux_fcontext { '/var/www/openshift/console/httpd/run(/.*)?':
-    ensure   => 'present',
-    seltype  => 'httpd_var_run_t',
+    ensure  => 'present',
+    seltype => 'httpd_var_run_t',
   }
 
   # Add semanage types to dirs before anything else goes into them.

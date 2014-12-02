@@ -840,7 +840,7 @@ class openshift_origin (
   $msgserver_admin_password             = inline_template('<%= require "securerandom"; SecureRandom.base64 %>'),
   $msgserver_tls_enabled                = 'disabled',
   $msgserver_tls_keystore_password      = 'password',
-  $msgserver_tls_ca                     = "/var/lib/puppet/ssl/certs/ca.pem",
+  $msgserver_tls_ca                     = '/var/lib/puppet/ssl/certs/ca.pem',
   $msgserver_tls_cert                   = inline_template('<%= "/var/lib/puppet/ssl/certs/#{fqdn.downcase}.pem" %>'),
   $msgserver_tls_key                    = inline_template('<%= "/var/lib/puppet/ssl/private_keys/#{fqdn.downcase}.pem" %>'),
   $mcollective_user                     = 'mcollective',

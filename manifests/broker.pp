@@ -109,18 +109,18 @@ class openshift_origin::broker {
   }
 
   selinux_fcontext { '/var/www/openshift/broker/httpd/run(/.*)?':
-    ensure   => 'present',
-    seltype  => 'httpd_var_run_t',
+    ensure  => 'present',
+    seltype => 'httpd_var_run_t',
   }
 
   selinux_fcontext { '/var/www/openshift/broker/tmp(/.*)?':
-    ensure   => 'present',
-    seltype  => 'httpd_tmp_t',
+    ensure  => 'present',
+    seltype => 'httpd_tmp_t',
   }
 
   selinux_fcontext { '/var/log/openshift/broker(/.*)?':
-    ensure   => 'present',
-    seltype  => 'httpd_log_t',
+    ensure  => 'present',
+    seltype => 'httpd_log_t',
   }
 
   # Make sure the semanage rules are set up right away.
@@ -234,12 +234,13 @@ class openshift_origin::broker {
       notify  => Service['openshift-broker'],
     }
   }
+  $development_file_present = $::openshift_origin::development_mode ? {
+    true    => present,
+    default => absent,
+  }
   file { '/etc/openshift/development':
-    source  => 'puppet:///modules/openshift_origin/development',
-    ensure  => $::openshift_origin::development_mode ? {
-        true    => present,
-        default => absent,
-      }
+    ensure => $development_file_present,
+    source => 'puppet:///modules/openshift_origin/development',
   }
 
   # SCL and Puppet don't play well together; circumvents the use of the `scl enable ruby193` mechanism while
