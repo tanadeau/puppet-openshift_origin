@@ -293,8 +293,8 @@
 #
 # [*mcollective_cluster_members*]
 #   Default: $msgserver_cluster_members
-#   An array of ActiveMQ server hostnames.  Required when parameter
-#   msgserver_cluster is set to true.
+# DEPRECATED: use msgserver_cluster_members instead, if both are set they must
+# match
 #
 # [*msgserver_password*]
 #   Default 'changeme'
@@ -984,22 +984,29 @@ class openshift_origin (
     default => $install_cartridges_recommended_deps,
   }
 
-  # Check for various unsupported OSE configs
-  if $ose_version != undef {
-    class { 'openshift_origin::ose_supported_config': }
-  }
-
-  if $msgserver_cluster_members and $mcollective_cluster_members == undef {
-    $real_mcollective_cluster_members = $msgserver_cluster_members
-  }
-
-  if $msgserver_cluster and ! $msgserver_cluster_members and ! $real_mcollective_cluster_members {
-    fail('msgserver_cluster_members and mcollective_cluster_members parameters are required when msgserver_cluster is set')
+  # somewhere along the way we've transitioned to msgserver_cluster_members
+  # rather than mcollective_cluster_members
+  if $msgserver_cluster {
+    if ( ($msgserver_cluster_members != $mcollective_cluster_members) and $mcollective_cluster_members ) {
+      fail('msgserver_cluster_members and mcollective_cluster_members must be the same')
+    } elsif !$msgserver_cluster_members and !$mcollective_cluster_members {
+      fail('msgserver_cluster_members is required required when msgserver_cluster is set')
+    } elsif !$msgserver_cluster_members and $mcollective_cluster_members {
+      $real_msgserver_cluster_members = $mcollective_cluster_members
+    } else {
+      $real_msgserver_cluster_members = $msgserver_cluster_members
+    }
   }
 
   Exec { path => '/usr/bin:/usr/sbin:/bin:/sbin' }
 
   include openshift_origin::update_conf_files
+
+  # Check for various unsupported OSE configs
+  if $ose_version != undef {
+    class { 'openshift_origin::ose_supported_config': }
+  }
+
 
   if member( $roles, 'nameserver' ) {
     class { 'openshift_origin::role::nameserver': } ->
