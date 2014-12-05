@@ -101,6 +101,7 @@ class openshift_origin::msgserver (
   }
 
   service { 'activemq':
+    ensure     => running,
     require    => File['activemq.xml config','jetty.xml config','jetty-realm.properties config'],
     hasstatus  => true,
     hasrestart => true,
