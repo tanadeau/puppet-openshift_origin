@@ -13,7 +13,7 @@
 #  limitations under the License.
 #
 class openshift_origin::register_dns {
-  if $::openshift_origin::register_host_with_nameserver {
+  if $::openshift_origin::register_host_with_nameserver and $::openshift_origin::bind_krb_principal == '' {
     if $::fqdn != 'localhost' {
       package { 'bind-utils' :
           ensure  => present,
@@ -47,5 +47,9 @@ class openshift_origin::register_dns {
         require  => Package['bind-utils'],
       }
     }
+  } elsif $::openshift_origin::register_host_with_nameserver and $::openshift_origin::bind_krb_principal != '' {
+    warning "You cannot use register_host_with_nameserver when using GSS-TSIG DNS updates"
+    fail "You cannot use register_host_with_nameserver when using GSS-TSIG DNS updates"
   }
+
 }
