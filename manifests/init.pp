@@ -321,11 +321,11 @@
 #   Location for certificate ca
 #
 # [*msgserver_tls_cert*]
-#   Default: /var/lib/puppet/ssl/certs/${lower_fqdn}.pem
+#   Default: /var/lib/puppet/ssl/certs/#{fqdn.downcase}.pem
 #   Location for certificate cert
 #
 # [*msgserver_tls_key*]
-#   Default: /var/lib/puppet/ssl/private_keys/${lower_fqdn}.pem
+#   Default: /var/lib/puppet/ssl/private_keys/#{fqdn.downcase}.pem
 #   Location for certificate key
 #
 # [*mcollective_user*]
@@ -770,7 +770,6 @@
 class openshift_origin (
   $ose_version                          = undef,
   $ose_unsupported                      = false,
-  $lower_fqdn                           = $openshift_origin::params::lower_fqdn,
   $roles                                = ['broker','node','msgserver','datastore','nameserver'],
   $install_method                       = 'yum',
   $parallel_deployment                  = false,
