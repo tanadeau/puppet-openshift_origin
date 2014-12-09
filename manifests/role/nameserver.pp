@@ -14,8 +14,10 @@
 #
 class openshift_origin::role::nameserver inherits openshift_origin::role {
   include openshift_origin::nameserver
+  include openshift_origin::register_dns
 
   anchor { 'openshift_origin::nameserver_role_begin': } ->
   Class['openshift_origin::nameserver'] ->
-  anchor { 'openshift_origin::nameserver_role_end': }
+  anchor { 'openshift_origin::nameserver_role_end': } ->
+  Class['openshift_origin::register_dns']
 }
