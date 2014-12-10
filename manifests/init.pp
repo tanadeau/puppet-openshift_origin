@@ -981,7 +981,7 @@ class openshift_origin (
   }
 
   $cartridge_deps_to_install = $install_cartridges_recommended_deps ? {
-    undef   => $cartridge_deps_to_install_default,
+    undef   => intersection($cartridge_deps_to_install_default, $cartridges_to_install),
     default => $install_cartridges_recommended_deps,
   }
 
