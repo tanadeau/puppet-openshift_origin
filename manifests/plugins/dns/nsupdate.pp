@@ -29,8 +29,8 @@ class openshift_origin::plugins::dns::nsupdate {
     warning "Use the last field in the generated key file /var/named/K${openshift_origin::domain}*.key"
     fail 'bind_key is required.'
   }
-  if !$::openshift_origin::bind_krb_principal == '' and $::openshift_origin::bind_krb_keytab == '' {
-    warning "Kerberos keytab for the DNS service was not found. Please generate a keytab for DNS/${::openshift_origin::nameserver_fqdn}"
+  if $::openshift_origin::bind_krb_principal != '' and $::openshift_origin::bind_krb_keytab == '' {
+    warning "Kerberos keytab for the DNS service was not set. Please generate a keytab for DNS/${::openshift_origin::nameserver_fqdn} and provide a path for the keytab."
     fail 'bind_krb_keytab is required.'
   }
 
@@ -41,7 +41,7 @@ class openshift_origin::plugins::dns::nsupdate {
     ],
   }
 
-  if !$::openshift_origin::bind_krb_principal == '' {
+  if $::openshift_origin::bind_krb_principal != '' {
     file { 'broker-dns-keytab':
       ensure  => present,
       path    => $::openshift_origin::bind_krb_keytab,
