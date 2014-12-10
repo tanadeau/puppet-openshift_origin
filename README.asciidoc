@@ -673,7 +673,10 @@ Options:
 Default: htpasswd
 
 === broker_krb_service_name
-The KrbServiceName value for mod_auth_kerb configuration
+The KrbServiceName value for mod_auth_kerb configuration. This value will be
+prefixed with 'HTTP/' to create the krb5 service principal.
+
+Default: hostname
 
 === broker_krb_auth_realms
 The KrbAuthRealms value for mod_auth_kerb configuration
