@@ -45,9 +45,7 @@ class openshift_origin::node {
       'make',
       'oddjob',
       'dbus',
-      'vim-enhanced',
       'mlocate',
-      'screen',
       'libcgroup',
     ]:
     ensure  => present,
