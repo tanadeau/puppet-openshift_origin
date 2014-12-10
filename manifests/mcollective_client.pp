@@ -34,6 +34,46 @@ class openshift_origin::mcollective_client {
   if ($::openshift_origin::msgserver_tls_enabled == 'enabled' or $::openshift_origin::msgserver_tls_enabled == 'strict') {
     if ($::openshift_origin::msgserver_tls_ca != '') and ($::openshift_origin::msgserver_tls_key != '') and ($::openshift_origin::msgserver_tls_cert != '') {
       $tls_certs_provided = true
+
+      file { 'mcollective client cert directory':
+        ensure  => 'directory',
+        path    => "${::openshift_origin::params::ruby_scl_path_prefix}/etc/mcollective/certs/",
+        owner   => 'apache',
+        group   => 'apache',
+        mode    => '0750',
+        require => Package['mcollective-client'],
+      }
+
+      file { 'mcollective client tls ca':
+        ensure  => 'present',
+        path    => "${::openshift_origin::params::ruby_scl_path_prefix}/etc/mcollective/certs/ca.pem",
+        owner   => 'apache',
+        group   => 'apache',
+        mode    => '0640',
+        source  => $::openshift_origin::msgserver_tls_ca,
+        require => Package['mcollective-client'],
+      }
+
+      file { 'mcollective client tls cert':
+        ensure  => 'present',
+        path    => "${::openshift_origin::params::ruby_scl_path_prefix}/etc/mcollective/certs/cert.pem",
+        owner   => 'apache',
+        group   => 'apache',
+        mode    => '0640',
+        source  => $::openshift_origin::msgserver_tls_cert,
+        require => Package['mcollective-client'],
+      }
+      
+      file { 'mcollective client tls key':
+        ensure  => 'present',
+        path    => "${::openshift_origin::params::ruby_scl_path_prefix}/etc/mcollective/certs/key.pem",
+        owner   => 'apache',
+        group   => 'apache',
+        mode    => '0640',
+        source  => $::openshift_origin::msgserver_tls_key,
+        require => Package['mcollective-client'],
+      }
+      
     } else { $tls_certs_provided = false }
   }
 
