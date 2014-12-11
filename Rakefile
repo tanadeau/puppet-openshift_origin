@@ -4,7 +4,7 @@ require 'puppet-syntax/tasks/puppet-syntax'
 
 # puppet-lint parameters per puppet approved criteria
 # https://forge.puppetlabs.com/approved/criteria#validation
-PuppetLint.configuration.fail_on_warnings
+PuppetLint.configuration.fail_on_warnings = true
 PuppetLint.configuration.send("disable_80chars")
 PuppetLint.configuration.send("relative")
 # http://puppet-lint.com/checks/class_inherits_from_params_class/
