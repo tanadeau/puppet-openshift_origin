@@ -48,8 +48,8 @@ class openshift_origin::register_dns {
       }
     }
   } elsif $::openshift_origin::register_host_with_nameserver and $::openshift_origin::bind_krb_principal != '' {
-    warning "You cannot use register_host_with_nameserver when using GSS-TSIG DNS updates"
-    fail "You cannot use register_host_with_nameserver when using GSS-TSIG DNS updates"
+    warning 'You cannot use register_host_with_nameserver when using GSS-TSIG DNS updates'
+    fail 'You cannot use register_host_with_nameserver when using GSS-TSIG DNS updates'
   }
 
 }
