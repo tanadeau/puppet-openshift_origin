@@ -1,8 +1,30 @@
 CHANGELOG
 =========
 
+4.1.2
+-----
+
+2014-12-12
+
+ * Remove fedora specific code
+ * Fix parse order dependent parameter evaluation
+ * Reconcile class parameter documentation with puppet deployment guide
+ * Add TLS support to ActiveMQ and mcollective via msgserver_tls_enabled
+ parameter
+ * Add quickstarts_json parameter to provide quickstarts. For OpenShift
+ Enterprise if this is null don't deploy a default quickstarts file.
+ * puppetlabs-stdlib >= 4.3.0 is required
+ * RHBZ 1160099 - Ensure DNS firewall rules applied before register_dns
+ * RHBZ 1161486 - Create /etc/openshift/development file
+ * RHBZ 1162050 - Wait longer for primary replicaset instance to come online
+ * RHBZ 1162093 - Fix infrastructure zone dns updates
+ * RHBZ 1162454 - default hostnames should use infra zone if provided
+ * RHBZ 1162901 - ensure correct dns key algo used
+ * RHBZ 1170055 - Ensure activemq service is started
+ * RHBZ 1170859 - Only install recommended cart deps for installed carts
+
 4.1.0
-------
+-----
 
 2014-11-11
 
