@@ -461,6 +461,13 @@
 # 
 #  Default: 1
 #
+# [*conf_ha_dns_prefix*]
+# [*conf_ha_dns_suffix*]
+#   Prefix/Suffix used for Highly Available application URL
+#   http://${HA_DNS_PREFIX}${APP_NAME}-${DOMAIN_NAME}${HA_DNS_SUFFIX}.${CLOUD_DOMAIN}
+#   Default prefix: 'ha-'
+#   Default suffix: ''
+#
 # [*conf_valid_gear_sizes*]
 #   List of all gear sizes this will be used in this OpenShift installation.
 #   Default: ['small']
@@ -891,6 +898,8 @@ class openshift_origin (
   $openshift_password1                  = 'changeme',
   $conf_broker_auth_salt                = inline_template('<%= require "securerandom"; SecureRandom.base64 %>'),
   $conf_broker_auth_private_key         = undef,
+  $conf_ha_dns_prefix                   = 'ha-',
+  $conf_ha_dns_suffix                   = '',
   $conf_broker_session_secret           = undef,
   $conf_broker_default_region_name      = '',
   $conf_broker_allow_region_selection   = false,
