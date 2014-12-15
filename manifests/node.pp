@@ -39,16 +39,8 @@ class openshift_origin::node {
     ['rubygem-openshift-origin-node',
       "${::openshift_origin::params::ruby_scl_prefix}rubygem-passenger-native",
       'openshift-origin-node-util',
-      'policycoreutils-python',
       'openshift-origin-msg-node-mcollective',
-      'git',
-      'make',
-      'oddjob',
-      'dbus',
-      'vim-enhanced',
       'mlocate',
-      'screen',
-      'libcgroup',
     ]:
     ensure  => present,
     require => Class['openshift_origin::install_method'],
@@ -216,8 +208,6 @@ class openshift_origin::node {
       Package['rubygem-openshift-origin-node'],
       Package['openshift-origin-node-util'],
       Package['mcollective'],
-      Package['oddjob'],
-      Package['dbus'],
     ],
   }
   Service['messagebus'] -> Service['oddjobd']
@@ -249,7 +239,7 @@ class openshift_origin::node {
   service { ['cgconfig', 'cgred']:
     ensure  => running,
     enable  => true,
-    require => [Package['libcgroup'], Augeas['openshift cgconfig']],
+    require => [Package['rubygem-openshift-origin-node'], Augeas['openshift cgconfig']],
   }
 
   service { ['openshift-gears']:
