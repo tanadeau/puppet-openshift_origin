@@ -104,6 +104,9 @@ class openshift_origin::broker {
       '/var/www/openshift/broker/httpd/run',
       '/var/www/openshift/broker/tmp',
       '/var/www/openshift/broker/tmp/cache',
+      '/var/www/openshift/broker/tmp/sessions',
+      '/var/www/openshift/broker/tmp/pids',
+      '/var/www/openshift/broker/tmp/sockets',
     ]:
     ensure  => directory,
   }
@@ -192,6 +195,12 @@ class openshift_origin::broker {
     $quickstart_content = ''
   }
 
+  exec {'clear console cache':
+    refreshonly => true,
+    subscribe   => File['quickstarts'],
+    command     => 'oo-admin-console-cache --clear',
+  }
+  
   file { 'quickstarts':
     ensure  => present,
     path    => '/etc/openshift/quickstarts.json',
@@ -248,29 +257,32 @@ class openshift_origin::broker {
   $broker_bundle_show = 'LD_LIBRARY_PATH=/opt/rh/ruby193/root/usr/lib64 GEM_PATH=/opt/rh/ruby193/root/usr/local/share/gems:/opt/rh/ruby193/root/usr/share/gems /opt/rh/ruby193/root/usr/bin/bundle show'
 
   exec { 'Broker gem dependencies':
-    cwd     => '/var/www/openshift/broker/',
-    command => "rm -f Gemfile.lock && ${broker_bundle_show}",
-    before  => File['/var/www/openshift/broker/tmp'],
-    require => [
+    cwd         => '/var/www/openshift/broker/',
+    command     => "rm -f Gemfile.lock && ${broker_bundle_show}",
+    before      => File['/var/www/openshift/broker/tmp'],
+    require     => [
       Package['openshift-origin-broker'],
       File['openshift broker.conf','mcollective broker plugin config'],
     ],
-    notify  => [
+    notify      => [
       Service['openshift-broker'],
       File['/var/www/openshift/broker/Gemfile.lock'],
     ],
+    subscribe   => Package['openshift-origin-broker'],
+    refreshonly => true,
   }
 
   # This File resource is to guarantee that the Gemfile.lock created
   # by the subscribed Exec has the appropriate permissions (otherwise
   # it is created as owned by root:root)
   file { '/var/www/openshift/broker/Gemfile.lock':
-    ensure    => present,
-    owner     => 'apache',
-    group     => 'apache',
-    mode      => '0644',
-    require   => Package['openshift-origin-broker','httpd'],
-    subscribe => Exec['Broker gem dependencies'],
+    ensure                  => present,
+    owner                   => 'apache',
+    group                   => 'apache',
+    mode                    => '0644',
+    selinux_ignore_defaults => true,
+    require                 => Package['openshift-origin-broker','httpd'],
+    subscribe               => Exec['Broker gem dependencies'],
   }
 
   service { 'openshift-broker':
