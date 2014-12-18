@@ -648,6 +648,34 @@ Default max number of gears a user is allowed to use
 
 Default: 100
 
+=== conf_broker_default_region_name
+Default region if one is not specified.
+
+Default: ""
+
+=== conf_broker_allow_region_selection
+Should the user be allowed to select the region the application is placed in.
+
+Default: true
+
+=== conf_broker_require_districts
+When true, gear placement will fail if there are no available districts
+with the correct gear profile.
+
+Default: true
+
+=== conf_broker_require_zones
+When true, gear placement will fail if there are no available zones
+with the correct gear profile.
+
+Default: false
+
+=== conf_broker_zone_min_gear_group
+desired minimum number of zones between which gears in application
+gear groups are distributed.
+
+Default: 1
+
 === broker_dns_plugin
 
 DNS plugin used by the broker to register application DNS entries.
