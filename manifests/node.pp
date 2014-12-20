@@ -53,17 +53,20 @@ class openshift_origin::node {
     command => "echo ${::openshift_origin::node_frontend_plugins} > /etc/openshift/.puppet_node_frontend_plugins",
     creates => '/etc/openshift/.puppet_node_frontend_plugins',
     require => Package['rubygem-openshift-origin-node'],
+    notify  => Exec['prevent_node_frontend_changes'],
   }
   file { '/etc/openshift/.puppet_proposed_node_frontend_plugins':
     content => inline_template("${openshift_origin::node_frontend_plugins}\n"),
     require => Package['rubygem-openshift-origin-node'],
+    notify  => Exec['prevent_node_frontend_changes'],
   }
   exec { 'prevent_node_frontend_changes':
-    command => '/usr/bin/diff /etc/openshift/.puppet_node_frontend_plugins /etc/openshift/.puppet_proposed_node_frontend_plugins',
-    require => [
+    command     => '/usr/bin/diff /etc/openshift/.puppet_node_frontend_plugins /etc/openshift/.puppet_proposed_node_frontend_plugins',
+    require     => [
         File['/etc/openshift/.puppet_proposed_node_frontend_plugins'],
         Exec['node_frontend_marker'],
-      ]
+      ],
+    refreshonly => true,
   }
 
   file { 'openshift node config':
