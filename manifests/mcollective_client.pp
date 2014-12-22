@@ -41,7 +41,7 @@ class openshift_origin::mcollective_client {
         owner   => 'apache',
         group   => 'apache',
         mode    => '0750',
-        require => Package['mcollective-client'],
+        require => Package['mcollective-client','httpd'],
       }
 
       file { 'mcollective client tls ca':
@@ -51,7 +51,7 @@ class openshift_origin::mcollective_client {
         group   => 'apache',
         mode    => '0640',
         source  => $::openshift_origin::msgserver_tls_ca,
-        require => Package['mcollective-client'],
+        require => Package['mcollective-client','httpd'],
       }
 
       file { 'mcollective client tls cert':
@@ -61,7 +61,7 @@ class openshift_origin::mcollective_client {
         group   => 'apache',
         mode    => '0640',
         source  => $::openshift_origin::msgserver_tls_cert,
-        require => Package['mcollective-client'],
+        require => Package['mcollective-client','httpd'],
       }
       
       file { 'mcollective client tls key':
@@ -71,7 +71,7 @@ class openshift_origin::mcollective_client {
         group   => 'apache',
         mode    => '0640',
         source  => $::openshift_origin::msgserver_tls_key,
-        require => Package['mcollective-client'],
+        require => Package['mcollective-client','httpd'],
       }
       
     } else { $tls_certs_provided = false }
