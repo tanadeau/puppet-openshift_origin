@@ -22,9 +22,9 @@ plugin.activemq.pool.<%= index + 1%>.password = <%= scope.lookupvar('::openshift
   <% if (scope.lookupvar('::openshift_origin::msgserver_tls_enabled') == 'enabled' and @tls_certs_provided == true) or scope.lookupvar('::openshift_origin::msgserver_tls_enabled') == 'strict' -%>
   plugin.activemq.pool.<%= index + 1%>.port = 61614
   plugin.activemq.pool.<%= index + 1%>.ssl = true
-  plugin.activemq.pool.<%= index + 1%>.ssl.ca = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/certs/ca.pem
-  plugin.activemq.pool.<%= index + 1%>.ssl.key = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/certs/key.pem
-  plugin.activemq.pool.<%= index + 1%>.ssl.cert = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/certs/cert.pem
+  plugin.activemq.pool.<%= index + 1%>.ssl.ca = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/etc/mcollective/certs/ca.pem
+  plugin.activemq.pool.<%= index + 1%>.ssl.key = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/etc/mcollective/certs/key.pem
+  plugin.activemq.pool.<%= index + 1%>.ssl.cert = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/etc/mcollective/certs/cert.pem
   <% else %>
   plugin.activemq.pool.<%= index + 1%>.port = 61613
   <% end %>
@@ -39,9 +39,9 @@ plugin.activemq.pool.1.password = <%= scope.lookupvar('::openshift_origin::mcoll
   <% if (scope.lookupvar('::openshift_origin::msgserver_tls_enabled') == 'enabled' and @tls_certs_provided == true) or scope.lookupvar('::openshift_origin::msgserver_tls_enabled') == 'strict' -%>
   plugin.activemq.pool.1.port = 61614
   plugin.activemq.pool.1.ssl = true
-  plugin.activemq.pool.1.ssl.ca = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/certs/ca.pem
-  plugin.activemq.pool.1.ssl.key = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/certs/key.pem
-  plugin.activemq.pool.1.ssl.cert = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/certs/cert.pem
+  plugin.activemq.pool.1.ssl.ca = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/etc/mcollective/certs/ca.pem
+  plugin.activemq.pool.1.ssl.key = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/etc/mcollective/certs/key.pem
+  plugin.activemq.pool.1.ssl.cert = <%= scope.lookupvar('::openshift_origin::params::ruby_scl_path_prefix') %>/etc/mcollective/certs/cert.pem
   <% else -%>  
   plugin.activemq.pool.1.port = 61613
   <% end -%>
