@@ -418,6 +418,23 @@
 #   for every node in the deployment (this is the default behavior, which protects
 #   scalable apps from single points of failure at the Node level).
 #
+# [*conf_broker_default_templates*]
+#   Customize default app templates for specified framework cartridges.
+#   Space-separated list of elements <cartridge-name>|<git url> - URLs must be available for all nodes.
+#   URL will be cloned as the git repository for the cartridge at app creation unless the user specifies their own.
+#   e.g.: DEFAULT_APP_TEMPLATES=php-5.3|http://example.com/php.git perl-5.10|file:///etc/openshift/cart.conf.d/templates/perl.git
+#   WARNING: do not include private credentials in any URL; they would be visible in every app's cloned repository.
+#
+#   Default: ''
+#
+# [*conf_broker_valid_gear_cartridges*]
+#   Enumerate the set of valid gear sizes for a given cartridge.
+#   If not specified, its assumed the cartridge can run on any defined gear size.
+#   Space-separated list of elements <cartridge-name>|<size1,size2>
+#   e.g.: VALID_GEAR_SIZES_FOR_CARTRIDGE="php-5.3|medium,large jbossews-2.0|large"
+#
+#   Default: ''
+#
 # [*conf_console_product_logo*]
 #   Relative path to product logo URL
 #   Default: '/assets/logo-origin.svg'
@@ -898,6 +915,8 @@ class openshift_origin (
   $conf_broker_require_zones            = false,
   $conf_broker_zone_min_gear_group      = '1',
   $conf_broker_multi_haproxy_per_node   = false,
+  $conf_broker_default_templates        = '',
+  $conf_broker_valid_gear_cartridges    = '',
   $conf_console_product_logo            = undef,
   $conf_console_product_title           = undef,
   $conf_console_session_secret          = undef,
