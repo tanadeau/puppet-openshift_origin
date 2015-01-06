@@ -146,6 +146,6 @@ PRODUCT_LOGO=<%= scope.lookupvar('::openshift_origin::console_product_logo') %>
 PRODUCT_TITLE=<%= scope.lookupvar('::openshift_origin::console_product_title') %>
 
 # Direct logs to syslog rather than log files:
-#SYSLOG_ENABLED="true"
+SYSLOG_ENABLED="<%= scope.lookupvar('::openshift_origin::syslog_enabled') %>"
 
 SESSION_SECRET="<%= scope.lookupvar('::openshift_origin::conf_console_session_secret') %>"

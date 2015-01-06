@@ -1,0 +1,11 @@
+queuesize = 1000
+inputbuffersize = 4096
+<% if scope.lookupvar('::openshift_origin::syslog_enabled') == true %>
+outputtype = multi
+<% else %>
+outputtype = file
+<% end %>
+syslogbuffersize = 4096
+filebuffersize = 4096
+outputtypefromenviron = false
+filewriterdir = ~/app-root/logs

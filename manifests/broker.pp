@@ -18,6 +18,7 @@ class openshift_origin::broker {
   include openshift_origin::firewall::apache
   include openshift_origin::selbooleans
   include openshift_origin::selbooleans::broker_console
+  include openshift_origin::rsyslog
 
   anchor { 'openshift_origin::broker_begin': } ->
   Class['openshift_origin::broker_console_dirs'] ->

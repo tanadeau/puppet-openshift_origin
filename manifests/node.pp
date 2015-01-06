@@ -20,7 +20,8 @@ class openshift_origin::node {
   include openshift_origin::firewall::node
   include openshift_origin::selbooleans
   include openshift_origin::selbooleans::node
-
+  include openshift_origin::rsyslog
+  include openshift_origin::rsyslog::node
 
   anchor { 'openshift_origin::node_begin': } ->
   Class['openshift_origin::selbooleans'] ->

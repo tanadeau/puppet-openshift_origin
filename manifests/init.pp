@@ -690,6 +690,14 @@
 # [*manage_firewall*]
 #   Indicate whether or not this module will configure the firewall for you
 #
+# [*syslog_enabled*]
+#   Direct logs to syslog rather than log files. Only works with OpenShift Enterprise 2.2
+#   Default: false
+#
+# [*syslog_central_server_hostname*]
+#   Host name of the central log server where rsyslog logs will be forwarded to.
+#   Default: undef
+#
 # [*install_cartridges*]
 #   List of cartridges to be installed on the node. Options:
 #
@@ -940,6 +948,8 @@ class openshift_origin (
   $install_cartridges_recommended_deps  = undef,
   $install_cartridges_optional_deps     = undef,
   $manage_firewall                      = true,
+  $syslog_enabled                       = false,
+  $syslog_central_server_hostname       = undef,
 ) inherits openshift_origin::params {
   include openshift_origin::role
 
