@@ -47,11 +47,6 @@ class openshift_origin::rsyslog {
       enable  => true,
       require => Exec['install_rsyslog7']
     }
-  }else{
-    service { 'rsyslog':
-      ensure => stopped,
-      enable => false,
-    }
   }
 }
 
