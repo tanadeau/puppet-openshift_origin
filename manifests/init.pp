@@ -692,6 +692,7 @@
 #
 # [*syslog_enabled*]
 #   Direct logs to syslog rather than log files. Only works with OpenShift Enterprise 2.2
+#   Get more details on https://blog.openshift.com/central-log-management-openshift-enterprise/
 #   Default: false
 #
 # [*syslog_central_server_hostname*]

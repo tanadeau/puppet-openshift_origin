@@ -901,6 +901,7 @@ Default: false
 
 === syslog_enabled
 Direct logs to syslog rather than log files.
+Get more details on https://blog.openshift.com/central-log-management-openshift-enterprise/
 
 Default: undef
 
