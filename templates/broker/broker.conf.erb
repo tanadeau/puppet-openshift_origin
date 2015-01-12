@@ -167,6 +167,11 @@ ALLOW_MULTIPLE_HAPROXY_ON_NODE=<%= scope.lookupvar('::openshift_origin::conf_bro
 # Also this still will not create any DNS entry for the alias; that is an external step.
 ALLOW_ALIAS_IN_DOMAIN="false"
 
+# Whether to send OpenShift log messages to syslog or to files.
+# If true, messages that normally end up in the Rails environment-specific log
+# (e.g. production.rb), usage.log, and user_action.log will instead go to syslog.
+SYSLOG_ENABLED="<%= scope.lookupvar('::openshift_origin::syslog_enabled') %>"
+
 # Customize default app templates for specified framework cartridges.
 # Space-separated list of elements <cartridge-name>|<git url> - URLs must be available for all nodes.
 # URL will be cloned as the git repository for the cartridge at app creation unless the user specifies their own.

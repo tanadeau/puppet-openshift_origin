@@ -1,0 +1,20 @@
+# OpenShift plugin configuration
+template(name="OpenShift" type="list")
+{
+property(name="timestamp" dateFormat="rfc3339")
+constant(value=" ")
+property(name="hostname")
+constant(value=" ")
+property(name="syslogtag")
+constant(value=" app=")
+property(name="$!OpenShift!OPENSHIFT_APP_NAME")
+constant(value=" ns=")
+property(name="$!OpenShift!OPENSHIFT_NAMESPACE")
+constant(value=" appUuid=")
+property(name="$!OpenShift!OPENSHIFT_APP_UUID")
+constant(value=" gearUuid=")
+property(name="$!OpenShift!OPENSHIFT_GEAR_UUID")
+property(name="msg" spifno1stsp="on")
+property(name="msg" droplastlf="on")
+constant(value="n")
+}

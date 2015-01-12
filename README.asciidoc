@@ -897,6 +897,17 @@ $dns_infrastructure_names = [
 === manage_firewall
 Indicate whether or not this module will configure the firewall for you
 
+Default: false
+
+=== syslog_enabled
+Direct logs to syslog rather than log files.
+Get more details on https://blog.openshift.com/central-log-management-openshift-enterprise/
+
+Default: undef
+
+=== syslog_central_server_hostname
+Host name of the central log server where rsyslog logs will be forwarded to.
+
 === install_cartridges
 List of cartridges to be installed on the node. Options:
 

@@ -39,6 +39,23 @@ PLATFORM_LOG_LEVEL=DEBUG
 PLATFORM_TRACE_LOG_FILE=/var/log/openshift/node/platform-trace.log
 PLATFORM_TRACE_LOG_LEVEL=DEBUG
 
+<% if scope.lookupvar('::openshift_origin::syslog_enabled') == true -%>
+# Uncomment and use the following lines if you want platform log entries to contain
+# parsable attributes associated with a given MCollective request. Possible values
+# are request_id, app_uuid, container_uuid, app_name, app_namespace, cart_name.
+# The entries will appear in the order specified.
+PLATFORM_LOG_CONTEXT_ENABLED=1
+PLATFORM_LOG_CONTEXT_ATTRS=request_id,container_uuid,app_uuid
+PLATFORM_LOG_CLASS=SyslogLogger
+
+# Enable Metrics
+WATCHMAN_METRICS_ENABLED=true
+# How often should the watchman plugin gather metrics
+WATCHMAN_METRICS_INTERVAL=60
+# Metadata to include in messages
+METRICS_METADATA="appName:OPENSHIFT_APP_NAME,gear:OPENSHIFT_GEAR_UUID,app:OPENSHIFT_APP_UUID,ns:OPENSHIFT_NAMESPACE"
+<% end -%>
+
 OPENSHIFT_FRONTEND_HTTP_PLUGINS=<%= scope.lookupvar('::openshift_origin::node_frontend_plugins').map{ |p| 'openshift-origin-frontend-' + p }.join(',') %>
 
 CONTAINERIZATION_PLUGIN=openshift-origin-container-<%= scope.lookupvar('::openshift_origin::node_container_plugin') %>

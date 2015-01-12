@@ -1,0 +1,3 @@
+erase rsyslog
+install rsyslog7 rsyslog7-mmopenshift
+transaction run
