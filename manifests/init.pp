@@ -952,8 +952,6 @@ class openshift_origin (
   $syslog_enabled                       = false,
   $syslog_central_server_hostname       = undef,
 ) inherits openshift_origin::params {
-  include openshift_origin::role
-
   $default_host_domain = $dns_infrastructure_zone ? {
     ''        => $domain,
     default   => $dns_infrastructure_zone,

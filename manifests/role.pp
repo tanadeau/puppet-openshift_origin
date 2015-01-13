@@ -14,7 +14,7 @@
 #  limitations under the License.
 #
 class openshift_origin::role {
-  include openshift_origin::install_method
+  require openshift_origin::install_method
   require openshift_origin::firewall::ssh
 
   if ( $::openshift_origin::configure_ntp ) {

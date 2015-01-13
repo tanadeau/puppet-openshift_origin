@@ -17,9 +17,18 @@ Deployment Guide for current prerequisites and supported configuration details.
   * 10gen-mms-agent and phpmyadmin cartridges are not included in Openshift Enterprise and therefore have been
     removed from the list of default cartridges
 
+=== oo-admin-yum-validator
+If ose_version is set then oo-admin-yum-validator with the ---fixall flag will be
+run prior to installing OSE packages. Once oo-admin-yum-validator has run
+successfully puppet will not run it again. If you modify your yum configuration
+after oo-admin-yum-validator has been executed you should you should re-run
+oo-admin-yum-validator to ensure proper repo priorities and package exclusions.
+
 === Yum repositories
-Configuring yum repositories via this module is not currently supported. Please ensure subscriptions and/or
-yum repositories are configured per the deployment guide. https://access.redhat.com/documentation/en-US/OpenShift_Enterprise/2/html/Deployment_Guide/Red_Hat_Subscription_Requirements.html
+Configuring yum repositories via this module is not currently supported. Please
+ensure subscriptions and/or yum repositories are configured per the deployment
+guide.
+https://access.redhat.com/documentation/en-US/OpenShift_Enterprise/2/html/Deployment_Guide/Red_Hat_Subscription_Requirements.html
 
 === TODO
   * Use stored configs to push node dns changes from broker without sharing secrets to nodes

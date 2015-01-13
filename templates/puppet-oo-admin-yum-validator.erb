@@ -1,0 +1,15 @@
+#!/bin/bash
+# oo-admin-yum-validator exits with 1 when it makes changes
+# so run it once with fix-all, then run it in reporting mode
+# to see if there are problems, if not write out a success marker
+# so puppet doesn't run this again
+ooayv=$( /usr/bin/oo-admin-yum-validator -o <%= scope.lookupvar('::openshift_origin::ose_version') %> -a <%= @role_string %> )
+ooayv=$( /usr/bin/oo-admin-yum-validator -o <%= scope.lookupvar('::openshift_origin::ose_version') %> <%= @role_string %> )
+if [ $? -eq 0 ]
+then
+   touch /etc/yum-validator/.oo_admin_yum_validator_success
+   exit 0
+else
+   exit 1
+fi
+
