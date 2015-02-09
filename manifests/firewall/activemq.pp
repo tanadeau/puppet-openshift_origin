@@ -27,7 +27,7 @@ class openshift_origin::firewall::activemq {
       $activemq_port = '61613'
       $activemq_openwire_port = '61616'
     }
-    
+
     lokkit::ports { 'ActiveMQ':
       tcpPorts => [ $activemq_port ],
     }

@@ -201,7 +201,7 @@ class openshift_origin::broker {
     subscribe   => File['quickstarts'],
     command     => 'oo-admin-console-cache --clear',
   }
-  
+
   file { 'quickstarts':
     ensure  => present,
     path    => '/etc/openshift/quickstarts.json',
