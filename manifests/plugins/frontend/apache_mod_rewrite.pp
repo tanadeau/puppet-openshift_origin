@@ -44,7 +44,7 @@ class openshift_origin::plugins::frontend::apache_mod_rewrite {
                   chown root:apache /etc/httpd/conf.d/openshift/nodes.txt /etc/httpd/conf.d/openshift/nodes.db.new && \
                   chmod 750 /etc/httpd/conf.d/openshift/nodes.txt /etc/httpd/conf.d/openshift/nodes.db.new && \
                   mv -f /etc/httpd/conf.d/openshift/nodes.db.new /etc/httpd/conf.d/openshift/nodes.db',
-      unless  => 'grep \'__default__/broker\' /etc/httpd/conf.d/openshift/nodes.txt 2>/dev/null',
+      unless  => 'grep "__default__/broker" /etc/httpd/conf.d/openshift/nodes.txt 2>/dev/null',
       require => File['broker and console route for node'],
     }
   }
