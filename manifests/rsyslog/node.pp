@@ -47,6 +47,7 @@ class openshift_origin::rsyslog::node {
     owner   => 'root',
     group   => 'root',
     content => template('openshift_origin/node/logshifter.conf.erb'),
+    require => Package['rubygem-openshift-origin-node'],
     notify  => [Service['openshift-watchman'], Service["${::openshift_origin::params::ruby_scl_prefix}mcollective"]]
   }
 }
