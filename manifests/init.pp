@@ -592,6 +592,10 @@
 #   External facing network device. Used for routing and traffic control setup.
 #   Default: eth0
 #
+# [*conf_node_proxy_ports_per_gear*]
+#   Number of proxy ports available per gear.
+#   Default: 5
+#
 # [*conf_node_public_key*]
 # [*conf_node_private_key*]
 #   Public and private keys used for gears on the default domain. Both values
@@ -929,6 +933,7 @@ class openshift_origin (
   $node_frontend_plugins                = ['apache-vhost','nodejs-websocket'],
   $node_unmanaged_users                 = [],
   $conf_node_external_eth_dev           = 'eth0',
+  $conf_node_proxy_ports_per_gear       = '5',
   $conf_node_public_key                 = undef,
   $conf_node_private_key                = undef,
   $conf_node_supplementary_posix_groups = '',
