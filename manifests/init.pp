@@ -948,6 +948,7 @@ class openshift_origin (
   $install_cartridges                   = undef,
   $install_cartridges_recommended_deps  = undef,
   $install_cartridges_optional_deps     = undef,
+  $quickstarts_json                     = undef,
   $manage_firewall                      = true,
   $syslog_enabled                       = false,
   $syslog_central_server_hostname       = undef,
