@@ -791,6 +791,11 @@ External facing network device. Used for routing and traffic control setup.
 
 Default: eth0
 
+=== conf_node_proxy_ports_per_gear
+Number of proxy ports available per gear.
+
+Default: 5
+
 === conf_node_public_key
 === conf_node_private_key
 Public and private keys used for gears on the default domain. Both values
