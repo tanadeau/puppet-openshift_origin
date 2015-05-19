@@ -443,6 +443,12 @@
 #
 #  Default: true
 #
+# [*conf_broker_use_predictable_gear_uuids*]
+#  When true, new gear UUIDs (and thus gear usernames) are created with the format:
+#  <domain_namespace>­<app_name>­<gear_index>
+#
+#  Default: false
+#
 # [*conf_broker_require_districts*]
 #  When true, gear placement will fail if there are no available districts
 #  with the correct gear profile.
@@ -916,7 +922,8 @@ class openshift_origin (
   $conf_broker_auth_private_key         = undef,
   $conf_broker_session_secret           = undef,
   $conf_broker_default_region_name      = '',
-  $conf_broker_allow_region_selection   = false,
+  $conf_broker_allow_region_selection     = false,
+  $conf_broker_use_predictable_gear_uuids = false,
   $conf_broker_require_districts        = true,
   $conf_broker_require_zones            = false,
   $conf_broker_zone_min_gear_group      = '1',
