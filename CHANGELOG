@@ -1,6 +1,26 @@
 CHANGELOG
 =========
 
+4.1.3
+-----
+
+2015-05-19
+
+ * Adding option for proxy_ports_per_gear
+ * Modify the OpenShift logging and metrics file
+ * Add dependency for file resource '/etc/openshift/logshifter.conf'
+ * Double quotes instead of escaped singles for exec 'regen node routes'
+ * Add oo-admin-yum-validator for OSE installs
+ * Add syslog configuration
+ * Update mcollective-client.cfg.erb
+ * Package httpd should be installed first
+ * Add extra district, zone and region options
+ * Clean up to avoid unnecessary notices and service restarts
+ * Remove unnecessary packages from puppet management
+ * Add support for USE_PREDICTABLE_GEAR_UUIDS
+ * Add puppetlabs-concat < 2.0.0 dependency as workaround for puppetlabs-haproxy
+ < 2.0.0 dependency resolution issues
+
 4.1.2
 -----
 
