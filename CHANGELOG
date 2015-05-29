@@ -6,7 +6,7 @@ CHANGELOG
 
 2015-05-19
 
- * Adding option for proxy_ports_per_gear
+ * Adding option for PROXY_PORTS_PER_GEAR (origin) / PORTS_PER_USER (ose)
  * Modify the OpenShift logging and metrics file
  * Add dependency for file resource '/etc/openshift/logshifter.conf'
  * Double quotes instead of escaped singles for exec 'regen node routes'
@@ -17,7 +17,7 @@ CHANGELOG
  * Add extra district, zone and region options
  * Clean up to avoid unnecessary notices and service restarts
  * Remove unnecessary packages from puppet management
- * Add support for USE_PREDICTABLE_GEAR_UUIDS
+ * Add support for USE_PREDICTABLE_GEAR_UUIDS (ose only)
  * Add puppetlabs-concat < 2.0.0 dependency as workaround for puppetlabs-haproxy
  < 2.0.0 dependency resolution issues
 
