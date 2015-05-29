@@ -10,6 +10,12 @@ VALID_GEAR_SIZES="<%= scope.lookupvar('::openshift_origin::conf_valid_gear_sizes
 VALID_GEAR_SIZES="<%= scope.lookupvar('::openshift_origin::conf_valid_gear_sizes') %>"
 <% end %>
 
+# Enumerate the set of valid gear sizes for a given cartridge.
+# If not specified, its assumed the cartridge can run on any defined gear size.
+# Space-separated list of elements <cartridge-name>|<size1,size2>
+# e.g.: VALID_GEAR_SIZES_FOR_CARTRIDGE="php-5.3|medium,large jbossews-2.0|large"
+VALID_GEAR_SIZES_FOR_CARTRIDGE=<%= scope.lookupvar('::openshift_origin::conf_broker_valid_gear_cartridges') %>
+
 # Default number of domains to assign to a new user
 DEFAULT_MAX_DOMAINS="<%= scope.lookupvar('::openshift_origin::conf_default_max_domains') %>"
 # Default number of gears to assign to a new user
@@ -177,7 +183,7 @@ SYSLOG_ENABLED="<%= scope.lookupvar('::openshift_origin::syslog_enabled') %>"
 # URL will be cloned as the git repository for the cartridge at app creation unless the user specifies their own.
 # e.g.: DEFAULT_APP_TEMPLATES=php-5.3|http://example.com/php.git perl-5.10|file:///etc/openshift/cart.conf.d/templates/perl.git
 # WARNING: do not include private credentials in any URL; they would be visible in every app's cloned repository.
-DEFAULT_APP_TEMPLATES=
+DEFAULT_APP_TEMPLATES=<%= scope.lookupvar('::openshift_origin::conf_broker_default_templates') %>
 
 # List the node platforms available on the cloud
 # Comma-separated list of node platforms (e.g.:linux,windows).
