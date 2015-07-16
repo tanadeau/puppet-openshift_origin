@@ -260,6 +260,7 @@ class openshift_origin::node {
       enable  => true,
       require => [
         Package['rubygem-openshift-origin-node'],
+        File['openshift node config'],
         Package['openshift-origin-node-util'],
         Service['openshift-gears'],
       ],
