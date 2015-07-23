@@ -39,6 +39,8 @@
   RequestHeader set Front-End-Https "On"
   ProxyPass /console http://127.0.0.1:8118/console
   ProxyPassReverse /console http://127.0.0.1:8118/console
+  ProxyPass /assets http://127.0.0.1:8118/console/assets
+  ProxyPassReverse /assets http://127.0.0.1:8118/console/assets
   ProxyPass /broker http://127.0.0.1:8080/broker
   <% if scope.lookupvar('::openshift_origin::broker_external_access_admin_console') == true %>
   ProxyPass /admin-console http://127.0.0.1:8080/admin-console
