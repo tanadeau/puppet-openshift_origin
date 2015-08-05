@@ -50,7 +50,7 @@ MONGO_USER="<%= scope.lookupvar('::openshift_origin::mongodb_broker_user') %>"
 MONGO_PASSWORD="<%= scope.lookupvar('::openshift_origin::mongodb_broker_password') %>"
 MONGO_DB="<%= scope.lookupvar('::openshift_origin::mongodb_name') %>"
 MONGO_TEST_DB="<%= scope.lookupvar('::openshift_origin::mongodb_name') %>_test"
-MONGO_SSL="false"
+MONGO_SSL="<%= scope.lookupvar('::openshift_origin::mongodb_ssl') %>"
 MONGO_REPLICA_SETS=<%= scope.lookupvar('::openshift_origin::mongodb_replicasets') %>
 
 #Enables gear/filesystem resource usage tracking

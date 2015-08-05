@@ -362,6 +362,10 @@
 #   Default: '27017'
 #   The TCP port used for MongoDB to listen on.
 #
+# [*mongodb_ssl*]
+#   Default: false
+#   Enable/disable using SSL to communicate with MongoDB.
+#
 # [*mongodb_replicasets*]
 #   Default: false
 #   Enable/disable MongoDB replica sets for database high-availability.
@@ -933,6 +937,7 @@ class openshift_origin (
   $mongodb_broker_password              = 'mongopass',
   $mongodb_name                         = 'openshift_broker',
   $mongodb_port                         = '27017',
+  $mongodb_ssl                          = false,
   $mongodb_replicasets                  = false,
   $mongodb_replica_name                 = 'openshift',
   $mongodb_replica_primary              = undef,
