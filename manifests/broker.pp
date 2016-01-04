@@ -298,5 +298,15 @@ class openshift_origin::broker {
     command => '/bin/sed -i \'/VirtualHost/,/VirtualHost/ d\' /etc/httpd/conf.d/ssl.conf',
     onlyif  => '/bin/grep \'VirtualHost _default\' /etc/httpd/conf.d/ssl.conf',
     require => Package['openshift-origin-broker'],
+    notify  => Service['httpd'],
+  }
+
+  if $::openshift_origin::apache_https_port != '443' {
+    exec { 'Change mod_ssl Listen port':
+      command => "/bin/sed -i 's/^Listen 443$/Listen ${::openshift_origin::apache_https_port}/' /etc/httpd/conf.d/ssl.conf",
+      onlyif  => '/bin/grep \'^Listen 443$\' /etc/httpd/conf.d/ssl.conf',
+      require => Package['openshift-origin-broker'],
+      notify  => Service['httpd'],
+    }
   }
 }

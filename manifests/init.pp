@@ -1002,6 +1002,8 @@ class openshift_origin (
   $install_login_shell                  = false,
   $register_host_with_nameserver        = false,
   $update_network_conf_files            = true,
+  $apache_http_port                     = '80',
+  $apache_https_port                    = '443',
   $install_cartridges                   = undef,
   $install_cartridges_recommended_deps  = undef,
   $install_cartridges_optional_deps     = undef,

@@ -31,4 +31,42 @@ class openshift_origin::plugins::frontend::apache_vhost {
       require => Package['rubygem-openshift-origin-frontend-apache-vhost'],
     }
   }
+
+  if $::openshift_origin::apache_http_port != '80' {
+    lokkit::ports { 'OpenShift Apache non-standard HTTP':
+      tcpPorts => [$::openshift_origin::apache_http_port],
+    }
+
+    selinux_port { "tcp/${::openshift_origin::apache_http_port}":
+      seltype => 'http_port_t',
+      require => Package['httpd'],
+      before  => Service['httpd'],
+    }
+
+    exec { 'Change HTTP NameVirtualHost in vhost':
+      command => "/bin/sed -i -e 's/^NameVirtualHost \\*:80$/NameVirtualHost *:${::openshift_origin::apache_http_port}/' /etc/httpd/conf.d/000001_openshift_origin_frontend_vhost.conf",
+      onlyif  => '/bin/grep \'^NameVirtualHost \*:80$\' /etc/httpd/conf.d/000001_openshift_origin_frontend_vhost.conf',
+      require => Package['rubygem-openshift-origin-frontend-apache-vhost'],
+      notify  => Service['httpd'],
+    }
+  }
+
+  if $::openshift_origin::apache_https_port != '443' {
+    lokkit::ports { 'OpenShift Apache non-standard HTTPS':
+      tcpPorts => [$::openshift_origin::apache_https_port],
+    }
+
+    selinux_port { "tcp/${::openshift_origin::apache_https_port}":
+      seltype => 'http_port_t',
+      require => Package['httpd'],
+      before  => Service['httpd'],
+    }
+
+    exec { 'Change HTTPS NameVirtualHost in vhost':
+      command => "/bin/sed -i -e 's/^NameVirtualHost \\*:443$/NameVirtualHost *:${::openshift_origin::apache_https_port}/' /etc/httpd/conf.d/000001_openshift_origin_frontend_vhost.conf",
+      onlyif  => '/bin/grep \'^NameVirtualHost \*:443$\' /etc/httpd/conf.d/000001_openshift_origin_frontend_vhost.conf',
+      require => Package['rubygem-openshift-origin-frontend-apache-vhost'],
+      notify  => Service['httpd'],
+    }
+  }
 }

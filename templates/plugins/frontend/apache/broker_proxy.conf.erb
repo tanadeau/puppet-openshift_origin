@@ -12,7 +12,7 @@
     AllowOverride None
 </Directory>
 
-<VirtualHost *:80>
+<VirtualHost *:<%= scope.lookupvar('::openshift_origin::apache_http_port') %>>
   # ServerName we will inherit from other config;
   # ServerAlias is to make sure "localhost" traffic goes here regardless.
   ServerAlias localhost
@@ -23,7 +23,7 @@
   RewriteRule     ^(.*)$     https://%{HTTP_HOST}$1 [R,L]
 </VirtualHost>
 
-<VirtualHost *:443>
+<VirtualHost *:<%= scope.lookupvar('::openshift_origin::apache_https_port') %>>
   # ServerName we will inherit from other config;
   # ServerAlias is to make sure "localhost" traffic goes here regardless.
   ServerAlias localhost

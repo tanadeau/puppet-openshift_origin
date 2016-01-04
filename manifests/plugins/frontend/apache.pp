@@ -39,13 +39,14 @@ class openshift_origin::plugins::frontend::apache {
 
     $httpd_servername_path    = '/etc/httpd/conf.d/000002_openshift_origin_broker_servername.conf'
     $servername_conf_template = 'openshift_origin/plugins/frontend/apache/broker_servername.conf.erb'
-
   } elsif 'node' in $::openshift_origin::roles {
     $httpd_servername_path    = '/etc/httpd/conf.d/000001_openshift_origin_node_servername.conf'
     $servername_conf_template = 'openshift_origin/plugins/frontend/apache/node_servername.conf.erb'
   }
 
   if 'broker' and 'load_balancer' in $::openshift_origin::roles {
+    # TODO: Fix this to work with other Apache config changes
+
     exec { 'httpd_conf':
       path    => ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'],
       command => "sed -ri \'s/Listen 80/Listen ${openshift_origin::broker_ip_addr}:80/\' /etc/httpd/conf/httpd.conf",
@@ -53,10 +54,19 @@ class openshift_origin::plugins::frontend::apache {
       require => Package['httpd'],
       notify  => Service['httpd'],
     }
+
     exec { 'ssl_conf':
       path    => ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'],
       command => "sed -ri \'s/Listen 443/Listen ${openshift_origin::broker_ip_addr}:443/\' /etc/httpd/conf.d/ssl.conf",
       unless  => "grep \"Listen ${openshift_origin::broker_ip_addr}:443\" /etc/httpd/conf.d/ssl.conf",
+      require => Package['httpd'],
+      notify  => Service['httpd'],
+    }
+  } elsif $::openshift_origin::apache_http_port != '80' {
+    exec { 'httpd_conf':
+      path    => ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'],
+      command => "sed -ri \'s/Listen 80/Listen ${openshift_origin::apache_http_port}/\' /etc/httpd/conf/httpd.conf",
+      unless  => "grep \"Listen ${openshift_origin::apache_http_port}\" /etc/httpd/conf/httpd.conf",
       require => Package['httpd'],
       notify  => Service['httpd'],
     }
