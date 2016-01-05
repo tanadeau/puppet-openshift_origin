@@ -45,7 +45,7 @@ class openshift_origin::plugins::frontend::apache {
     $servername_conf_template = 'openshift_origin/plugins/frontend/apache/node_servername.conf.erb'
   }
 
-  if 'broker' and 'load_balancer' in $::openshift_origin::roles {
+  if ('broker' and 'load_balancer' in $::openshift_origin::roles) or $::openshift_origin::broker_ip_addr != $::ipaddress {
     exec { 'httpd_conf':
       path    => ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/'],
       command => "sed -ri \'s/Listen 80/Listen ${openshift_origin::broker_ip_addr}:80/\' /etc/httpd/conf/httpd.conf",
